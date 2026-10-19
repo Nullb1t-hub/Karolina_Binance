@@ -8,7 +8,7 @@ let busy=false,bot;
 export function attachBot(b){bot=b;}
 const now=()=>Date.now();
 const dayKey=()=>new Intl.DateTimeFormat('en-CA',{timeZone:process.env.TZ||'Europe/Prague',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
-function interval(s){return Math.max(s.settings.minGapMinutes*60000,s.settings.periodHours*3600000/Math.max(1,s.settings.postsPerPeriod));}
+function interval(s,snapshot){const base=s.settings.periodHours*3600000/Math.max(1,s.settings.postsPerPeriod);const vol=Math.max(snapshot?.summary?.avgAbsSpot24hPct||0,snapshot?.summary?.avgAbsFutures24hPct||0);const multiplier=s.settings.scheduleMode==='active'?(vol>=3?0.75:1.25):1;return Math.max(s.settings.minGapMinutes*60000,base*multiplier);}
 async function notify(text){if(bot&&process.env.TELEGRAM_OWNER_ID)try{await bot.sendMessage(process.env.TELEGRAM_OWNER_ID,text,{disable_web_page_preview:true});}catch(e){console.error('Telegram notify:',e.message);}}
 export async function startSchedule(){
  const s=getState();
@@ -37,7 +37,7 @@ export async function runTick(){
   }
   await updateState(d=>{
    const p={...result,text,market:candidate.market,symbol:candidate.coin.symbol,price:candidate.coin.price,change24h:candidate.coin.change24h,day:today,snapshotAt:snapshot.fetchedAt};
-   d.posts.unshift(p);d.posts=d.posts.slice(0,300);d.publishedToday.push({day:today,at:p.publishedAt});d.lastPostAt=p.publishedAt;d.seenTopics.push(candidate.coin.symbol);d.seenTopics=d.seenTopics.slice(-100);d.nextPostAt=new Date(Date.parse(p.publishedAt)+interval(d)).toISOString();d.lastError=null;
+   d.posts.unshift(p);d.posts=d.posts.slice(0,300);d.publishedToday.push({day:today,at:p.publishedAt});d.lastPostAt=p.publishedAt;d.seenTopics.push(candidate.coin.symbol);d.seenTopics=d.seenTopics.slice(-100);d.nextPostAt=new Date(Date.parse(p.publishedAt)+interval(d,snapshot)).toISOString();d.lastError=null;
   });
   await notify((dry?'🧪 ЧЕРНОВИК — НЕ ОПУБЛИКОВАН':'✅ ПОСТ ОПУБЛИКОВАН')+'\n\nРынок: '+candidate.market.toUpperCase()+'\nМонета: '+candidate.coin.symbol+'\nИзменение 24ч: '+candidate.coin.change24h+'%\n\n'+text+(result.url?'\n\n'+result.url:'')+(result.successWithoutId?'\nBinance подтвердил отправку, но не вернул ID. Не повторяй вручную сразу.':''));
  }catch(e){const m=String(e.message||e).slice(0,400);await updateState(d=>{d.lastError=m;d.nextPostAt=new Date(now()+600000).toISOString();});await notify('⚠️ Пост не опубликован. Повторная попытка не раньше чем через 10 минут. Ошибка: '+m);}

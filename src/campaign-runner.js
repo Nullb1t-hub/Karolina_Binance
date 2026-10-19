@@ -43,8 +43,7 @@ async function main(){
  const s=await load(),event=process.env.GITHUB_EVENT_NAME||'';
  if(!s.startedAt){if(event!=='workflow_dispatch'){console.log('Not started. Use Actions → Karolina 3-day pilot → Run workflow.');return;}s.active=true;s.startedAt=new Date().toISOString();s.endsAt=new Date(now()+72*3600000).toISOString();s.published=0;s.perDay={};s.seen=[];s.history=[];console.log('Pilot starts '+s.startedAt+' ends '+s.endsAt);}
  if(!s.active||(s.published||0)>=maxPosts||now()>=Date.parse(s.endsAt)){s.active=false;s.lastError='Pilot complete or time expired';await save(s);console.log('Finished '+s.published+'/'+maxPosts);return;}
- if(!process.env.BINANCE_SQUARE_OPENAPI_KEY)throw Error('Missing BINANCE_SQUARE_OPENAPI_KEY; no post sent.');
- try{await postOne(s);}catch(e){s.lastError=String(e.message||e).slice(0,500);console.error('POST FAILED: '+s.lastError);}
+ try{if(!process.env.BINANCE_SQUARE_OPENAPI_KEY)throw Error('Missing BINANCE_SQUARE_OPENAPI_KEY; no post sent.');await postOne(s);}catch(e){s.lastError=String(e.message||e).slice(0,500);console.error('POST FAILED: '+s.lastError);}
  if(s.published>=maxPosts||now()>=Date.parse(s.endsAt))s.active=false;await save(s);console.log('PILOT '+(s.active?'ACTIVE':'FINISHED')+' '+s.published+'/'+maxPosts+' perDay='+JSON.stringify(s.perDay)+' error='+(s.lastError||'none'));
 }
 main().catch(e=>{console.error('FATAL: '+String(e.message||e));process.exitCode=1;});

@@ -32,7 +32,7 @@ async function symbols(){
   console.log('Binance market feed returned too few breakouts; falling back to CoinGecko');
  }catch(e){console.log('Binance market feed failed: '+e.message+'; falling back to CoinGecko');}
  const d=await getJson('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=volume_desc&per_page=250&page=1&price_change_percentage=24h',18000);
- return d.map(x=>({ticker:String(x.symbol||'').toUpperCase(),symbol:String(x.symbol||'').toUpperCase()+'USDT',price:Number(x.current_price),change:Number(x.price_change_percentage_24h),volume:Number(x.total_volume),marketCap:Number(x.market_cap||0),coinId:x.id,image:x.image,source:'CoinGecko'}))
+ return d.map(x=>({ticker:String(x.symbol||'').toUpperCase(),name:x.name,symbol:String(x.symbol||'').toUpperCase()+'USDT',price:Number(x.current_price),change:Number(x.price_change_percentage_24h),volume:Number(x.total_volume),marketCap:Number(x.market_cap||0),coinId:x.id,image:x.image,source:'CoinGecko'}))
   .filter(x=>x.ticker&&!excluded.has(x.ticker)&&x.price>0&&x.volume>=1500000&&Math.abs(x.change)>=4.5&&(!x.marketCap||x.marketCap<15000000000))
   .sort((a,b)=>Math.abs(b.change)*Math.log10(1+b.volume)-Math.abs(a.change)*Math.log10(1+a.volume)).slice(0,100);
 }

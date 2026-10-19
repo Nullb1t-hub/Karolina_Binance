@@ -122,7 +122,7 @@ async function postOne(s){
  throw Error('No eligible '+mode+' token could be published. Last issue: '+last);
 }
 async function main(){
- const s=await load(),event=process.env.GITHUB_EVENT_NAME||'';
+ let s=await load();const event=process.env.GITHUB_EVENT_NAME||'';
  if(event==='push'){console.log('Publishing paused: push runs only validate code.');return;}
  if(event==='schedule'&&s.planVersion!==2){console.log('Scheduled run waiting for manual pilot start.');return;}
  if(event==='workflow_dispatch'&&s.planVersion!==2){s={active:true,startedAt:new Date().toISOString(),endsAt:new Date(now()+72*3600000).toISOString(),published:0,perDay:{},seen:[],history:[],lastError:null,planVersion:2};console.log('New 3-day pilot starts '+s.startedAt+' ends '+s.endsAt+' target='+maxPosts+' mix spot='+spotTarget+' futures='+futuresTarget);}

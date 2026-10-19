@@ -1,5 +1,10 @@
 name: Karolina 3-day pilot
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/campaign-runner.js'
+      - '.github/workflows/karolina-3day-pilot.yml'
   workflow_dispatch:
   schedule:
     - cron: '0 0,2,4,7,9,12,14,16,19,21 * * *'
@@ -21,6 +26,7 @@ jobs:
       - name: Check campaign script syntax
         run: node --check src/campaign-runner.js
       - name: Publish one verified crypto-news post
+        if: github.event_name != 'push'
         run: node src/campaign-runner.js
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}

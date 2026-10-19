@@ -14,7 +14,7 @@ export async function startSchedule(){
  const s=getState();
  if(s.running)return {ok:false,message:'Агент уже запущен.'};
  if(!process.env.GEMINI_API_KEY)return {ok:false,message:'Добавь GEMINI_API_KEY.'};
- if(process.env.DRY_RUN!=='true'&&!process.env.BINANCE_SQUARE_OPENAPI_KEY)return {ok:false,message:'Добавь Binance Square OpenAPI key.'};
+ if(process.env.DRY_RUN==='false'&&!process.env.BINANCE_SQUARE_OPENAPI_KEY)return {ok:false,message:'Добавь Binance Square OpenAPI key.'};
  await updateState(d=>{d.running=true;d.startedAt=new Date().toISOString();d.nextPostAt=new Date(now()+15000).toISOString();d.lastError=null;});
  return {ok:true,message:'Запуск принят. Первая проверка примерно через 15 секунд.'};
 }
@@ -27,7 +27,7 @@ export async function runTick(){
   if(s.publishedToday.length>=s.settings.maxPostsPerDay){await updateState(d=>{d.running=false;d.lastError='Достигнут дневной лимит.';});await notify('⏸ Агент остановлен: достигнут дневной лимит.');return;}
   if(s.lastPostAt&&now()-Date.parse(s.lastPostAt)<s.settings.minGapMinutes*60000){await updateState(d=>{d.nextPostAt=new Date(Date.parse(d.lastPostAt)+d.settings.minGapMinutes*60000).toISOString();});return;}
   const snapshot=await getMarketSnapshot(),candidate=chooseCandidate(snapshot,s),text=await createPost(candidate,s.settings);
-  const dry=process.env.DRY_RUN==='true';
+  const dry=process.env.DRY_RUN!=='false';
   let result;
   if(dry)result={id:null,url:null,publishedAt:new Date().toISOString(),dryRun:true};
   else{

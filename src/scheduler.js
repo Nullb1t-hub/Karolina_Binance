@@ -28,17 +28,16 @@ export async function runTick(){
   if(s.lastPostAt&&now()-Date.parse(s.lastPostAt)<s.settings.minGapMinutes*60000){await updateState(d=>{d.nextPostAt=new Date(Date.parse(d.lastPostAt)+d.settings.minGapMinutes*60000).toISOString();});return;}
   const snapshot=await getMarketSnapshot(),candidate=chooseCandidate(snapshot,s),text=await createPost(candidate,s.settings);
   const dry=process.env.DRY_RUN!=='false';
+  const svg=makeMarketCardSvg(candidate.coin,candidate.market);
+  const png=await sharp(Buffer.from(svg)).png().toBuffer();
   let result;
   if(dry)result={id:null,url:null,publishedAt:new Date().toISOString(),dryRun:true};
-  else{
-   const svg=makeMarketCardSvg(candidate.coin,candidate.market);
-   const png=await sharp(Buffer.from(svg)).png().toBuffer();
-   result=await publishImage(text,png,'market-'+candidate.coin.symbol.toLowerCase()+'.png');
-  }
+  else result=await publishImage(text,png,'market-'+candidate.coin.symbol.toLowerCase()+'.png');
   await updateState(d=>{
    const p={...result,text,market:candidate.market,symbol:candidate.coin.symbol,price:candidate.coin.price,change24h:candidate.coin.change24h,day:today,snapshotAt:snapshot.fetchedAt};
    d.posts.unshift(p);d.posts=d.posts.slice(0,300);d.publishedToday.push({day:today,at:p.publishedAt});d.lastPostAt=p.publishedAt;d.seenTopics.push(candidate.coin.symbol);d.seenTopics=d.seenTopics.slice(-100);d.nextPostAt=new Date(Date.parse(p.publishedAt)+interval(d,snapshot)).toISOString();d.lastError=null;
   });
+  if(dry&&bot&&process.env.TELEGRAM_OWNER_ID){try{await bot.sendPhoto(process.env.TELEGRAM_OWNER_ID,png,{caption:'🧪 Черновик карточки — не опубликован\n'+candidate.market.toUpperCase()+' • '+candidate.coin.symbol+' • '+candidate.coin.change24h+'% за 24ч'});}catch(e){console.error('Draft image preview failed:',e.message);}}
   await notify((dry?'🧪 ЧЕРНОВИК — НЕ ОПУБЛИКОВАН':'✅ ПОСТ ОПУБЛИКОВАН')+'\n\nРынок: '+candidate.market.toUpperCase()+'\nМонета: '+candidate.coin.symbol+'\nИзменение 24ч: '+candidate.coin.change24h+'%\n\n'+text+(result.url?'\n\n'+result.url:'')+(result.successWithoutId?'\nBinance подтвердил отправку, но не вернул ID. Не повторяй вручную сразу.':''));
  }catch(e){const m=String(e.message||e).slice(0,400);await updateState(d=>{d.lastError=m;d.nextPostAt=new Date(now()+600000).toISOString();});await notify('⚠️ Пост не опубликован. Повторная попытка не раньше чем через 10 минут. Ошибка: '+m);}
  finally{busy=false;}

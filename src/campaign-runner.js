@@ -13,20 +13,36 @@ async function load(){try{return JSON.parse(await fs.readFile(statePath,'utf8'))
 async function save(s){await fs.mkdir('.karolina',{recursive:true});await fs.writeFile(statePath,JSON.stringify(s,null,2)+'\n');}
 function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));}
 function wrap(s,max){const out=[];let line='';for(const w of String(s||'').split(/\s+/)){if((line+' '+w).trim().length>max&&line){out.push(line);line=w;}else line=(line+' '+w).trim();}if(line)out.push(line);return out.slice(0,3);}
+async function getJson(url,timeout=12000){
+ let r;
+ try{r=await fetch(url,{signal:AbortSignal.timeout(timeout),headers:{'user-agent':'Karolina-MarketScout/2.1'}});}
+ catch(e){throw Error('Network request failed for '+new URL(url).host+': '+String(e.cause?.code||e.message||e));}
+ if(!r.ok)throw Error(new URL(url).host+' HTTP '+r.status);
+ return r.json();
+}
+const excluded=new Set(['BTC','ETH','BNB','SOL','XRP','DOGE','ADA','TRX','TON','LINK','LTC','BCH','DOT','AVAX','SHIB','USDC','USDT','FDUSD','DAI','EUR','BRL','TRY']);
 async function symbols(){
- const r=await fetch('https://api.binance.vision/api/v3/ticker/24hr',{signal:AbortSignal.timeout(15000)});
- if(!r.ok)throw Error('Binance public market data HTTP '+r.status);
- const excluded=new Set(['BTC','ETH','BNB','SOL','XRP','DOGE','ADA','TRX','TON','LINK','LTC','BCH','DOT','AVAX','SHIB','USDC','USDT','FDUSD','DAI']);
- const d=await r.json();
- return d.filter(x=>String(x.symbol).endsWith('USDT')&&!/(UP|DOWN|BULL|BEAR)USDT$/.test(x.symbol))
-  .map(x=>({ticker:x.symbol.slice(0,-4),symbol:x.symbol,price:Number(x.lastPrice),change:Number(x.priceChangePercent),volume:Number(x.quoteVolume),trades:Number(x.count)}))
-  .filter(x=>!excluded.has(x.ticker)&&x.price>0&&x.volume>=1500000&&Math.abs(x.change)>=4.5&&x.trades>=1000)
+ try{
+  const d=await getJson('https://api.binance.vision/api/v3/ticker/24hr',15000);
+  const rows=d.filter(x=>String(x.symbol).endsWith('USDT')&&!/(UP|DOWN|BULL|BEAR)USDT$/.test(x.symbol))
+   .map(x=>({ticker:x.symbol.slice(0,-4),symbol:x.symbol,price:Number(x.lastPrice),change:Number(x.priceChangePercent),volume:Number(x.quoteVolume),trades:Number(x.count),source:'Binance Spot'}))
+   .filter(x=>!excluded.has(x.ticker)&&x.price>0&&x.volume>=1500000&&Math.abs(x.change)>=4.5&&x.trades>=1000)
+   .sort((a,b)=>Math.abs(b.change)*Math.log10(1+b.volume)-Math.abs(a.change)*Math.log10(1+a.volume));
+  if(rows.length>=3)return rows.slice(0,100);
+  console.log('Binance market feed returned too few breakouts; falling back to CoinGecko');
+ }catch(e){console.log('Binance market feed failed: '+e.message+'; falling back to CoinGecko');}
+ const d=await getJson('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=volume_desc&per_page=250&page=1&price_change_percentage=24h',18000);
+ return d.map(x=>({ticker:String(x.symbol||'').toUpperCase(),symbol:String(x.symbol||'').toUpperCase()+'USDT',price:Number(x.current_price),change:Number(x.price_change_percentage_24h),volume:Number(x.total_volume),marketCap:Number(x.market_cap||0),coinId:x.id,image:x.image,source:'CoinGecko'}))
+  .filter(x=>x.ticker&&!excluded.has(x.ticker)&&x.price>0&&x.volume>=1500000&&Math.abs(x.change)>=4.5&&(!x.marketCap||x.marketCap<15000000000))
   .sort((a,b)=>Math.abs(b.change)*Math.log10(1+b.volume)-Math.abs(a.change)*Math.log10(1+a.volume)).slice(0,100);
 }
 async function chartPoints(coin){
- const r=await fetch('https://api.binance.vision/api/v3/klines?symbol='+encodeURIComponent(coin.symbol)+'&interval=1h&limit=24',{signal:AbortSignal.timeout(12000)});
- if(!r.ok)throw Error('Chart data HTTP '+r.status);
- return (await r.json()).map(x=>Number(x[4])).filter(x=>Number.isFinite(x)&&x>0);
+ if(coin.coinId){
+  const d=await getJson('https://api.coingecko.com/api/v3/coins/'+encodeURIComponent(coin.coinId)+'/market_chart?vs_currency=usd&days=1',15000);
+  return (d.prices||[]).map(x=>Number(x[1])).filter(x=>Number.isFinite(x)&&x>0);
+ }
+ const d=await getJson('https://api.binance.vision/api/v3/klines?symbol='+encodeURIComponent(coin.symbol)+'&interval=1h&limit=24',12000);
+ return d.map(x=>Number(x[4])).filter(x=>Number.isFinite(x)&&x>0);
 }
 function linePath(values){
  const min=Math.min(...values),max=Math.max(...values),span=max-min||1;
@@ -35,7 +51,7 @@ function linePath(values){
 async function card(coin,values){
  const up=coin.change>=0,accent=up?'#36E6A2':'#FF5577',p=(coin.change>=0?'+':'')+coin.change.toFixed(2)+'%';
  const line=linePath(values),area=line+' L1112 510 L88 510 Z';
- const logoUrl='https://assets.coincap.io/assets/icons/'+encodeURIComponent(coin.ticker.toLowerCase())+'@2x.png';
+ const logoUrl=coin.image||'https://assets.coincap.io/assets/icons/'+encodeURIComponent(coin.ticker.toLowerCase())+'@2x.png';
  let logo=null;try{const r=await fetch(logoUrl,{signal:AbortSignal.timeout(4500)});if(r.ok)logo=await sharp(Buffer.from(await r.arrayBuffer())).resize(82,82,{fit:'contain'}).png().toBuffer();}catch{}
  const grid=Array.from({length:5},(_,i)=>'<line x1="88" y1="'+(335+i*42)+'" x2="1112" y2="'+(335+i*42)+'" stroke="#263146"/>').join('');
  const svg='<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675"><defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#070A11"/><stop offset="1" stop-color="#141E30"/></linearGradient><linearGradient id="fill" x1="0" y1="0" x2="0" y2="1"><stop stop-color="'+accent+'" stop-opacity=".3"/><stop offset="1" stop-color="'+accent+'" stop-opacity="0"/></linearGradient></defs><rect width="1200" height="675" fill="url(#bg)"/><circle cx="1100" cy="70" r="240" fill="'+accent+'" opacity=".045"/><text x="88" y="74" fill="#8190AA" font-size="20" letter-spacing="4" font-family="Arial">MARKET WATCH • 24H</text><text x="88" y="174" fill="#F6F8FC" font-size="70" font-weight="700" font-family="Arial">$'+coin.ticker+'</text><text x="88" y="220" fill="#95A3BC" font-size="23" font-family="Arial">PRICE CHANGE</text><text x="1112" y="174" text-anchor="end" fill="'+accent+'" font-size="64" font-weight="700" font-family="Arial">'+p+'</text><text x="1112" y="220" text-anchor="end" fill="#95A3BC" font-size="21" font-family="Arial">24H VOLUME $'+(coin.volume/1e6).toFixed(1)+'M</text>'+grid+'<path d="'+area+'" fill="url(#fill)"/><path d="'+line+'" fill="none" stroke="'+accent+'" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><line x1="88" y1="540" x2="1112" y2="540" stroke="#263146"/><text x="88" y="592" fill="#DCE3EF" font-size="22" font-family="Arial">REAL 1H CANDLES • 24H VIEW</text><text x="88" y="625" fill="#71809B" font-size="17" font-family="Arial">Data: Binance Spot market feed</text><text x="1112" y="600" text-anchor="end" fill="#7F8CA8" font-size="19" font-family="Arial">KAROLINA</text></svg>';
@@ -85,6 +101,6 @@ async function main(){
  if(!s.startedAt){s.active=true;s.startedAt=new Date().toISOString();s.endsAt=new Date(now()+72*3600000).toISOString();s.published=0;s.perDay={};s.seen=[];s.history=[];console.log('Pilot starts '+s.startedAt+' ends '+s.endsAt);}
  if(!s.active||(s.published||0)>=maxPosts||now()>=Date.parse(s.endsAt)){s.active=false;s.lastError='Pilot complete or time expired';await save(s);console.log('Finished '+s.published+'/'+maxPosts);return;}
  try{if(!process.env.BINANCE_SQUARE_OPENAPI_KEY)throw Error('Missing BINANCE_SQUARE_OPENAPI_KEY; no post sent.');await postOne(s);}catch(e){s.lastError=String(e.message||e).slice(0,500);console.error('POST FAILED: '+s.lastError);}
- if(s.published>=maxPosts||now()>=Date.parse(s.endsAt))s.active=false;await save(s);console.log('PILOT '+(s.active?'ACTIVE':'FINISHED')+' '+s.published+'/'+maxPosts+' perDay='+JSON.stringify(s.perDay)+' error='+(s.lastError||'none'));
+ if(s.published>=maxPosts||now()>=Date.parse(s.endsAt))s.active=false;await save(s);console.log('PILOT '+(s.active?'ACTIVE':'FINISHED')+' '+s.published+'/'+maxPosts+' perDay='+JSON.stringify(s.perDay)+' error='+(s.lastError||'none'));if(s.lastError)process.exitCode=1;
 }
 main().catch(e=>{console.error('FATAL: '+String(e.message||e));process.exitCode=1;});

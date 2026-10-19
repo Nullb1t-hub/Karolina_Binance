@@ -66,12 +66,15 @@ async function stories(s){const all=[];for(const f of feeds){try{const r=await f
 function parseJson(raw){const t=String(raw||'').trim(),a=t.indexOf('{'),b=t.lastIndexOf('}');if(a<0||b<=a)throw Error('AI returned invalid JSON');return JSON.parse(t.slice(a,b+1));}
 function fallbackDraft(coin,mode){
  const up=coin.change>=0,move=(up?'+':'')+coin.change.toFixed(2)+'%';
- if(mode==='futures')return '
+ if(mode==='futures')return '$'+coin.ticker+' '+(up?'🚀':'🔻')+' '+move+' in 24h. Check the Binance Futures market, manage your risk, and decide: long or short? '+coin.futuresUrl+' #'+coin.ticker+' #Futures';
+ return '$'+coin.ticker+' '+(up?'🚀':'🔻')+' '+move+' in 24h. Check the Binance Spot market and make your own call—buying or waiting? '+coin.spotUrl+' #'+coin.ticker+' #Spot';
+}
+async function draft(coin,mode){
  const facts='$'+coin.ticker+' moved '+(coin.change>=0?'+':'')+coin.change.toFixed(2)+'% in 24h; volume $'+Math.round(coin.volume)+'.';
  try{
   if(!process.env.GEMINI_API_KEY)throw Error('No Gemini key');
   const ai=new GoogleGenAI({apiKey:process.env.GEMINI_API_KEY});
-  const res=await ai.models.generateContent({model:process.env.GEMINI_MODEL||'gemini-3.8-flash',contents:'Write a punchy Binance Square post in English, maximum 2 short sentences plus hashtags, under 240 characters. Start with literal cashtag });
+  const res=await ai.models.generateContent({model:process.env.GEMINI_MODEL||'gemini-3.8-flash',contents:'Write a punchy Binance Square post in English, maximum 2 short sentences plus hashtags, under 240 characters. Start with cashtag $'+coin.ticker+'. This post is for Binance '+(mode==='futures'?'Futures':'Spot')+'. Include a natural call to check this market and one engaging question. Keep playful and sharp, not a news article. Facts only: '+facts+' Never give a guaranteed outcome, price target, or direct buy/sell instruction. Include this market URL: '+(mode==='futures'?coin.futuresUrl:coin.spotUrl)+'. Finish with #'+coin.ticker+' #'+(mode==='futures'?'Futures':'Spot')+'. Output only the post.'});
   const t=String(res.text||'').trim();
   if(t.length>=20&&t.length<=280&&t.includes('$'+coin.ticker)&&!/(guaranteed|sure profit|100% profit)/i.test(t))return t;
  }catch(e){console.log('AI caption fallback: '+String(e.message||e).slice(0,120));}

@@ -102,8 +102,17 @@ async function postOne(s){
  const mode=shouldFutures?'futures':'spot';
  let marketSet;
  if(mode==='futures'){
-  const data=await getJson('https://fapi.binance.com/fapi/v1/ticker/24hr',15000);
-  marketSet=new Set(data.map(x=>x.symbol).filter(x=>String(x).endsWith('USDT')));
+  try{
+   const data=await getJson('https://fapi.binance.com/fapi/v1/ticker/24hr',15000);
+   marketSet=new Set(data.map(x=>x.symbol).filter(x=>String(x).endsWith('USDT')));
+  }catch(e){
+   // GitHub-hosted runners can be geo-blocked by Binance Futures (HTTP 451).
+   // Fall back only to a conservative set of commonly listed USDⓈ-M perpetuals,
+   // intersected with live CoinGecko candidates, rather than aborting the whole run.
+   console.log('Binance Futures feed unavailable: '+String(e.message||e)+'; using conservative known-perpetual fallback');
+   const knownPerpetuals=new Set(('1000SATS 1000PEPE 1000SHIB 1INCH AAVE ACE ADA ALGO ANIME APT ARB ARKM ARK ATOM AVAX BCH BEAM BERA BLUR BNB BONK BRETT BTC CFX CHZ COMP CRV DOGE DOT DYDX EGLD ENA ENS ETC ETH FIL FET FLOW FTM GALA GAS GRT HBAR HIFI ICP IMX INJ IOTA JASMY JTO JUP KAS KAVA LDO LINK LISTA LTC MANA MANTA MASK MEME METIS MINA MKR NEAR NEIRO NOT OP ORDI PENDLE PEOPLE PEPE PNUT POL POLYX POPCAT PYTH QNT QTUM RENDER RIF RLC RUNE SAND SEI SHIB SKL SNX SOL STX SUI SUPER SUSHI TAO THETA TIA TLM TNSR TON TRB TRX UNI USUAL VET W WIF WLD XAI XLM XRP XTZ YGG ZEC ZEN ZK ZRO ZRX').split(' '));
+   marketSet=new Set(list.filter(x=>knownPerpetuals.has(x.ticker)).map(x=>x.ticker+'USDT'));
+  }
  }else{
   try{
    const data=await getJson('https://api.binance.com/api/v3/ticker/24hr',15000);

@@ -98,9 +98,11 @@ async function postOne(s){
   try{
    const data=await getJson('https://api.binance.com/api/v3/ticker/24hr',15000);
    marketSet=new Set(data.map(x=>x.symbol).filter(x=>String(x).endsWith('USDT')));
-  }catch{
-   const data=await getJson('https://api.binance.vision/api/v3/ticker/24hr',15000);
-   marketSet=new Set(data.map(x=>x.symbol).filter(x=>String(x).endsWith('USDT')));
+  }catch(e){
+   console.log('Binance Vision spot-list fallback failed: '+String(e.message||e));
+   // When Binance market endpoints are unreachable, continue using CoinGecko-backed
+   // candidates; their price chart is available separately and publishing can still proceed.
+   marketSet=new Set(list.filter(x=>x.coinId).map(x=>x.ticker+'USDT'));
   }
  }
  const seen=new Set(s.seen||[]);

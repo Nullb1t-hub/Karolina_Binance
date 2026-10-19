@@ -13,35 +13,76 @@ async function load(){try{return JSON.parse(await fs.readFile(statePath,'utf8'))
 async function save(s){await fs.mkdir('.karolina',{recursive:true});await fs.writeFile(statePath,JSON.stringify(s,null,2)+'\n');}
 function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));}
 function wrap(s,max){const out=[];let line='';for(const w of String(s||'').split(/\s+/)){if((line+' '+w).trim().length>max&&line){out.push(line);line=w;}else line=(line+' '+w).trim();}if(line)out.push(line);return out.slice(0,3);}
-async function card(ticker,title,source){
- const ts=wrap(title,34).map((x,i)=>'<text x="76" y="'+(345+i*58)+'" fill="#F8FAFC" font-size="43" font-weight="700" font-family="Arial">'+esc(x)+'</text>').join('');
- const svg='<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675"><defs><linearGradient id="bg"><stop stop-color="#10131D"/><stop offset="1" stop-color="#202A43"/></linearGradient></defs><rect width="1200" height="675" rx="32" fill="url(#bg)"/><circle cx="1090" cy="60" r="250" fill="#F0B90B" opacity=".08"/><path d="M70 75H1130" stroke="#F0B90B" stroke-width="3"/><text x="76" y="125" fill="#F0B90B" font-size="25" font-weight="700" letter-spacing="3" font-family="Arial">KAROLINA • CRYPTO BRIEF</text><circle cx="132" cy="218" r="46" fill="#F0B90B"/><text x="132" y="230" text-anchor="middle" fill="#111827" font-size="29" font-weight="700" font-family="Arial">'+esc(ticker)+'</text><text x="205" y="210" fill="#FFFFFF" font-size="38" font-weight="700" font-family="Arial">$'+esc(ticker)+'</text><text x="205" y="248" fill="#AAB5CC" font-size="21" font-family="Arial">NEWS • VERIFIED SOURCE</text>'+ts+'<path d="M76 555H1124" stroke="#FFFFFF" stroke-opacity=".14" stroke-width="2"/><text x="76" y="600" fill="#B8C2D8" font-size="21" font-family="Arial">Source: '+esc(source)+'</text><text x="1124" y="600" fill="#F0B90B" font-size="20" text-anchor="end" font-family="Arial">FACTS OVER HYPE</text><text x="76" y="640" fill="#71809D" font-size="17" font-family="Arial">Crypto news summary • Not financial advice</text></svg>';
- let b=Buffer.from(svg);
- try{const r=await fetch('https://assets.coincap.io/assets/icons/'+encodeURIComponent(ticker.toLowerCase())+'@2x.png',{signal:AbortSignal.timeout(5000)});if(r.ok){const logo=await sharp(Buffer.from(await r.arrayBuffer())).resize(66,66,{fit:'contain'}).png().toBuffer();const badge=Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675"><circle cx="132" cy="218" r="39" fill="#FFFFFF"/></svg>');b=await sharp(b).composite([{input:badge},{input:logo,left:99,top:185}]).png().toBuffer();}}catch{}
- return sharp(b).png().toBuffer();
+async function symbols(){
+ const r=await fetch('https://api.binance.vision/api/v3/ticker/24hr',{signal:AbortSignal.timeout(15000)});
+ if(!r.ok)throw Error('Binance public market data HTTP '+r.status);
+ const excluded=new Set(['BTC','ETH','BNB','SOL','XRP','DOGE','ADA','TRX','TON','LINK','LTC','BCH','DOT','AVAX','SHIB','USDC','USDT','FDUSD','DAI']);
+ const d=await r.json();
+ return d.filter(x=>String(x.symbol).endsWith('USDT')&&!/(UP|DOWN|BULL|BEAR)USDT$/.test(x.symbol))
+  .map(x=>({ticker:x.symbol.slice(0,-4),symbol:x.symbol,price:Number(x.lastPrice),change:Number(x.priceChangePercent),volume:Number(x.quoteVolume),trades:Number(x.count)}))
+  .filter(x=>!excluded.has(x.ticker)&&x.price>0&&x.volume>=1500000&&Math.abs(x.change)>=4.5&&x.trades>=1000)
+  .sort((a,b)=>Math.abs(b.change)*Math.log10(1+b.volume)-Math.abs(a.change)*Math.log10(1+a.volume)).slice(0,100);
 }
-async function symbols(){try{const r=await fetch('https://api.binance.com/api/v3/ticker/24hr',{signal:AbortSignal.timeout(12000)});if(!r.ok)throw Error('Binance market list HTTP '+r.status);const data=await r.json();const live=data.filter(x=>String(x.symbol).endsWith('USDT')&&Number(x.quoteVolume)>1000000&&!/(UP|DOWN|BULL|BEAR)USDT$/.test(x.symbol)).sort((a,b)=>Number(b.quoteVolume)-Number(a.quoteVolume)).slice(0,180).map(x=>x.symbol.slice(0,-4));if(live.length>=20)return live;throw Error('Binance returned too few symbols');}catch(e){console.log('Binance market-list fallback: '+e.message);return ['BTC','ETH','BNB','SOL','XRP','DOGE','ADA','TRX','TON','LINK','AVAX','DOT','LTC','BCH','UNI','NEAR','SUI','APT','ETC','ATOM','FIL','ARB','OP','INJ','SEI','TIA','SHIB','PEPE','FET','RENDER','AAVE','ICP','XLM','HBAR','VET','MKR','WLD','TAO','POL','ONDO','JUP','WIF','FLOKI','ENA','PENDLE','CRV','ALGO','EOS','XTZ','QNT'];}}
+async function chartPoints(coin){
+ const r=await fetch('https://api.binance.vision/api/v3/klines?symbol='+encodeURIComponent(coin.symbol)+'&interval=1h&limit=24',{signal:AbortSignal.timeout(12000)});
+ if(!r.ok)throw Error('Chart data HTTP '+r.status);
+ return (await r.json()).map(x=>Number(x[4])).filter(x=>Number.isFinite(x)&&x>0);
+}
+function linePath(values){
+ const min=Math.min(...values),max=Math.max(...values),span=max-min||1;
+ return values.map((v,i)=>((i?'L':'M')+(88+i*1024/(values.length-1)).toFixed(1)+' '+(490-(v-min)/span*165).toFixed(1))).join(' ');
+}
+async function card(coin,values){
+ const up=coin.change>=0,accent=up?'#36E6A2':'#FF5577',p=(coin.change>=0?'+':'')+coin.change.toFixed(2)+'%';
+ const line=linePath(values),area=line+' L1112 510 L88 510 Z';
+ const logoUrl='https://assets.coincap.io/assets/icons/'+encodeURIComponent(coin.ticker.toLowerCase())+'@2x.png';
+ let logo=null;try{const r=await fetch(logoUrl,{signal:AbortSignal.timeout(4500)});if(r.ok)logo=await sharp(Buffer.from(await r.arrayBuffer())).resize(82,82,{fit:'contain'}).png().toBuffer();}catch{}
+ const grid=Array.from({length:5},(_,i)=>'<line x1="88" y1="'+(335+i*42)+'" x2="1112" y2="'+(335+i*42)+'" stroke="#263146"/>').join('');
+ const svg='<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675"><defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#070A11"/><stop offset="1" stop-color="#141E30"/></linearGradient><linearGradient id="fill" x1="0" y1="0" x2="0" y2="1"><stop stop-color="'+accent+'" stop-opacity=".3"/><stop offset="1" stop-color="'+accent+'" stop-opacity="0"/></linearGradient></defs><rect width="1200" height="675" fill="url(#bg)"/><circle cx="1100" cy="70" r="240" fill="'+accent+'" opacity=".045"/><text x="88" y="74" fill="#8190AA" font-size="20" letter-spacing="4" font-family="Arial">MARKET WATCH • 24H</text><text x="88" y="174" fill="#F6F8FC" font-size="70" font-weight="700" font-family="Arial">$'+coin.ticker+'</text><text x="88" y="220" fill="#95A3BC" font-size="23" font-family="Arial">PRICE CHANGE</text><text x="1112" y="174" text-anchor="end" fill="'+accent+'" font-size="64" font-weight="700" font-family="Arial">'+p+'</text><text x="1112" y="220" text-anchor="end" fill="#95A3BC" font-size="21" font-family="Arial">24H VOLUME $'+(coin.volume/1e6).toFixed(1)+'M</text>'+grid+'<path d="'+area+'" fill="url(#fill)"/><path d="'+line+'" fill="none" stroke="'+accent+'" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><line x1="88" y1="540" x2="1112" y2="540" stroke="#263146"/><text x="88" y="592" fill="#DCE3EF" font-size="22" font-family="Arial">REAL 1H CANDLES • 24H VIEW</text><text x="88" y="625" fill="#71809B" font-size="17" font-family="Arial">Data: Binance Spot market feed</text><text x="1112" y="600" text-anchor="end" fill="#7F8CA8" font-size="19" font-family="Arial">KAROLINA</text></svg>';
+ let b=await sharp(Buffer.from(svg)).png().toBuffer();
+ if(logo){const badge=Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675"><circle cx="1020" cy="105" r="52" fill="#FFFFFF"/></svg>');b=await sharp(b).composite([{input:badge},{input:logo,left:979,top:64}]).png().toBuffer();}
+ return b;
+}
 async function stories(s){const all=[];for(const f of feeds){try{const r=await fetch(f.url,{signal:AbortSignal.timeout(10000),headers:{'user-agent':'KarolinaCryptoNews/1.0'}});if(r.ok)all.push(...parseFeed(await r.text(),f.name));}catch(e){console.log('Feed '+f.name+': '+e.message);}}const seen=new Set(s.seen||[]),cut=now()-72*3600000;return all.filter(x=>!seen.has(x.link)&&(!Date.parse(x.date)||Date.parse(x.date)>=cut)).sort((a,b)=>(Date.parse(b.date)||0)-(Date.parse(a.date)||0));}
 function parseJson(raw){const t=String(raw||'').trim(),a=t.indexOf('{'),b=t.lastIndexOf('}');if(a<0||b<=a)throw Error('AI returned invalid JSON');return JSON.parse(t.slice(a,b+1));}
-async function draft(st,sym){
- if(!process.env.GEMINI_API_KEY)throw Error('Missing GEMINI_API_KEY');
- const ai=new GoogleGenAI({apiKey:process.env.GEMINI_API_KEY});
- const prompt='Write one original Russian Binance Square crypto-news post based ONLY on this source. Source: '+st.source+'. Title: '+st.title+'. Excerpt: '+st.description.slice(0,1600)+'. Choose one genuinely relevant symbol from this Binance spot list: '+sym.join(', ')+'. Return JSON {"title":"short Russian headline max 70 chars","ticker":"one symbol from list or NONE","text":"700-1100 Russian characters, natural and specific, explain what happened and why it matters, no invented numbers/dates/quotes, no hype or predictions, no external URLs, include $TICKER, 2-3 relevant hashtags and end with Источник: '+st.source+'."}. If no listed coin is directly relevant, ticker must be NONE. Avoid generic BTC price chatter and robotic filler.';
- const res=await ai.models.generateContent({model:process.env.GEMINI_MODEL||'gemini-2.5-flash',contents:prompt}),d=parseJson(res.text);
- d.title=String(d.title||'').trim().slice(0,90);d.ticker=String(d.ticker||'NONE').toUpperCase().replace(/^\$/,'').trim();d.text=String(d.text||'').trim();
- if(!d.title||d.text.length<350)throw Error('AI draft failed quality checks');if(d.ticker==='NONE'||!sym.includes(d.ticker))throw Error('No valid relevant cashtag');if(!d.text.includes('$'+d.ticker))d.text='$'+d.ticker+' — '+d.text;
- if(/guaranteed profit|guaranteed returns|100% sure|sure win|гарантированн(ая|ый|о) прибыль/i.test(d.text))throw Error('Rejected unrealistic claim');if(/https?:\/\/|t\.me\//i.test(d.text))throw Error('External link rejected');return d;
+function fallbackDraft(coin){
+ const move=coin.change>=0?'is ripping higher':'is getting hit';
+ const emoji=coin.change>=0?'🚀':'🔴';
+ return '$'+coin.ticker+' '+emoji+' '+(coin.change>=0?'+':'')+coin.change.toFixed(2)+'% in 24h. '+move+' on $'+(coin.volume/1e6).toFixed(1)+'M volume. Is this move just starting or running out of steam? #'+coin.ticker+' #Crypto';
+}
+async function draft(coin){
+ const facts='$'+coin.ticker+' moved '+(coin.change>=0?'+':'')+coin.change.toFixed(2)+'% in 24h; volume $'+Math.round(coin.volume)+'.';
+ try{
+  if(!process.env.GEMINI_API_KEY)throw Error('No Gemini key');
+  const ai=new GoogleGenAI({apiKey:process.env.GEMINI_API_KEY});
+  const res=await ai.models.generateContent({model:process.env.GEMINI_MODEL||'gemini-3.8-flash',contents:'Write a punchy Binance Square post in English, maximum 2 short sentences plus hashtags, under 240 characters. Start with literal '+coin.ticker+' cashtag $'+coin.ticker+'. Use a playful sharp trader tone like a viral one-liner, not news article. Facts only: '+facts+' Add one question, no price target, no fabricated cause, no promise, no generic filler. Finish with #'+coin.ticker+' #Crypto. Output only the post.'});
+  const t=String(res.text||'').trim();
+  if(t.length>=20&&t.length<=280&&t.includes('$'+coin.ticker)&&!/(guaranteed|sure profit|100% profit)/i.test(t))return t;
+ }catch(e){console.log('AI caption fallback: '+String(e.message||e).slice(0,120));}
+ return fallbackDraft(coin);
 }
 async function postOne(s){
- const today=dayKey();s.perDay=s.perDay||{};if((s.perDay[today]||0)>=maxDaily){console.log('Daily cap reached');return false;}
- const sym=await symbols(),list=await stories(s);if(!list.length)throw Error('No fresh unseen stories in last 72 hours; no filler post will be published.');
- let last='No suitable story';
- for(const st of list.slice(0,8)){try{const d=await draft(st,sym),img=await card(d.ticker,d.title,st.source),r=await publishImage(d.text,img,'karolina-'+d.ticker.toLowerCase()+'-'+Date.now()+'.png');const e={at:new Date().toISOString(),source:st.source,sourceUrl:st.link,title:d.title,ticker:d.ticker,text:d.text,url:r.url||null,postId:r.id||null,successWithoutId:!!r.successWithoutId};s.published=(s.published||0)+1;s.perDay[today]=(s.perDay[today]||0)+1;s.seen=(s.seen||[]).concat(st.link).slice(-300);s.history=(s.history||[]).concat(e).slice(-60);s.lastError=null;console.log('PUBLISHED '+s.published+'/'+maxPosts+' $'+d.ticker+' '+st.source+' '+(r.url||'no URL returned'));console.log('TITLE: '+d.title+'\nTEXT: '+d.text);return true;}catch(e){last=String(e.message||e);console.log('Skipped "'+st.title+'": '+last);}}
- throw Error('Could not create verified post from 8 stories. Last issue: '+last);
+ const today=dayKey();s.perDay=s.perDay||{};
+ if((s.perDay[today]||0)>=maxDaily)throw Error('Daily cap reached');
+ const list=await symbols();if(!list.length)throw Error('No high-volume 24h breakout tokens found; nothing posted.');
+ const seen=new Set(s.seen||[]),candidates=list.filter(x=>!seen.has(x.ticker)).slice(0,10);
+ let last='No unused breakout candidate';
+ for(const coin of candidates){
+  try{
+   const values=await chartPoints(coin);if(values.length<8)throw Error('Not enough real chart points');
+   const text=await draft(coin),img=await card(coin,values);
+   const r=await publishImage(text,img,'karolina-'+coin.ticker.toLowerCase()+'-'+Date.now()+'.png');
+   const entry={at:new Date().toISOString(),ticker:coin.ticker,change:coin.change,volume:coin.volume,text,url:r.url||null,postId:r.id||null};
+   s.published=(s.published||0)+1;s.perDay[today]=(s.perDay[today]||0)+1;s.seen=(s.seen||[]).concat(coin.ticker).slice(-300);s.history=(s.history||[]).concat(entry).slice(-60);s.lastError=null;
+   console.log('PUBLISHED '+s.published+'/'+maxPosts+' $'+coin.ticker+' '+coin.change.toFixed(2)+'% '+(r.url||'no URL'));console.log('TEXT: '+text);return true;
+  }catch(e){last=String(e.message||e);console.log('Skipped $'+coin.ticker+': '+last);}
+ }
+ throw Error('No breakout candidate could be published. Last issue: '+last);
 }
 async function main(){
  const s=await load(),event=process.env.GITHUB_EVENT_NAME||'';
- if(!s.startedAt){if(event!=='workflow_dispatch'){console.log('Not started. Use Actions → Karolina 3-day pilot → Run workflow.');return;}s.active=true;s.startedAt=new Date().toISOString();s.endsAt=new Date(now()+72*3600000).toISOString();s.published=0;s.perDay={};s.seen=[];s.history=[];console.log('Pilot starts '+s.startedAt+' ends '+s.endsAt);}
+ if(event!=='workflow_dispatch'){console.log('Publishing paused: only manual workflow runs can publish.');return;}
+ if(!s.startedAt){s.active=true;s.startedAt=new Date().toISOString();s.endsAt=new Date(now()+72*3600000).toISOString();s.published=0;s.perDay={};s.seen=[];s.history=[];console.log('Pilot starts '+s.startedAt+' ends '+s.endsAt);}
  if(!s.active||(s.published||0)>=maxPosts||now()>=Date.parse(s.endsAt)){s.active=false;s.lastError='Pilot complete or time expired';await save(s);console.log('Finished '+s.published+'/'+maxPosts);return;}
  try{if(!process.env.BINANCE_SQUARE_OPENAPI_KEY)throw Error('Missing BINANCE_SQUARE_OPENAPI_KEY; no post sent.');await postOne(s);}catch(e){s.lastError=String(e.message||e).slice(0,500);console.error('POST FAILED: '+s.lastError);}
  if(s.published>=maxPosts||now()>=Date.parse(s.endsAt))s.active=false;await save(s);console.log('PILOT '+(s.active?'ACTIVE':'FINISHED')+' '+s.published+'/'+maxPosts+' perDay='+JSON.stringify(s.perDay)+' error='+(s.lastError||'none'));

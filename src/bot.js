@@ -7,6 +7,7 @@ export function createBot(){
  const bot=new TelegramBot(process.env.TELEGRAM_BOT_TOKEN,{polling:true});
  bot.on('polling_error',e=>console.error('Telegram polling:',e.message));
  bot.on('message',async m=>{
+  if((m.text||'').trim()==='/myid'&&!process.env.TELEGRAM_OWNER_ID){return bot.sendMessage(m.chat.id,'Твой Telegram ID: '+m.from.id+'\\nДобавь это число в секрет TELEGRAM_OWNER_ID, затем перезапусти агента.');}
   if(!isOwner(m)){bot.sendMessage(m.chat.id,'Бот закрыт для посторонних пользователей.').catch(()=>{});return;}
   const text=(m.text||'').trim(),parts=text.split(/\s+/),cmd=parts[0],arg=parts.slice(1).join(' ');
   try{

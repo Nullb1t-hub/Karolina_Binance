@@ -49,62 +49,61 @@ function linePath(values){
  return values.map((v,i)=>((i?'L':'M')+(88+i*1024/(values.length-1)).toFixed(1)+' '+(490-(v-min)/span*165).toFixed(1))).join(' ');
 }
 async function card(coin,values){
- const up=coin.change>=0,accent=up?'#36F5A0':'#FF4F78',accent2=up?'#00C2FF':'#FF9A5B';
- const line=linePath(values),area=line+' L1112 505 L88 505 Z';
- const logoUrl=coin.image||'https://assets.coincap.io/assets/icons/'+encodeURIComponent(coin.ticker.toLowerCase())+'@2x.png';
- let logo=null;
- try{
-  const r=await fetch(logoUrl,{signal:AbortSignal.timeout(4500)});
-  if(r.ok){
-   const raw=await sharp(Buffer.from(await r.arrayBuffer())).resize(78,78,{fit:'cover',position:'centre'}).png().toBuffer();
-   const mask=Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" width="78" height="78"><circle cx="39" cy="39" r="38" fill="white"/></svg>');
-   logo=await sharp(raw).composite([{input:mask,blend:'dest-in'}]).png().toBuffer();
-  }
- }catch{}
- const ticker=esc(coin.ticker),fullName=esc(coin.name||coin.fullName||coin.ticker);
- const move=(up?'+':'')+Number(coin.change).toFixed(2)+'%';
- const min=Math.min(...values),max=Math.max(...values),span=max-min||1;
- const endX=1112,endY=(490-(values[values.length-1]-min)/span*165).toFixed(1);
- const grid=Array.from({length:6},(_,i)=>'<line x1="72" y1="'+(205+i*58)+'" x2="1128" y2="'+(205+i*58)+'" stroke="#203047" stroke-width="1" opacity=".78"/>').join('');
- const arrow=up
-  ? '<path d="M0 31 L28 3 L28 18 L51 18 L51 31 L28 31 L28 46 Z" fill="'+accent+'"/>'
-  : '<path d="M0 15 L28 43 L28 28 L51 28 L51 15 L28 15 L28 0 Z" fill="'+accent+'"/>';
- const arrowGlow=up?'M0 31 L28 3 L28 18 L51 18 L51 31 L28 31 L28 46 Z':'M0 15 L28 43 L28 28 L51 28 L51 15 L28 15 L28 0 Z';
- const svg='<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675"><defs>'+
- '<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#050712"/><stop offset=".48" stop-color="#0A1020"/><stop offset="1" stop-color="#11192B"/></linearGradient>'+
- '<linearGradient id="shine" x1="0" y1="0" x2="1" y2="0"><stop stop-color="'+accent+'" stop-opacity="0"/><stop offset=".5" stop-color="'+accent+'" stop-opacity=".9"/><stop offset="1" stop-color="'+accent2+'" stop-opacity="0"/></linearGradient>'+
- '<linearGradient id="fill" x1="0" y1="0" x2="0" y2="1"><stop stop-color="'+accent+'" stop-opacity=".34"/><stop offset="1" stop-color="'+accent+'" stop-opacity=".01"/></linearGradient>'+
- '<linearGradient id="panel" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#131D30" stop-opacity=".98"/><stop offset="1" stop-color="#090E1A" stop-opacity=".97"/></linearGradient>'+
- '<filter id="glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="9"/></filter>'+
- '<filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="20"/></filter>'+
- '</defs><rect width="1200" height="675" fill="url(#bg)"/>'+
- '<circle cx="1020" cy="100" r="250" fill="'+accent+'" opacity=".07"/><circle cx="1040" cy="110" r="165" fill="'+accent2+'" opacity=".045"/>'+
- '<path d="M35 177 H1165" stroke="url(#shine)" stroke-width="2" opacity=".9"/>'+
- ''+
- '<text x="1134" y="57" text-anchor="end" font-family="Arial,Helvetica,sans-serif" font-size="13" font-weight="700" letter-spacing="3" fill="#8F9DB4">LIVE MARKET PULSE</text>'+
- '<rect x="56" y="77" width="1088" height="103" rx="25" fill="url(#panel)" stroke="#34445E" stroke-opacity=".8"/>'+
- '<circle cx="121" cy="128" r="43" fill="'+accent+'" opacity=".15" filter="url(#glow)"/><circle cx="121" cy="128" r="39" fill="#080D17" stroke="'+accent+'" stroke-width="2.5"/><circle cx="121" cy="128" r="34" fill="none" stroke="#FFFFFF" stroke-opacity=".14" stroke-width="1"/>'+
- '<text x="188" y="121" font-family="Arial,Helvetica,sans-serif" font-size="44" font-weight="800" letter-spacing="1.5" fill="#FFFFFF">'+ticker+'</text>'+
- '<text x="190" y="151" font-family="Arial,Helvetica,sans-serif" font-size="20" font-weight="500" fill="#AAB8CE">'+fullName+'</text>'+
- '<rect x="824" y="102" width="288" height="49" rx="24" fill="'+accent+'" fill-opacity=".12" stroke="'+accent+'" stroke-opacity=".55"/>'+
- '<circle cx="849" cy="126" r="5" fill="'+accent+'"/><text x="868" y="133" font-family="Arial,Helvetica,sans-serif" font-size="16" font-weight="700" letter-spacing="2" fill="'+accent+'">'+(up?'BULLISH MOMENTUM':'BEARISH MOMENTUM')+'</text>'+
- grid+
- '<path d="'+area+'" fill="url(#fill)"/>'+
- '<path d="'+line+'" fill="none" stroke="'+accent+'" stroke-width="18" opacity=".17" filter="url(#glow)" stroke-linecap="round" stroke-linejoin="round"/>'+
- '<path d="'+line+'" fill="none" stroke="'+accent+'" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>'+
- '<path d="M90 516 H1110" stroke="url(#shine)" stroke-width="2" opacity=".85"/>'+
- '<circle cx="'+endX+'" cy="'+endY+'" r="18" fill="'+accent+'" opacity=".14"/><circle cx="'+endX+'" cy="'+endY+'" r="7" fill="'+accent+'" stroke="#FFFFFF" stroke-width="2"/>'+
- '<g transform="translate(1030 224)"><path d="'+arrowGlow+'" fill="none" stroke="'+accent+'" stroke-width="2" opacity=".4"/><path d="'+arrowGlow+'" fill="'+accent+'" opacity=".22" filter="url(#glow)"/>'+arrow+'</g>'+
- '<rect x="56" y="535" width="1088" height="93" rx="24" fill="url(#panel)" stroke="#34445E" stroke-opacity=".78"/>'+
- '<rect x="78" y="555" width="5" height="52" rx="2.5" fill="'+accent+'"/>'+
- '<text x="101" y="573" font-family="Arial,Helvetica,sans-serif" font-size="14" font-weight="700" letter-spacing="3" fill="#9BAAC0">24H PRICE MOVE</text>'+
- '<text x="98" y="616" font-family="Arial,Helvetica,sans-serif" font-size="54" font-weight="900" letter-spacing="-1.5" fill="'+accent+'">'+esc(move)+'</text>'+
- '<text x="1112" y="574" text-anchor="end" font-family="Arial,Helvetica,sans-serif" font-size="14" font-weight="700" letter-spacing="2.5" fill="#91A0B7">REAL PRICE HISTORY</text>'+
- '<text x="1112" y="601" text-anchor="end" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#DCE5F2">'+(up?'↗ Buyers pushing':'↘ Sellers pushing')+'</text>'+
- '<text x="1112" y="619" text-anchor="end" font-family="Arial,Helvetica,sans-serif" font-size="11" letter-spacing="1.5" fill="#64748B">KAROLINA • MARKET WATCH</text></svg>';
- let b=await sharp(Buffer.from(svg)).png().toBuffer();
- if(logo)b=await sharp(b).composite([{input:logo,left:82,top:89}]).png().toBuffer();
- return b;
+  const up=coin.change>=0,accent=up?'#36F5A0':'#FF4F78',accent2=up?'#00C2FF':'#FF9A5B';
+  const line=linePath(values),area=line+' L1112 505 L88 505 Z';
+  const logoUrl=coin.image||'https://assets.coincap.io/assets/icons/'+encodeURIComponent(coin.ticker.toLowerCase())+'@2x.png';
+  let logo=null;
+  try{
+   const r=await fetch(logoUrl,{signal:AbortSignal.timeout(4500)});
+   if(r.ok){
+    const raw=await sharp(Buffer.from(await r.arrayBuffer())).resize(78,78,{fit:'cover',position:'centre'}).png().toBuffer();
+    const mask=Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" width="78" height="78"><circle cx="39" cy="39" r="38" fill="white"/></svg>');
+    logo=await sharp(raw).composite([{input:mask,blend:'dest-in'}]).png().toBuffer();
+   }
+  }catch{}
+  const ticker=esc(coin.ticker),fullName=esc(coin.name||coin.fullName||coin.ticker);
+  const move=(up?'+':'')+Number(coin.change).toFixed(2)+'%';
+  const min=Math.min(...values),max=Math.max(...values),span=max-min||1;
+  const endX=1112,endY=(490-(values[values.length-1]-min)/span*165).toFixed(1);
+  const grid=Array.from({length:6},(_,i)=>'<line x1="72" y1="'+(205+i*58)+'" x2="1128" y2="'+(205+i*58)+'" stroke="#203047" stroke-width="1" opacity=".78"/>').join('');
+  const trend=up
+   ? '<path d="M0 48 L31 17 L48 34 L82 0 M54 0 H82 V28" fill="none" stroke="'+accent+'" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>'
+   : '<path d="M0 0 L31 31 L48 14 L82 48 M54 48 H82 V20" fill="none" stroke="'+accent+'" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>';
+  const svg='<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675"><defs>'+
+  '<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#050712"/><stop offset=".48" stop-color="#0A1020"/><stop offset="1" stop-color="#11192B"/></linearGradient>'+
+  '<linearGradient id="shine" x1="0" y1="0" x2="1" y2="0"><stop stop-color="'+accent+'" stop-opacity="0"/><stop offset=".5" stop-color="'+accent+'" stop-opacity=".9"/><stop offset="1" stop-color="'+accent2+'" stop-opacity="0"/></linearGradient>'+
+  '<linearGradient id="fill" x1="0" y1="0" x2="0" y2="1"><stop stop-color="'+accent+'" stop-opacity=".34"/><stop offset="1" stop-color="'+accent+'" stop-opacity=".01"/></linearGradient>'+
+  '<linearGradient id="panel" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#131D30" stop-opacity=".98"/><stop offset="1" stop-color="#090E1A" stop-opacity=".97"/></linearGradient>'+
+  '<filter id="glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="9"/></filter>'+
+  '</defs><rect width="1200" height="675" fill="url(#bg)"/>'+
+  '<circle cx="1020" cy="100" r="250" fill="'+accent+'" opacity=".07"/><circle cx="1040" cy="110" r="165" fill="'+accent2+'" opacity=".045"/>'+
+  '<g fill="'+accent+'" opacity=".8"><path d="M102 42 l3 8 8 3 -8 3 -3 8 -3 -8 -8 -3 8 -3z"/><path d="M1080 192 l2 6 6 2 -6 2 -2 6 -2 -6 -6 -2 6 -2z"/><circle cx="1110" cy="76" r="2"/><circle cx="995" cy="188" r="2"/></g>'+
+  '<path d="M35 177 H1165" stroke="url(#shine)" stroke-width="2" opacity=".9"/>'+
+  '<text x="1134" y="57" text-anchor="end" font-family="Arial,Helvetica,sans-serif" font-size="13" font-weight="700" letter-spacing="3" fill="#8F9DB4">LIVE MARKET PULSE</text>'+
+  '<rect x="56" y="77" width="1088" height="103" rx="25" fill="url(#panel)" stroke="#34445E" stroke-opacity=".8"/>'+
+  '<circle cx="121" cy="128" r="43" fill="'+accent+'" opacity=".13" filter="url(#glow)"/>'+
+  '<text x="188" y="121" font-family="Arial,Helvetica,sans-serif" font-size="44" font-weight="800" letter-spacing="1.5" fill="#FFFFFF">'+ticker+'</text>'+
+  '<text x="190" y="151" font-family="Arial,Helvetica,sans-serif" font-size="20" font-weight="500" fill="#AAB8CE">'+fullName+'</text>'+
+  '<rect x="824" y="102" width="288" height="49" rx="24" fill="'+accent+'" fill-opacity=".12" stroke="'+accent+'" stroke-opacity=".55"/>'+
+  '<circle cx="849" cy="126" r="5" fill="'+accent+'"/><text x="868" y="133" font-family="Arial,Helvetica,sans-serif" font-size="16" font-weight="700" letter-spacing="2" fill="'+accent+'">'+(up?'BULLISH MOMENTUM':'BEARISH MOMENTUM')+'</text>'+
+  grid+
+  '<path d="'+area+'" fill="url(#fill)"/>'+
+  '<path d="'+line+'" fill="none" stroke="'+accent+'" stroke-width="18" opacity=".17" filter="url(#glow)" stroke-linecap="round" stroke-linejoin="round"/>'+
+  '<path d="'+line+'" fill="none" stroke="'+accent+'" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>'+
+  '<path d="M90 516 H1110" stroke="url(#shine)" stroke-width="2" opacity=".85"/>'+
+  '<circle cx="'+endX+'" cy="'+endY+'" r="18" fill="'+accent+'" opacity=".14"/><circle cx="'+endX+'" cy="'+endY+'" r="7" fill="'+accent+'" stroke="#FFFFFF" stroke-width="2"/>'+
+  '<g transform="translate(1010 225) scale(.9)"><path d="'+(up?'M0 48 L31 17 L48 34 L82 0 M54 0 H82 V28':'M0 0 L31 31 L48 14 L82 48 M54 48 H82 V20')+'" fill="none" stroke="'+accent+'" stroke-width="18" opacity=".25" filter="url(#glow)" stroke-linecap="round" stroke-linejoin="round"/>'+trend+'</g>'+
+  '<rect x="56" y="535" width="1088" height="93" rx="24" fill="url(#panel)" stroke="#34445E" stroke-opacity=".78"/>'+
+  '<line x1="420" y1="552" x2="420" y2="611" stroke="#34445E"/><line x1="790" y1="552" x2="790" y2="611" stroke="#34445E"/>'+
+  '<text x="82" y="568" font-family="Arial,Helvetica,sans-serif" font-size="13" font-weight="700" letter-spacing="2.5" fill="#9BAAC0">24H PRICE MOVE</text>'+
+  '<text x="80" y="613" font-family="Arial,Helvetica,sans-serif" font-size="48" font-weight="900" letter-spacing="-1.5" fill="'+accent+'">'+esc(move)+'</text>'+
+  '<text x="455" y="568" font-family="Arial,Helvetica,sans-serif" font-size="13" font-weight="700" letter-spacing="2.5" fill="#9BAAC0">24H VOLUME</text>'+
+  '<text x="455" y="607" font-family="Arial,Helvetica,sans-serif" font-size="31" font-weight="800" fill="#FFFFFF">'+esc(compactMoney(coin.volume))+'</text>'+
+  '<text x="825" y="568" font-family="Arial,Helvetica,sans-serif" font-size="13" font-weight="700" letter-spacing="2.5" fill="#9BAAC0">LAST PRICE · USD</text>'+
+  '<text x="825" y="607" font-family="Arial,Helvetica,sans-serif" font-size="31" font-weight="800" fill="#FFFFFF">'+esc(formatPrice(coin.price))+'</text></svg>';
+  let b=await sharp(Buffer.from(svg)).png().toBuffer();
+  if(logo)b=await sharp(b).composite([{input:logo,left:82,top:89}]).png().toBuffer();
+  return b;
 }
 async function stories(s){const all=[];for(const f of feeds){try{const r=await fetch(f.url,{signal:AbortSignal.timeout(10000),headers:{'user-agent':'KarolinaCryptoNews/1.0'}});if(r.ok)all.push(...parseFeed(await r.text(),f.name));}catch(e){console.log('Feed '+f.name+': '+e.message);}}const seen=new Set(s.seen||[]),cut=now()-72*3600000;return all.filter(x=>!seen.has(x.link)&&(!Date.parse(x.date)||Date.parse(x.date)>=cut)).sort((a,b)=>(Date.parse(b.date)||0)-(Date.parse(a.date)||0));}
 function parseJson(raw){const t=String(raw||'').trim(),a=t.indexOf('{'),b=t.lastIndexOf('}');if(a<0||b<=a)throw Error('AI returned invalid JSON');return JSON.parse(t.slice(a,b+1));}
@@ -115,17 +114,26 @@ function compactMoney(value){
  if(n>=1e3)return '$'+(n/1e3).toFixed(0)+'K';
  return '$'+Math.round(n).toLocaleString('en-US');
 }
+function formatPrice(value){
+ const n=Number(value)||0;
+ if(n>=1000)return '$'+n.toLocaleString('en-US',{maximumFractionDigits:2});
+ if(n>=1)return '$'+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:4});
+ if(n>=0.01)return '$'+n.toFixed(4);
+ return '$'+n.toPrecision(4);
+}
 function fallbackDraft(coin,mode){
  const up=coin.change>=0,move=(up?'+':'')+Number(coin.change).toFixed(2)+'%',volume=compactMoney(coin.volume);
  if(mode==='futures'){
-  const hook=up?'🚀 FUTURES MOMENTUM: buyers are pushing':'🔻 FUTURES ALERT: sellers are pressing';
-  const question=up?'does this move have another leg, or is a pullback coming?':'does the slide continue, or are buyers ready to fight back?';
+  const hook=up?'🚀 FUTURES RADAR':'🔻 FUTURES UNDER PRESSURE';
+  const observation=up?'Buyers have the momentum for now — the real test is whether price can hold it.':'Sellers have control for now — watch whether price keeps slipping or buyers step in.';
+  const question=up?'Does $'+coin.ticker+' have another leg, or are you watching for a pullback?':'More downside ahead, or is this where buyers push back?';
   const bias=up?'#LONG':'#SHORT';
-  return hook+' $'+coin.ticker+' is moving '+move+' over 24h on '+volume+' volume. 👀 The level to watch now: momentum vs. a reversal. '+question+'\n\n📊 Watching the perpetuals? Search $'+coin.ticker+' on Binance Futures and check the chart before making a move. Manage leverage and risk.\n\n#'+coin.ticker+' #Futures '+bias;
+  return hook+' | $'+coin.ticker+' '+move+' in 24h, with '+volume+' in volume. 👀\n\n'+observation+' '+question+'\n\n📊 Open Binance Futures, search $'+coin.ticker+' and check the live chart before making a decision. Momentum can flip fast — manage leverage and risk.\n\n#'+coin.ticker+' #Futures '+bias;
  }
- const hook=up?'⚡ BREAKOUT WATCH':'🔻 DOWNSIDE WATCH';
- const question=up?'clean continuation or a classic fakeout?':'a dip worth watching or another leg down?';
- return hook+' — $'+coin.ticker+' '+move+' in 24h with '+volume+' traded. That is the kind of move that gets attention. 👀\n\nWhat do you see next: '+question+' Drop your take below. 📈\n\nOpen Binance Spot, search $'+coin.ticker+' and check the live chart. No chasing candles — watch the levels.\n\n#'+coin.ticker+' #BinanceSpot';
+ const hook=up?'⚡ $'+coin.ticker+' IS ON THE RADAR':'🔻 $'+coin.ticker+' UNDER PRESSURE';
+ const observation=up?'That is a serious 24h move — but the next candles matter more than the headline.':'Sellers have made their mark over 24h; now watch whether the move extends or starts to fade.';
+ const question=up?'Can buyers hold momentum, or is a pullback setting up?':'More downside from here, or are buyers ready to step in?';
+ return hook+' | '+move+' in 24h with '+volume+' traded. 👀\n\n'+observation+'\n\n'+question+' What level are you watching? Drop your read below. 📊\n\nOpen Binance Spot, search $'+coin.ticker+' and check the live chart. No FOMO — let price confirm the move.\n\n#'+coin.ticker+' #BinanceSpot';
 }
 async function draft(coin,mode){
  // Keep captions consistent and mobile-friendly: emojis, market facts, a real question,

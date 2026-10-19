@@ -4,7 +4,7 @@
 2. Create a Gemini key at https://aistudio.google.com/apikey
 3. Use the existing Telegram bot token from BotFather. On first start, send /myid to @carolinainfo_bot to get your numeric Telegram user ID, then configure TELEGRAM_OWNER_ID and restart.
 4. Copy .env.example to .env and fill the secrets. Never commit .env.
-5. Node.js 20+: run npm install, npm run check, npm start.
+5. Node.js 20+: run npm install, npm run check, npm start. Or use Docker Compose with a local .env file: docker compose up -d --build.
 6. In Telegram, send /start then /settings. DRY_RUN=true means drafts only; no Binance post is sent.
 7. After validating drafts and the key, change DRY_RUN=false and start with a low cadence.
 
@@ -15,6 +15,6 @@ Known limitations in this initial scaffold:
 - Views, ticker clicks and reward payments are not assumed to be available via a public API. Reports mark these as unavailable until a reliable data source is implemented.
 - The adaptive Spot/Futures choice is a transparent heuristic based on 24h volatility and funding snapshots, not a predictive trading model.
 - scheduleMode=active is saved but full market-hour optimization is not yet implemented.
-- State is a local JSON file; production hosting must provide persistent storage.
+- State is a local JSON file; production hosting must provide persistent storage. Docker Compose mounts ./data to keep it across restarts.
 - Free hosts may sleep or restart. A host must support an always-running worker and persistent storage to avoid missed jobs. No free plan is guaranteed to do this.
 - No earnings are guaranteed; trading analysis is informational, not financial advice.

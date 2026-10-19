@@ -1,25 +1,29 @@
-# Karolina Binance AI Agent
+# Karolina Binance — Telegram Control Panel
 
-A Telegram-controlled assistant for Binance Square market-analysis posts.
+GitHub Actions-powered Telegram controller for preparing and scheduling crypto-event posts for Binance Square.
 
-## Current modules
-- Binance public Spot and USD-M Futures market snapshots (no trading API key).
-- Gemini-generated posts in a language selected in Telegram.
-- Spot/Futures adaptive mode and manual ratio mode.
-- Automatically generated market-card images and Binance Square image upload flow.
-- Telegram controls, schedule, recent-post journal and status reports.
-- Local JSON state and a health endpoint.
-- GitHub Actions syntax checks.
+## Flow
+1. Send /start or /panel to the Telegram bot.
+2. Choose duration (3/6/12 hours), post count (3/5/8), and language.
+3. Press “Find events and prepare”. The controller reads public crypto-news RSS feeds and uses Gemini to draft source-linked posts.
+4. Review the drafts. Preparation does not publish.
+5. Choose test/live mode, then press Start. Posts are processed gradually during the selected period; Pause stops the campaign.
+6. Receive Telegram status and completion messages.
 
-## Safety defaults
-- DRY_RUN=true sends generated drafts to Telegram but does not publish.
-- No order placement, wallet access or trade permissions.
-- Conservative internal daily cap and minimum interval.
-- Never commit .env or share API keys.
-- Market analysis is not financial advice; income is not guaranteed.
+Focus: new token launches/listings, testnets, airdrops, ecosystem launches, security events, partnerships, funding, token unlocks and governance. Routine BTC/ETH price commentary is not the default.
 
-## Start
-See docs/SETUP.md. This initial scaffold has not yet been run against the user's live Telegram or Binance credentials. Creator Center analytics such as views and ticker click-throughs are not integrated until a supported data source is verified.
+## Required GitHub Actions secrets
+- TELEGRAM_BOT_TOKEN
+- TELEGRAM_OWNER_ID (numeric Telegram user ID)
+- GEMINI_API_KEY
+- BINANCE_SQUARE_OPENAPI_KEY (live publishing only)
 
-## Hosting note
-This worker needs to stay alive and keep persistent state. Many free web hosts sleep or erase local files; choose a host that supports an always-on worker and persistent storage before enabling automatic publishing.
+The .karolina/state.json file stores the Telegram update offset, settings, and public drafts. Never put keys or private messages into it. The repository is public.
+
+## Free operation and limitations
+- The controller runs every five minutes. Telegram commands can take several minutes; scheduled runs can be delayed. It is not a real-time server.
+- Public GitHub repositories can use standard Actions runners within GitHub policies and limits; Gemini API quotas are separate.
+- The workflow requires contents: write to persist campaign state. Do not run the older npm start worker at the same time with this bot token.
+- RSS feeds can be unavailable or stale. Posts should be checked before starting a campaign.
+- Default mode is dry-run. Binance Square publishing API credentials/endpoints must be validated before relying on live posts. Live mode publishes publicly.
+- No trading, wallet access, earnings guarantees, or verified views/click analytics.

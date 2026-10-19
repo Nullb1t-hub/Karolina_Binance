@@ -80,7 +80,7 @@ async function card(coin,values){
  '</defs><rect width="1200" height="675" fill="url(#bg)"/>'+
  '<circle cx="1020" cy="100" r="250" fill="'+accent+'" opacity=".07"/><circle cx="1040" cy="110" r="165" fill="'+accent2+'" opacity=".045"/>'+
  '<path d="M35 177 H1165" stroke="url(#shine)" stroke-width="2" opacity=".9"/>'+
- '<text x="66" y="57" font-family="Arial,Helvetica,sans-serif" font-size="20" font-weight="700" letter-spacing="6" fill="#F4F7FF">KAROLINA</text>'+
+ ''+
  '<text x="1134" y="57" text-anchor="end" font-family="Arial,Helvetica,sans-serif" font-size="13" font-weight="700" letter-spacing="3" fill="#8F9DB4">LIVE MARKET PULSE</text>'+
  '<rect x="56" y="77" width="1088" height="103" rx="25" fill="url(#panel)" stroke="#34445E" stroke-opacity=".8"/>'+
  '<circle cx="121" cy="128" r="43" fill="'+accent+'" opacity=".15" filter="url(#glow)"/><circle cx="121" cy="128" r="39" fill="#080D17" stroke="'+accent+'" stroke-width="2.5"/><circle cx="121" cy="128" r="34" fill="none" stroke="#FFFFFF" stroke-opacity=".14" stroke-width="1"/>'+
@@ -121,7 +121,12 @@ function fallbackDraft(coin,mode){
   const hook=up?'🚀 FUTURES MOMENTUM: buyers are pushing':'🔻 FUTURES ALERT: sellers are pressing';
   const question=up?'does this move have another leg, or is a pullback coming?':'does the slide continue, or are buyers ready to fight back?';
   const bias=up?'#LONG':'#SHORT';
-  return hook+' 
+  return hook+' $'+coin.ticker+' is moving '+move+' over 24h on '+volume+' volume. 👀 The level to watch now: momentum vs. a reversal. '+question+'\n\n📊 Watching the perpetuals? Search $'+coin.ticker+' on Binance Futures and check the chart before making a move. Manage leverage and risk.\n\n#'+coin.ticker+' #Futures '+bias;
+ }
+ const hook=up?'⚡ BREAKOUT WATCH':'🔻 DOWNSIDE WATCH';
+ const question=up?'clean continuation or a classic fakeout?':'a dip worth watching or another leg down?';
+ return hook+' — $'+coin.ticker+' '+move+' in 24h with '+volume+' traded. That is the kind of move that gets attention. 👀\n\nWhat do you see next: '+question+' Drop your take below. 📈\n\nOpen Binance Spot, search $'+coin.ticker+' and check the live chart. No chasing candles — watch the levels.\n\n#'+coin.ticker+' #BinanceSpot';
+}
 async function draft(coin,mode){
  // Keep captions consistent and mobile-friendly: emojis, market facts, a real question,
  // and a clear CTA. Never include raw/public URLs in the Binance Square caption.

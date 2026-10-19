@@ -1,0 +1,37 @@
+name: Karolina 3-day pilot
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0,2,4,7,9,12,14,16,19,21 * * *'
+permissions:
+  contents: write
+concurrency:
+  group: karolina-3day-pilot
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install --no-package-lock --no-audit --no-fund
+      - name: Publish one verified crypto-news post
+        run: node src/campaign-runner.js
+        env:
+          GEMINI_API_KEY: \${{ secrets.GEMINI_API_KEY }}
+          BINANCE_SQUARE_OPENAPI_KEY: \${{ secrets.BINANCE_SQUARE_OPENAPI_KEY }}
+          GEMINI_MODEL: gemini-2.5-flash
+          GITHUB_EVENT_NAME: \${{ github.event_name }}
+      - name: Persist pilot state
+        if: always()
+        run: |
+          if [[ -n "$(git status --porcelain .karolina/campaign.json)" ]]; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+users.noreply.github.com'
+            git add .karolina/campaign.json
+            git commit -m 'chore: update Karolina pilot state [skip ci]'
+            git push
+          fi

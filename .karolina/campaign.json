@@ -2,10 +2,25 @@
   "active": true,
   "startedAt": "2026-10-19T20:16:57.090Z",
   "endsAt": "2026-10-22T20:16:57.090Z",
-  "published": 0,
-  "perDay": {},
-  "seen": [],
-  "history": [],
-  "lastError": "Network request failed for api.binance.vision: ENOTFOUND",
+  "published": 1,
+  "perDay": {
+    "2026-10-19": 1
+  },
+  "seen": [
+    "AGT"
+  ],
+  "history": [
+    {
+      "at": "2026-10-19T20:20:50.517Z",
+      "ticker": "AGT",
+      "change": 39.81207,
+      "volume": 97343126,
+      "marketType": "spot",
+      "text": "$AGT surged +39.81% in 24h on $97343126 volume—are you watching this heat? Check the Spot market: https://www.binance.com/en/trade/AGT_USDT?type=spot #AGT #Spot",
+      "url": "https://app.binance.com/uni-qr/cpos/379085006478646?r=DZCPIY7B&l=ru",
+      "postId": 379085006478646
+    }
+  ],
+  "lastError": null,
   "planVersion": 2
 }

@@ -2,13 +2,14 @@
   "active": true,
   "startedAt": "2026-10-19T20:16:57.090Z",
   "endsAt": "2026-10-22T20:16:57.090Z",
-  "published": 2,
+  "published": 3,
   "perDay": {
-    "2026-10-19": 2
+    "2026-10-19": 3
   },
   "seen": [
     "AGT",
-    "WLD"
+    "WLD",
+    "PHA"
   ],
   "history": [
     {
@@ -30,6 +31,16 @@
       "text": "🚀 Momentum is heating up $WLD +9.74% in 24h • $271.2M volume. 👀 Futures traders: continuation or a sharp reversal? Check $WLD on Binance Futures and manage risk. #WLD #Futures",
       "url": "https://app.binance.com/uni-qr/cpos/379087750433402?r=DZCPIY7B&l=ru",
       "postId": 379087750433402
+    },
+    {
+      "at": "2026-10-19T20:52:16.534Z",
+      "ticker": "PHA",
+      "change": 39.22247,
+      "volume": 62587944,
+      "marketType": "spot",
+      "text": "⚡ BREAKOUT WATCH — $PHA +39.22% in 24h with $62.6M traded. That is the kind of move that gets attention. 👀\n\nWhat do you see next: clean continuation or a classic fakeout? Drop your take below. 📈\n\nOpen Binance Spot, search $PHA and check the live chart. No chasing candles — watch the levels.\n\n#PHA #BinanceSpot",
+      "url": "https://app.binance.com/uni-qr/cpos/379092731531511?r=DZCPIY7B&l=ru",
+      "postId": 379092731531511
     }
   ],
   "lastError": null,

@@ -67,20 +67,27 @@ async function card(coin,values){
 }
 async function stories(s){const all=[];for(const f of feeds){try{const r=await fetch(f.url,{signal:AbortSignal.timeout(10000),headers:{'user-agent':'KarolinaCryptoNews/1.0'}});if(r.ok)all.push(...parseFeed(await r.text(),f.name));}catch(e){console.log('Feed '+f.name+': '+e.message);}}const seen=new Set(s.seen||[]),cut=now()-72*3600000;return all.filter(x=>!seen.has(x.link)&&(!Date.parse(x.date)||Date.parse(x.date)>=cut)).sort((a,b)=>(Date.parse(b.date)||0)-(Date.parse(a.date)||0));}
 function parseJson(raw){const t=String(raw||'').trim(),a=t.indexOf('{'),b=t.lastIndexOf('}');if(a<0||b<=a)throw Error('AI returned invalid JSON');return JSON.parse(t.slice(a,b+1));}
+function compactMoney(value){
+ const n=Number(value)||0;
+ if(n>=1e9)return '$'+(n/1e9).toFixed(1)+'B';
+ if(n>=1e6)return '$'+(n/1e6).toFixed(1)+'M';
+ if(n>=1e3)return '$'+(n/1e3).toFixed(0)+'K';
+ return '$'+Math.round(n).toLocaleString('en-US');
+}
 function fallbackDraft(coin,mode){
- const up=coin.change>=0,move=(up?'+':'')+coin.change.toFixed(2)+'%';
- if(mode==='futures')return '$'+coin.ticker+' '+(up?'🚀':'🔻')+' '+move+' in 24h. Check the Binance Futures market, manage your risk, and decide: long or short? '+coin.futuresUrl+' #'+coin.ticker+' #Futures';
- return '$'+coin.ticker+' '+(up?'🚀':'🔻')+' '+move+' in 24h. Check the Binance Spot market and make your own call—buying or waiting? '+coin.spotUrl+' #'+coin.ticker+' #Spot';
+ const up=coin.change>=0,move=(up?'+':'')+Number(coin.change).toFixed(2)+'%',volume=compactMoney(coin.volume);
+ if(mode==='futures'){
+  const hook=up?'🚀 Momentum is heating up':'⚠️ Sellers are in control';
+  const question=up?'continuation or a sharp reversal?':'more downside or a bounce from here?';
+  return hook+' $'+coin.ticker+' '+move+' in 24h • '+volume+' volume. 👀 Futures traders: '+question+' Check $'+coin.ticker+' on Binance Futures and manage risk. #'+coin.ticker+' #Futures';
+ }
+ const hook=up?'🚀 Big move alert':'🔻 Downward move alert';
+ const question=up?'momentum or a fakeout?':'dip opportunity or more downside?';
+ return hook+' $'+coin.ticker+' '+move+' in 24h • '+volume+' volume. 👀 What comes next: '+question+' Find $'+coin.ticker+' on Binance Spot and check the chart. #'+coin.ticker+' #BinanceSpot';
 }
 async function draft(coin,mode){
- const facts='$'+coin.ticker+' moved '+(coin.change>=0?'+':'')+coin.change.toFixed(2)+'% in 24h; volume $'+Math.round(coin.volume)+'.';
- try{
-  if(!process.env.GEMINI_API_KEY)throw Error('No Gemini key');
-  const ai=new GoogleGenAI({apiKey:process.env.GEMINI_API_KEY});
-  const res=await ai.models.generateContent({model:process.env.GEMINI_MODEL||'gemini-3.8-flash',contents:'Write a punchy Binance Square post in English, maximum 2 short sentences plus hashtags, under 240 characters. Start with cashtag $'+coin.ticker+'. This post is for Binance '+(mode==='futures'?'Futures':'Spot')+'. Include a natural call to check this market and one engaging question. Keep playful and sharp, not a news article. Facts only: '+facts+' Never give a guaranteed outcome, price target, or direct buy/sell instruction. Include this market URL: '+(mode==='futures'?coin.futuresUrl:coin.spotUrl)+'. Finish with #'+coin.ticker+' #'+(mode==='futures'?'Futures':'Spot')+'. Output only the post.'});
-  const t=String(res.text||'').trim();
-  if(t.length>=20&&t.length<=280&&t.includes('$'+coin.ticker)&&!/(guaranteed|sure profit|100% profit)/i.test(t))return t;
- }catch(e){console.log('AI caption fallback: '+String(e.message||e).slice(0,120));}
+ // Keep captions consistent and mobile-friendly: emojis, market facts, a real question,
+ // and a clear CTA. Never include raw/public URLs in the Binance Square caption.
  return fallbackDraft(coin,mode);
 }
 async function postOne(s){

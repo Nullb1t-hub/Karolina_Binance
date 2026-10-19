@@ -2,14 +2,15 @@
   "active": true,
   "startedAt": "2026-10-19T21:02:07.000Z",
   "endsAt": "2026-10-22T21:02:07.000Z",
-  "published": 3,
+  "published": 4,
   "perDay": {
-    "2026-10-19": 3
+    "2026-10-19": 4
   },
   "seen": [
     "AGT",
     "WLD",
-    "PHA"
+    "PHA",
+    "CRV"
   ],
   "history": [
     {
@@ -41,6 +42,16 @@
       "text": "⚡ BREAKOUT WATCH — $PHA +39.22% in 24h with $62.6M traded. That is the kind of move that gets attention. 👀\n\nWhat do you see next: clean continuation or a classic fakeout? Drop your take below. 📈\n\nOpen Binance Spot, search $PHA and check the live chart. No chasing candles — watch the levels.\n\n#PHA #BinanceSpot",
       "url": "https://app.binance.com/uni-qr/cpos/379092731531511?r=DZCPIY7B&l=ru",
       "postId": 379092731531511
+    },
+    {
+      "at": "2026-10-19T21:04:27.422Z",
+      "ticker": "CRV",
+      "change": 9.42779,
+      "volume": 87546109,
+      "marketType": "futures",
+      "text": "🚀 FUTURES RADAR | $CRV +9.43% in 24h, with $87.5M in volume. 👀\n\nBuyers have the momentum for now — the real test is whether price can hold it. Does $CRV have another leg, or are you watching for a pullback?\n\n📊 Open Binance Futures, search $CRV and check the live chart before making a decision. Momentum can flip fast — manage leverage and risk.\n\n#CRV #Futures #LONG",
+      "url": "https://app.binance.com/uni-qr/cpos/379095725239772?r=DZCPIY7B&l=ru",
+      "postId": 379095725239772
     }
   ],
   "lastError": null,

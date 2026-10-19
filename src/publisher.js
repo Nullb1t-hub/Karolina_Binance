@@ -11,7 +11,7 @@ async function api(base,endpoint,apiKey,body){
  return data.data||{};
 }
 export async function publishText(text){
- const apiKey=key(),data=await api(V1,'/content/add',apiKey,{contentType:0,bodyTextOnly:text});
+ const apiKey=key(),data=await api(V1,'/content/add',apiKey,{contentType:1,bodyTextOnly:text});
  const id=data.id||null;return {id,url:data.shareLink||(id?'https://www.binance.com/square/post/'+id:null),publishedAt:new Date().toISOString(),successWithoutId:!!data.successWithoutId};
 }
 export async function publishImage(text,imageBuffer,imageName='market-card.png'){

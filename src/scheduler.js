@@ -44,8 +44,9 @@ export async function runTick(){
 }
 export async function sendDailyReport(kind='manual'){
  const s=getState(),today=dayKey(),ps=(s.posts||[]).filter(p=>p.day===today);
+ const liveCount=ps.filter(p=>!p.dryRun).length,draftCount=ps.filter(p=>p.dryRun).length;
  const list=ps.slice(0,8).map(p=>'• '+p.symbol+' ('+p.market+') '+p.change24h+'% '+(p.url||'(dry-run)')).join('\n')||'Публикаций пока нет.';
- const report='📊 BINANCE SQUARE — '+kind+'\n\nПостов сегодня: '+ps.length+'\nВсего записей: '+s.posts.length+'\nСтатус: '+(s.running?'работает':'остановлен')+'\nСледующий пост: '+(s.nextPostAt||'не запланирован')+'\n\n'+list+'\n\nПросмотры и переходы пока не подключены к подтверждённому источнику. Доход не измеряется этим модулем.';
+ const report='📊 BINANCE SQUARE — '+kind+'\n\nРеальных публикаций сегодня: '+liveCount+'\nЧерновиков сегодня: '+draftCount+'\nВсего записей: '+s.posts.length+'\nСтатус: '+(s.running?'работает':'остановлен')+'\nСледующий пост: '+(s.nextPostAt||'не запланирован')+'\n\n'+list+'\n\nПросмотры и переходы пока не подключены к подтверждённому источнику. Доход не измеряется этим модулем.';
  await notify(report);return report;
 }
 export function schedulerStatus(){const s=getState();return {running:s.running,nextPostAt:s.nextPostAt,lastPostAt:s.lastPostAt,lastError:s.lastError,settings:s.settings,postsToday:(s.publishedToday||[]).length};}

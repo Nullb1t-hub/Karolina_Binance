@@ -5,5 +5,9 @@
   "language": "ru",
   "mode": "dry",
   "drafts": [],
-  "active": false
+  "active": false,
+  "index": 0,
+  "seen": [],
+  "history": [],
+  "lastError": null
 }

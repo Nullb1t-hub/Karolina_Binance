@@ -1,14 +1,25 @@
 # Karolina Binance AI Agent
 
-Telegram-controlled Binance Square publishing assistant. This repository is the initial project scaffold; it does not publish anything until credentials are configured and you press Start in Telegram.
+A Telegram-controlled assistant for Binance Square market-analysis posts.
 
-## Safety
+## Current modules
+- Binance public Spot and USD-M Futures market snapshots (no trading API key).
+- Gemini-generated posts in a language selected in Telegram.
+- Spot/Futures adaptive mode and manual ratio mode.
+- Automatically generated market-card images and Binance Square image upload flow.
+- Telegram controls, schedule, recent-post journal and status reports.
+- Local JSON state and a health endpoint.
+- GitHub Actions syntax checks.
 
-- Never add API keys to source code or commit `.env`.
-- Binance market data is read-only; no trading endpoints or trade permissions are required.
-- Start in preview/dry-run mode and publish a single test post before enabling a schedule.
-- Generated trading analysis is informational, not financial advice.
+## Safety defaults
+- DRY_RUN=true sends generated drafts to Telegram but does not publish.
+- No order placement, wallet access or trade permissions.
+- Conservative internal daily cap and minimum interval.
+- Never commit .env or share API keys.
+- Market analysis is not financial advice; income is not guaranteed.
 
-## Status
+## Start
+See docs/SETUP.md. This initial scaffold has not yet been run against the user's live Telegram or Binance credentials. Creator Center analytics such as views and ticker click-throughs are not integrated until a supported data source is verified.
 
-Initial repository setup. See `.env.example` and `docs/SETUP.md` for configuration. Free hosting must support a continuously running worker and persistent state; sleeping serverless/free instances can miss scheduled posts.
+## Hosting note
+This worker needs to stay alive and keep persistent state. Many free web hosts sleep or erase local files; choose a host that supports an always-on worker and persistent storage before enabling automatic publishing.

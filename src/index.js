@@ -3,7 +3,7 @@ import http from 'node:http';
 import {loadState} from './store.js';
 import {createBot} from './bot.js';
 import {attachBot,runTick,sendDailyReport} from './scheduler.js';
-const missing=['TELEGRAM_BOT_TOKEN','TELEGRAM_OWNER_ID'].filter(k=>!process.env[k]);
+const missing=['TELEGRAM_BOT_TOKEN'].filter(k=>!process.env[k]);
 if(missing.length){console.error('Missing env vars:',missing.join(', '));process.exit(1);}
 await loadState();
 const bot=createBot();attachBot(bot);

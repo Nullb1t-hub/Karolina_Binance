@@ -2,12 +2,13 @@
   "active": true,
   "startedAt": "2026-10-19T19:27:40.970Z",
   "endsAt": "2026-10-22T19:27:40.971Z",
-  "published": 1,
+  "published": 2,
   "perDay": {
-    "2026-10-19": 1
+    "2026-10-19": 2
   },
   "seen": [
-    "https://decrypt.co/381343/jpmorgan-jpm-coin-ethereum-bank-dollars"
+    "https://decrypt.co/381343/jpmorgan-jpm-coin-ethereum-bank-dollars",
+    "BR"
   ],
   "history": [
     {
@@ -20,7 +21,16 @@
       "url": "https://app.binance.com/uni-qr/cpos/379076452362507?r=DZCPIY7B&l=ru",
       "postId": 379076452362507,
       "successWithoutId": false
+    },
+    {
+      "at": "2026-10-19T20:02:03.747Z",
+      "ticker": "BR",
+      "change": 49.23426,
+      "volume": 43607469,
+      "text": "$BR 🚀 +49.23% in 24h. is ripping higher on $43.6M volume. Is this move just starting or running out of steam? #BR #Crypto",
+      "url": "https://app.binance.com/uni-qr/cpos/379080391209790?r=DZCPIY7B&l=ru",
+      "postId": 379080391209790
     }
   ],
-  "lastError": "fetch failed"
+  "lastError": null
 }

@@ -2,9 +2,25 @@
   "active": true,
   "startedAt": "2026-10-19T19:27:40.970Z",
   "endsAt": "2026-10-22T19:27:40.971Z",
-  "published": 0,
-  "perDay": {},
-  "seen": [],
-  "history": [],
-  "lastError": "Could not create verified post from 8 stories. Last issue: {\"error\":{\"code\":404,\"message\":\"This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://ai.google.dev/gemini-api/docs/get-started).\",\"status\":\"NOT_FOUND\"}}"
+  "published": 1,
+  "perDay": {
+    "2026-10-19": 1
+  },
+  "seen": [
+    "https://decrypt.co/381343/jpmorgan-jpm-coin-ethereum-bank-dollars"
+  ],
+  "history": [
+    {
+      "at": "2026-10-19T19:46:02.139Z",
+      "source": "Decrypt",
+      "sourceUrl": "https://decrypt.co/381343/jpmorgan-jpm-coin-ethereum-bank-dollars",
+      "title": "JPMorgan запустил JPM Coin на блокчейне Ethereum",
+      "ticker": "ETH",
+      "text": "Банковский гигант JPMorgan приступает к развертыванию своего расчетного инструмента JPM Coin в сети Ethereum для институциональных клиентов. Данный шаг переносит долларовые средства банка на публичный блокчейн.\n\nВыпущенный токен полностью обеспечен долларами США, находящимися на счетах JPMorgan. Ключевым преимуществом внедрения является скорость транзакций: расчеты с использованием актива происходят за считанные секунды в любой день недели без привязки к стандартным банковским часам работы.\n\nЗапуск JPM Coin на $ETH отражает растущий интерес традиционных финансовых институтов к использованию открытых блокчейн-сетей для корпоративных расчетов. Перевод фиатных средств крупного банка в публичный реестр позволяет институциональным участникам ускорить проведение межбанковских и внутренних операций.\n\n#Ethereum #JPMorgan #криптовалюта\nИсточник: Decrypt.",
+      "url": "https://app.binance.com/uni-qr/cpos/379076452362507?r=DZCPIY7B&l=ru",
+      "postId": 379076452362507,
+      "successWithoutId": false
+    }
+  ],
+  "lastError": null
 }

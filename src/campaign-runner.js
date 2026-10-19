@@ -1,0 +1,50 @@
+import fs from 'node:fs/promises';
+import {GoogleGenAI} from '@google/genai';
+import sharp from 'sharp';
+import {publishImage} from './publisher.js';
+const statePath='.karolina/campaign.json';
+const feeds=[{name:'CoinDesk',url:'https://www.coindesk.com/arc/outboundfeeds/rss/'},{name:'Cointelegraph',url:'https://cointelegraph.com/rss'},{name:'Decrypt',url:'https://decrypt.co/feed'}];
+const maxPosts=30,maxDaily=10,now=()=>Date.now();
+function decode(s){return String(s||'').replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g,'$1').replace(/<[^>]*>/g,' ').replace(/&amp;/g,'&').replace(/&quot;/g,'"').replace(/&#39;|&apos;/g,"'").replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&#(\d+);/g,(_,n)=>String.fromCharCode(Number(n))).replace(/\s+/g,' ').trim();}
+function tag(b,n){const r=new RegExp('<'+n+'(?:\\s[^>]*)?>([\\s\\S]*?)<\\/'+n+'\\s*>','i'),m=b.match(r);return m?decode(m[1]):'';}
+function parseFeed(xml,source){return xml.split(/<item\b/i).slice(1).map(x=>x.split(/<\/item>/i)[0]).map(b=>({source,title:tag(b,'title'),link:tag(b,'link'),description:tag(b,'description'),date:tag(b,'pubDate')})).filter(x=>x.title&&/^https?:\/\//i.test(x.link));}
+function dayKey(){return new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Prague',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());}
+async function load(){try{return JSON.parse(await fs.readFile(statePath,'utf8'));}catch{return {active:false,startedAt:null,endsAt:null,published:0,perDay:{},seen:[],history:[],lastError:null};}}
+async function save(s){await fs.mkdir('.karolina',{recursive:true});await fs.writeFile(statePath,JSON.stringify(s,null,2)+'\n');}
+function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));}
+function wrap(s,max){const out=[];let line='';for(const w of String(s||'').split(/\s+/)){if((line+' '+w).trim().length>max&&line){out.push(line);line=w;}else line=(line+' '+w).trim();}if(line)out.push(line);return out.slice(0,3);}
+async function card(ticker,title,source){
+ const ts=wrap(title,34).map((x,i)=>'<text x="76" y="'+(345+i*58)+'" fill="#F8FAFC" font-size="43" font-weight="700" font-family="Arial">'+esc(x)+'</text>').join('');
+ const svg='<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675"><defs><linearGradient id="bg"><stop stop-color="#10131D"/><stop offset="1" stop-color="#202A43"/></linearGradient></defs><rect width="1200" height="675" rx="32" fill="url(#bg)"/><circle cx="1090" cy="60" r="250" fill="#F0B90B" opacity=".08"/><path d="M70 75H1130" stroke="#F0B90B" stroke-width="3"/><text x="76" y="125" fill="#F0B90B" font-size="25" font-weight="700" letter-spacing="3" font-family="Arial">KAROLINA • CRYPTO BRIEF</text><circle cx="132" cy="218" r="46" fill="#F0B90B"/><text x="132" y="230" text-anchor="middle" fill="#111827" font-size="29" font-weight="700" font-family="Arial">'+esc(ticker)+'</text><text x="205" y="210" fill="#FFFFFF" font-size="38" font-weight="700" font-family="Arial">$'+esc(ticker)+'</text><text x="205" y="248" fill="#AAB5CC" font-size="21" font-family="Arial">NEWS • VERIFIED SOURCE</text>'+ts+'<path d="M76 555H1124" stroke="#FFFFFF" stroke-opacity=".14" stroke-width="2"/><text x="76" y="600" fill="#B8C2D8" font-size="21" font-family="Arial">Source: '+esc(source)+'</text><text x="1124" y="600" fill="#F0B90B" font-size="20" text-anchor="end" font-family="Arial">FACTS OVER HYPE</text><text x="76" y="640" fill="#71809D" font-size="17" font-family="Arial">Crypto news summary • Not financial advice</text></svg>';
+ let b=Buffer.from(svg);
+ try{const r=await fetch('https://assets.coincap.io/assets/icons/'+encodeURIComponent(ticker.toLowerCase())+'@2x.png',{signal:AbortSignal.timeout(5000)});if(r.ok){const logo=await sharp(Buffer.from(await r.arrayBuffer())).resize(66,66,{fit:'contain'}).png().toBuffer();const badge=Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675"><circle cx="132" cy="218" r="39" fill="#FFFFFF"/></svg>');b=await sharp(b).composite([{input:badge},{input:logo,left:99,top:185}]).png().toBuffer();}}catch{}
+ return sharp(b).png().toBuffer();
+}
+async function symbols(){const r=await fetch('https://api.binance.com/api/v3/ticker/24hr',{signal:AbortSignal.timeout(12000)});if(!r.ok)throw Error('Binance market list HTTP '+r.status);return (await r.json()).filter(x=>String(x.symbol).endsWith('USDT')&&Number(x.quoteVolume)>1000000&&!/(UP|DOWN|BULL|BEAR)USDT$/.test(x.symbol)).sort((a,b)=>Number(b.quoteVolume)-Number(a.quoteVolume)).slice(0,180).map(x=>x.symbol.slice(0,-4));}
+async function stories(s){const all=[];for(const f of feeds){try{const r=await fetch(f.url,{signal:AbortSignal.timeout(10000),headers:{'user-agent':'KarolinaCryptoNews/1.0'}});if(r.ok)all.push(...parseFeed(await r.text(),f.name));}catch(e){console.log('Feed '+f.name+': '+e.message);}}const seen=new Set(s.seen||[]),cut=now()-72*3600000;return all.filter(x=>!seen.has(x.link)&&(!Date.parse(x.date)||Date.parse(x.date)>=cut)).sort((a,b)=>(Date.parse(b.date)||0)-(Date.parse(a.date)||0));}
+function parseJson(raw){const t=String(raw||'').trim(),a=t.indexOf('{'),b=t.lastIndexOf('}');if(a<0||b<=a)throw Error('AI returned invalid JSON');return JSON.parse(t.slice(a,b+1));}
+async function draft(st,sym){
+ if(!process.env.GEMINI_API_KEY)throw Error('Missing GEMINI_API_KEY');
+ const ai=new GoogleGenAI({apiKey:process.env.GEMINI_API_KEY});
+ const prompt='Write one original Russian Binance Square crypto-news post based ONLY on this source. Source: '+st.source+'. Title: '+st.title+'. Excerpt: '+st.description.slice(0,1600)+'. Choose one genuinely relevant symbol from this Binance spot list: '+sym.join(', ')+'. Return JSON {"title":"short Russian headline max 70 chars","ticker":"one symbol from list or NONE","text":"700-1100 Russian characters, natural and specific, explain what happened and why it matters, no invented numbers/dates/quotes, no hype or predictions, no external URLs, include $TICKER, 2-3 relevant hashtags and end with Источник: '+st.source+'."}. If no listed coin is directly relevant, ticker must be NONE. Avoid generic BTC price chatter and robotic filler.';
+ const res=await ai.models.generateContent({model:process.env.GEMINI_MODEL||'gemini-2.5-flash',contents:prompt}),d=parseJson(res.text);
+ d.title=String(d.title||'').trim().slice(0,90);d.ticker=String(d.ticker||'NONE').toUpperCase().replace(/^\$/,'').trim();d.text=String(d.text||'').trim();
+ if(!d.title||d.text.length<350)throw Error('AI draft failed quality checks');if(d.ticker==='NONE'||!sym.includes(d.ticker))throw Error('No valid relevant cashtag');if(!d.text.includes('$'+d.ticker))d.text='$'+d.ticker+' — '+d.text;
+ if(/guaranteed profit|guaranteed returns|100% sure|sure win|гарантированн(ая|ый|о) прибыль/i.test(d.text))throw Error('Rejected unrealistic claim');if(/https?:\/\/|t\.me\//i.test(d.text))throw Error('External link rejected');return d;
+}
+async function postOne(s){
+ const today=dayKey();s.perDay=s.perDay||{};if((s.perDay[today]||0)>=maxDaily){console.log('Daily cap reached');return false;}
+ const sym=await symbols(),list=await stories(s);if(!list.length)throw Error('No fresh unseen stories in last 72 hours; no filler post will be published.');
+ let last='No suitable story';
+ for(const st of list.slice(0,8)){try{const d=await draft(st,sym),img=await card(d.ticker,d.title,st.source),r=await publishImage(d.text,img,'karolina-'+d.ticker.toLowerCase()+'-'+Date.now()+'.png');const e={at:new Date().toISOString(),source:st.source,sourceUrl:st.link,title:d.title,ticker:d.ticker,text:d.text,url:r.url||null,postId:r.id||null,successWithoutId:!!r.successWithoutId};s.published=(s.published||0)+1;s.perDay[today]=(s.perDay[today]||0)+1;s.seen=(s.seen||[]).concat(st.link).slice(-300);s.history=(s.history||[]).concat(e).slice(-60);s.lastError=null;console.log('PUBLISHED '+s.published+'/'+maxPosts+' $'+d.ticker+' '+st.source+' '+(r.url||'no URL returned'));console.log('TITLE: '+d.title+'\nTEXT: '+d.text);return true;}catch(e){last=String(e.message||e);console.log('Skipped "'+st.title+'": '+last);}}
+ throw Error('Could not create verified post from 8 stories. Last issue: '+last);
+}
+async function main(){
+ const s=await load(),event=process.env.GITHUB_EVENT_NAME||'';
+ if(!s.startedAt){if(event!=='workflow_dispatch'){console.log('Not started. Use Actions → Karolina 3-day pilot → Run workflow.');return;}s.active=true;s.startedAt=new Date().toISOString();s.endsAt=new Date(now()+72*3600000).toISOString();s.published=0;s.perDay={};s.seen=[];s.history=[];console.log('Pilot starts '+s.startedAt+' ends '+s.endsAt);}
+ if(!s.active||(s.published||0)>=maxPosts||now()>=Date.parse(s.endsAt)){s.active=false;s.lastError='Pilot complete or time expired';await save(s);console.log('Finished '+s.published+'/'+maxPosts);return;}
+ if(!process.env.BINANCE_SQUARE_OPENAPI_KEY)throw Error('Missing BINANCE_SQUARE_OPENAPI_KEY; no post sent.');
+ try{await postOne(s);}catch(e){s.lastError=String(e.message||e).slice(0,500);console.error('POST FAILED: '+s.lastError);}
+ if(s.published>=maxPosts||now()>=Date.parse(s.endsAt))s.active=false;await save(s);console.log('PILOT '+(s.active?'ACTIVE':'FINISHED')+' '+s.published+'/'+maxPosts+' perDay='+JSON.stringify(s.perDay)+' error='+(s.lastError||'none'));
+}
+main().catch(e=>{console.error('FATAL: '+String(e.message||e));process.exitCode=1;});

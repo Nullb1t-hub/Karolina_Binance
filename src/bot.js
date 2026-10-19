@@ -1,13 +1,13 @@
 import TelegramBot from 'node-telegram-bot-api';
 import {getState,updateState} from './store.js';
 import {startSchedule,stopSchedule,sendDailyReport} from './scheduler.js';
-const help='Karolina Binance AI Agent\n\n/settings — панель\n/period 12 — период в часах\n/posts 3 — постов за период\n/language ru — ru, en, uk, cs, es, pt\n/mode adaptive — adaptive или manual\n/schedule uniform — uniform или active\n/ratio 70/30 — доли Spot/Futures для manual\n/status — состояние\n/recent — последние посты\n/report — отчёт\n/startagent — старт\n/pause — пауза\n\nПо умолчанию DRY_RUN=true: агент присылает черновики, но не публикует.';
+const help='Karolina Binance AI Agent\n\n/myid — узнать свой Telegram ID\n/settings — панель\n/period 12 — период в часах\n/posts 3 — постов за период\n/language ru — ru, en, uk, cs, es, pt\n/mode adaptive — adaptive или manual\n/schedule uniform — uniform или active\n/ratio 70/30 — доли Spot/Futures для manual\n/status — состояние\n/recent — последние посты\n/report — отчёт\n/startagent — старт\n/pause — пауза\n\nПо умолчанию DRY_RUN=true: агент присылает черновики, но не публикует.';
 const isOwner=m=>String(m.from&&m.from.id)===String(process.env.TELEGRAM_OWNER_ID||'');
 export function createBot(){
  const bot=new TelegramBot(process.env.TELEGRAM_BOT_TOKEN,{polling:true});
  bot.on('polling_error',e=>console.error('Telegram polling:',e.message));
  bot.on('message',async m=>{
-  if((m.text||'').trim()==='/myid'&&!process.env.TELEGRAM_OWNER_ID){return bot.sendMessage(m.chat.id,'Твой Telegram ID: '+m.from.id+'\\nДобавь это число в секрет TELEGRAM_OWNER_ID, затем перезапусти агента.');}
+  if((m.text||'').trim()==='/myid'&&!process.env.TELEGRAM_OWNER_ID){return bot.sendMessage(m.chat.id,'Твой Telegram ID: '+m.from.id+'\nДобавь это число в секрет TELEGRAM_OWNER_ID, затем перезапусти агента.');}
   if(!isOwner(m))return;
   const text=(m.text||'').trim(),parts=text.split(/\s+/),cmd=parts[0],arg=parts.slice(1).join(' ');
   try{

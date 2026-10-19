@@ -49,20 +49,61 @@ function linePath(values){
  return values.map((v,i)=>((i?'L':'M')+(88+i*1024/(values.length-1)).toFixed(1)+' '+(490-(v-min)/span*165).toFixed(1))).join(' ');
 }
 async function card(coin,values){
- const up=coin.change>=0,accent=up?'#35E6A1':'#FF5576';
- const line=linePath(values),area=line+' L1112 510 L88 510 Z';
+ const up=coin.change>=0,accent=up?'#36F5A0':'#FF4F78',accent2=up?'#00C2FF':'#FF9A5B';
+ const line=linePath(values),area=line+' L1112 505 L88 505 Z';
  const logoUrl=coin.image||'https://assets.coincap.io/assets/icons/'+encodeURIComponent(coin.ticker.toLowerCase())+'@2x.png';
- let logo=null;try{const r=await fetch(logoUrl,{signal:AbortSignal.timeout(4500)});if(r.ok)logo=await sharp(Buffer.from(await r.arrayBuffer())).resize(84,84,{fit:'contain'}).png().toBuffer();}catch{}
+ let logo=null;
+ try{
+  const r=await fetch(logoUrl,{signal:AbortSignal.timeout(4500)});
+  if(r.ok){
+   const raw=await sharp(Buffer.from(await r.arrayBuffer())).resize(78,78,{fit:'cover',position:'centre'}).png().toBuffer();
+   const mask=Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" width="78" height="78"><circle cx="39" cy="39" r="38" fill="white"/></svg>');
+   logo=await sharp(raw).composite([{input:mask,blend:'dest-in'}]).png().toBuffer();
+  }
+ }catch{}
  const ticker=esc(coin.ticker),fullName=esc(coin.name||coin.fullName||coin.ticker);
  const move=(up?'+':'')+Number(coin.change).toFixed(2)+'%';
- const grid=Array.from({length:6},(_,i)=>'<line x1="72" y1="'+(190+i*62)+'" x2="1128" y2="'+(190+i*62)+'" stroke="#1A2536" stroke-width="1"/>').join('');
+ const min=Math.min(...values),max=Math.max(...values),span=max-min||1;
+ const endX=1112,endY=(490-(values[values.length-1]-min)/span*165).toFixed(1);
+ const grid=Array.from({length:6},(_,i)=>'<line x1="72" y1="'+(205+i*58)+'" x2="1128" y2="'+(205+i*58)+'" stroke="#203047" stroke-width="1" opacity=".78"/>').join('');
  const arrow=up
-  ? '<path d="M1014 124 L1060 78 L1060 101 L1090 101 L1090 124 L1060 124 L1060 147 Z" fill="'+accent+'"/>'
-  : '<path d="M1014 104 L1060 150 L1060 127 L1090 127 L1090 104 L1060 104 L1060 81 Z" fill="'+accent+'"/>';
- const endX=1112,endY=(490-(values[values.length-1]-Math.min(...values))/((Math.max(...values)-Math.min(...values))||1)*165).toFixed(1);
- const svg='<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675"><defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#04060B"/><stop offset=".48" stop-color="#080E19"/><stop offset="1" stop-color="#111827"/></linearGradient><linearGradient id="fill" x1="0" y1="0" x2="0" y2="1"><stop stop-color="'+accent+'" stop-opacity=".28"/><stop offset="1" stop-color="'+accent+'" stop-opacity=".015"/></linearGradient><linearGradient id="panel" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#111A29" stop-opacity=".96"/><stop offset="1" stop-color="#0A101B" stop-opacity=".72"/></linearGradient><filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="8"/></filter></defs><rect width="1200" height="675" fill="url(#bg)"/><circle cx="1030" cy="150" r="245" fill="'+accent+'" opacity=".055"/><circle cx="1030" cy="150" r="180" fill="'+accent+'" opacity=".025"/>'+grid+'<path d="'+area+'" fill="url(#fill)"/><path d="'+line+'" fill="none" stroke="'+accent+'" stroke-width="14" opacity=".13" filter="url(#glow)" stroke-linecap="round" stroke-linejoin="round"/><path d="'+line+'" fill="none" stroke="'+accent+'" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="'+endX+'" cy="'+endY+'" r="12" fill="'+accent+'" opacity=".15"/><circle cx="'+endX+'" cy="'+endY+'" r="5.5" fill="'+accent+'"/><rect x="56" y="48" width="1088" height="126" rx="28" fill="url(#panel)" stroke="#263247" stroke-opacity=".72"/><circle cx="121" cy="111" r="43" fill="#080D16" stroke="#354157" stroke-width="2"/>'+arrow+'<text x="190" y="105" font-family="Arial,Helvetica,sans-serif" font-size="48" font-weight="700" letter-spacing="1.5" fill="#F4F7FB">'+ticker+'</text><text x="192" y="140" font-family="Arial,Helvetica,sans-serif" font-size="22" fill="#9BA9BC">'+fullName+'</text><rect x="72" y="548" width="1056" height="82" rx="22" fill="#0A101A" fill-opacity=".94" stroke="#273449" stroke-opacity=".8"/><rect x="92" y="570" width="5" height="38" rx="2.5" fill="'+accent+'"/><text x="120" y="583" font-family="Arial,Helvetica,sans-serif" font-size="17" font-weight="600" letter-spacing="3" fill="#91A0B4">24H CHANGE</text><text x="120" y="612" font-family="Arial,Helvetica,sans-serif" font-size="30" font-weight="700" fill="'+accent+'">'+esc(move)+'</text><text x="1100" y="600" text-anchor="end" font-family="Arial,Helvetica,sans-serif" font-size="16" letter-spacing="2" fill="#65748A">MARKET SNAPSHOT</text></svg>';
+  ? '<path d="M0 31 L28 3 L28 18 L51 18 L51 31 L28 31 L28 46 Z" fill="'+accent+'"/>'
+  : '<path d="M0 15 L28 43 L28 28 L51 28 L51 15 L28 15 L28 0 Z" fill="'+accent+'"/>';
+ const arrowGlow=up?'M0 31 L28 3 L28 18 L51 18 L51 31 L28 31 L28 46 Z':'M0 15 L28 43 L28 28 L51 28 L51 15 L28 15 L28 0 Z';
+ const svg='<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675"><defs>'+
+ '<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#050712"/><stop offset=".48" stop-color="#0A1020"/><stop offset="1" stop-color="#11192B"/></linearGradient>'+
+ '<linearGradient id="shine" x1="0" y1="0" x2="1" y2="0"><stop stop-color="'+accent+'" stop-opacity="0"/><stop offset=".5" stop-color="'+accent+'" stop-opacity=".9"/><stop offset="1" stop-color="'+accent2+'" stop-opacity="0"/></linearGradient>'+
+ '<linearGradient id="fill" x1="0" y1="0" x2="0" y2="1"><stop stop-color="'+accent+'" stop-opacity=".34"/><stop offset="1" stop-color="'+accent+'" stop-opacity=".01"/></linearGradient>'+
+ '<linearGradient id="panel" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#131D30" stop-opacity=".98"/><stop offset="1" stop-color="#090E1A" stop-opacity=".97"/></linearGradient>'+
+ '<filter id="glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="9"/></filter>'+
+ '<filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="20"/></filter>'+
+ '</defs><rect width="1200" height="675" fill="url(#bg)"/>'+
+ '<circle cx="1020" cy="100" r="250" fill="'+accent+'" opacity=".07"/><circle cx="1040" cy="110" r="165" fill="'+accent2+'" opacity=".045"/>'+
+ '<path d="M35 177 H1165" stroke="url(#shine)" stroke-width="2" opacity=".9"/>'+
+ '<text x="66" y="57" font-family="Arial,Helvetica,sans-serif" font-size="20" font-weight="700" letter-spacing="6" fill="#F4F7FF">KAROLINA</text>'+
+ '<text x="1134" y="57" text-anchor="end" font-family="Arial,Helvetica,sans-serif" font-size="13" font-weight="700" letter-spacing="3" fill="#8F9DB4">LIVE MARKET PULSE</text>'+
+ '<rect x="56" y="77" width="1088" height="103" rx="25" fill="url(#panel)" stroke="#34445E" stroke-opacity=".8"/>'+
+ '<circle cx="121" cy="128" r="43" fill="'+accent+'" opacity=".15" filter="url(#glow)"/><circle cx="121" cy="128" r="39" fill="#080D17" stroke="'+accent+'" stroke-width="2.5"/><circle cx="121" cy="128" r="34" fill="none" stroke="#FFFFFF" stroke-opacity=".14" stroke-width="1"/>'+
+ '<text x="188" y="121" font-family="Arial,Helvetica,sans-serif" font-size="44" font-weight="800" letter-spacing="1.5" fill="#FFFFFF">'+ticker+'</text>'+
+ '<text x="190" y="151" font-family="Arial,Helvetica,sans-serif" font-size="20" font-weight="500" fill="#AAB8CE">'+fullName+'</text>'+
+ '<rect x="824" y="102" width="288" height="49" rx="24" fill="'+accent+'" fill-opacity=".12" stroke="'+accent+'" stroke-opacity=".55"/>'+
+ '<circle cx="849" cy="126" r="5" fill="'+accent+'"/><text x="868" y="133" font-family="Arial,Helvetica,sans-serif" font-size="16" font-weight="700" letter-spacing="2" fill="'+accent+'">'+(up?'BULLISH MOMENTUM':'BEARISH MOMENTUM')+'</text>'+
+ grid+
+ '<path d="'+area+'" fill="url(#fill)"/>'+
+ '<path d="'+line+'" fill="none" stroke="'+accent+'" stroke-width="18" opacity=".17" filter="url(#glow)" stroke-linecap="round" stroke-linejoin="round"/>'+
+ '<path d="'+line+'" fill="none" stroke="'+accent+'" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>'+
+ '<path d="M90 516 H1110" stroke="url(#shine)" stroke-width="2" opacity=".85"/>'+
+ '<circle cx="'+endX+'" cy="'+endY+'" r="18" fill="'+accent+'" opacity=".14"/><circle cx="'+endX+'" cy="'+endY+'" r="7" fill="'+accent+'" stroke="#FFFFFF" stroke-width="2"/>'+
+ '<g transform="translate(1030 224)"><path d="'+arrowGlow+'" fill="none" stroke="'+accent+'" stroke-width="2" opacity=".4"/><path d="'+arrowGlow+'" fill="'+accent+'" opacity=".22" filter="url(#glow)"/>'+arrow+'</g>'+
+ '<rect x="56" y="535" width="1088" height="93" rx="24" fill="url(#panel)" stroke="#34445E" stroke-opacity=".78"/>'+
+ '<rect x="78" y="555" width="5" height="52" rx="2.5" fill="'+accent+'"/>'+
+ '<text x="101" y="573" font-family="Arial,Helvetica,sans-serif" font-size="14" font-weight="700" letter-spacing="3" fill="#9BAAC0">24H PRICE MOVE</text>'+
+ '<text x="98" y="616" font-family="Arial,Helvetica,sans-serif" font-size="54" font-weight="900" letter-spacing="-1.5" fill="'+accent+'">'+esc(move)+'</text>'+
+ '<text x="1112" y="574" text-anchor="end" font-family="Arial,Helvetica,sans-serif" font-size="14" font-weight="700" letter-spacing="2.5" fill="#91A0B7">REAL PRICE HISTORY</text>'+
+ '<text x="1112" y="601" text-anchor="end" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#DCE5F2">'+(up?'↗ Buyers pushing':'↘ Sellers pushing')+'</text>'+
+ '<text x="1112" y="619" text-anchor="end" font-family="Arial,Helvetica,sans-serif" font-size="11" letter-spacing="1.5" fill="#64748B">KAROLINA • MARKET WATCH</text></svg>';
  let b=await sharp(Buffer.from(svg)).png().toBuffer();
- if(logo){const badge=Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675"><circle cx="121" cy="111" r="34" fill="#080D16"/></svg>');b=await sharp(b).composite([{input:badge},{input:logo,left:79,top:69}]).png().toBuffer();}
+ if(logo)b=await sharp(b).composite([{input:logo,left:82,top:89}]).png().toBuffer();
  return b;
 }
 async function stories(s){const all=[];for(const f of feeds){try{const r=await fetch(f.url,{signal:AbortSignal.timeout(10000),headers:{'user-agent':'KarolinaCryptoNews/1.0'}});if(r.ok)all.push(...parseFeed(await r.text(),f.name));}catch(e){console.log('Feed '+f.name+': '+e.message);}}const seen=new Set(s.seen||[]),cut=now()-72*3600000;return all.filter(x=>!seen.has(x.link)&&(!Date.parse(x.date)||Date.parse(x.date)>=cut)).sort((a,b)=>(Date.parse(b.date)||0)-(Date.parse(a.date)||0));}
@@ -77,13 +118,286 @@ function compactMoney(value){
 function fallbackDraft(coin,mode){
  const up=coin.change>=0,move=(up?'+':'')+Number(coin.change).toFixed(2)+'%',volume=compactMoney(coin.volume);
  if(mode==='futures'){
-  const hook=up?'🚀 Momentum is heating up':'⚠️ Sellers are in control';
-  const question=up?'continuation or a sharp reversal?':'more downside or a bounce from here?';
-  return hook+' $'+coin.ticker+' '+move+' in 24h • '+volume+' volume. 👀 Futures traders: '+question+' Check $'+coin.ticker+' on Binance Futures and manage risk. #'+coin.ticker+' #Futures';
+  const hook=up?'🚀 FUTURES MOMENTUM: buyers are pushing':'🔻 FUTURES ALERT: sellers are pressing';
+  const question=up?'does this move have another leg, or is a pullback coming?':'does the slide continue, or are buyers ready to fight back?';
+  const bias=up?'#LONG':'#SHORT';
+  return hook+' 
+async function draft(coin,mode){
+ // Keep captions consistent and mobile-friendly: emojis, market facts, a real question,
+ // and a clear CTA. Never include raw/public URLs in the Binance Square caption.
+ return fallbackDraft(coin,mode);
+}
+async function postOne(s){
+ const today=dayKey();s.perDay=s.perDay||{};
+ if((s.perDay[today]||0)>=maxDaily)throw Error('Daily cap reached');
+ const list=await symbols();if(!list.length)throw Error('No high-volume 24h breakout tokens found; nothing posted.');
+ const history=s.history||[];
+ const spotCount=history.filter(x=>x.marketType==='spot').length;
+ const futuresCount=history.filter(x=>x.marketType==='futures').length;
+ const nextN=(s.published||0)+1;
+ const shouldFutures=futuresCount<Math.floor(nextN*futuresTarget/maxPosts) && futuresCount<futuresTarget;
+ const mode=shouldFutures?'futures':'spot';
+ let marketSet;
+ if(mode==='futures'){
+  try{
+   const data=await getJson('https://fapi.binance.com/fapi/v1/ticker/24hr',15000);
+   marketSet=new Set(data.map(x=>x.symbol).filter(x=>String(x).endsWith('USDT')));
+  }catch(e){
+   // GitHub-hosted runners can be geo-blocked by Binance Futures (HTTP 451).
+   // Fall back only to a conservative set of commonly listed USDⓈ-M perpetuals,
+   // intersected with live CoinGecko candidates, rather than aborting the whole run.
+   console.log('Binance Futures feed unavailable: '+String(e.message||e)+'; using conservative known-perpetual fallback');
+   const knownPerpetuals=new Set(('1000SATS 1000PEPE 1000SHIB 1INCH AAVE ACE ADA ALGO ANIME APT ARB ARKM ARK ATOM AVAX BCH BEAM BERA BLUR BNB BONK BRETT BTC CFX CHZ COMP CRV DOGE DOT DYDX EGLD ENA ENS ETC ETH FIL FET FLOW FTM GALA GAS GRT HBAR HIFI ICP IMX INJ IOTA JASMY JTO JUP KAS KAVA LDO LINK LISTA LTC MANA MANTA MASK MEME METIS MINA MKR NEAR NEIRO NOT OP ORDI PENDLE PEOPLE PEPE PNUT POL POLYX POPCAT PYTH QNT QTUM RENDER RIF RLC RUNE SAND SEI SHIB SKL SNX SOL STX SUI SUPER SUSHI TAO THETA TIA TLM TNSR TON TRB TRX UNI USUAL VET W WIF WLD XAI XLM XRP XTZ YGG ZEC ZEN ZK ZRO ZRX').split(' '));
+   marketSet=new Set(list.filter(x=>knownPerpetuals.has(x.ticker)).map(x=>x.ticker+'USDT'));
+  }
+ }else{
+  try{
+   const data=await getJson('https://api.binance.com/api/v3/ticker/24hr',15000);
+   marketSet=new Set(data.map(x=>x.symbol).filter(x=>String(x).endsWith('USDT')));
+  }catch(e){
+   console.log('Binance Vision spot-list fallback failed: '+String(e.message||e));
+   // When Binance market endpoints are unreachable, continue using CoinGecko-backed
+   // candidates; their price chart is available separately and publishing can still proceed.
+   marketSet=new Set(list.filter(x=>x.coinId).map(x=>x.ticker+'USDT'));
+  }
  }
- const hook=up?'🚀 Big move alert':'🔻 Downward move alert';
- const question=up?'momentum or a fakeout?':'dip opportunity or more downside?';
- return hook+' $'+coin.ticker+' '+move+' in 24h • '+volume+' volume. 👀 What comes next: '+question+' Find $'+coin.ticker+' on Binance Spot and check the chart. #'+coin.ticker+' #BinanceSpot';
+ const seen=new Set(s.seen||[]);
+ const candidates=list.filter(x=>!seen.has(x.ticker)&&marketSet.has(x.ticker+'USDT')).slice(0,12);
+ let last='No unused token is listed on the required Binance market';
+ for(const original of candidates){
+  const coin={...original,spotUrl:'https://www.binance.com/en/trade/'+original.ticker+'_USDT?type=spot',futuresUrl:'https://www.binance.com/en/futures/'+original.ticker+'USDT'};
+  try{
+   const values=await chartPoints(coin);if(values.length<8)throw Error('Not enough real chart points');
+   const text=await draft(coin,mode),img=await card(coin,values);
+   const r=await publishImage(text,img,'market-'+mode+'-'+coin.ticker.toLowerCase()+'-'+Date.now()+'.png');
+   const entry={at:new Date().toISOString(),ticker:coin.ticker,change:coin.change,volume:coin.volume,marketType:mode,text,url:r.url||null,postId:r.id||null};
+   s.published=(s.published||0)+1;s.perDay[today]=(s.perDay[today]||0)+1;s.seen=(s.seen||[]).concat(coin.ticker).slice(-300);s.history=(s.history||[]).concat(entry).slice(-100);s.lastError=null;
+   console.log('PUBLISHED '+s.published+'/'+maxPosts+' '+mode.toUpperCase()+' $'+coin.ticker+' '+coin.change.toFixed(2)+'% '+(r.url||'no URL'));
+   console.log('MIX spot='+spotCount+' futures='+futuresCount+' targets='+spotTarget+'/'+futuresTarget);
+   console.log('TEXT: '+text);return true;
+  }catch(e){last=String(e.message||e);console.log('Skipped $'+coin.ticker+': '+last);}
+ }
+ throw Error('No eligible '+mode+' token could be published. Last issue: '+last);
+}
+async function main(){
+ let s=await load();const event=process.env.GITHUB_EVENT_NAME||'';
+ if(event==='push'){console.log('Publishing paused: push runs only validate code.');return;}
+ if(event==='schedule'&&s.planVersion!==2){console.log('Scheduled run waiting for manual pilot start.');return;}
+ if(event==='workflow_dispatch'&&s.planVersion!==2){s={active:true,startedAt:new Date().toISOString(),endsAt:new Date(now()+72*3600000).toISOString(),published:0,perDay:{},seen:[],history:[],lastError:null,planVersion:2};console.log('New 3-day pilot starts '+s.startedAt+' ends '+s.endsAt+' target='+maxPosts+' mix spot='+spotTarget+' futures='+futuresTarget);}
+ if(!s.active||(s.published||0)>=maxPosts||now()>=Date.parse(s.endsAt)){s.active=false;s.lastError='Pilot complete or time expired';await save(s);console.log('Finished '+s.published+'/'+maxPosts);return;}
+ try{if(!process.env.BINANCE_SQUARE_OPENAPI_KEY)throw Error('Missing BINANCE_SQUARE_OPENAPI_KEY; no post sent.');await postOne(s);}catch(e){s.lastError=String(e.message||e).slice(0,500);console.error('POST FAILED: '+s.lastError);}
+ if(s.published>=maxPosts||now()>=Date.parse(s.endsAt))s.active=false;await save(s);console.log('PILOT '+(s.active?'ACTIVE':'FINISHED')+' '+s.published+'/'+maxPosts+' perDay='+JSON.stringify(s.perDay)+' error='+(s.lastError||'none'));if(s.lastError)process.exitCode=1;
+}
+main().catch(e=>{console.error('FATAL: '+String(e.message||e));process.exitCode=1;});
++coin.ticker+' is moving '+move+' over 24h on '+volume+' volume. 👀 The level to watch now: momentum vs. a reversal. '+question+'\n\n📊 Watching the perpetuals? Search 
+async function draft(coin,mode){
+ // Keep captions consistent and mobile-friendly: emojis, market facts, a real question,
+ // and a clear CTA. Never include raw/public URLs in the Binance Square caption.
+ return fallbackDraft(coin,mode);
+}
+async function postOne(s){
+ const today=dayKey();s.perDay=s.perDay||{};
+ if((s.perDay[today]||0)>=maxDaily)throw Error('Daily cap reached');
+ const list=await symbols();if(!list.length)throw Error('No high-volume 24h breakout tokens found; nothing posted.');
+ const history=s.history||[];
+ const spotCount=history.filter(x=>x.marketType==='spot').length;
+ const futuresCount=history.filter(x=>x.marketType==='futures').length;
+ const nextN=(s.published||0)+1;
+ const shouldFutures=futuresCount<Math.floor(nextN*futuresTarget/maxPosts) && futuresCount<futuresTarget;
+ const mode=shouldFutures?'futures':'spot';
+ let marketSet;
+ if(mode==='futures'){
+  try{
+   const data=await getJson('https://fapi.binance.com/fapi/v1/ticker/24hr',15000);
+   marketSet=new Set(data.map(x=>x.symbol).filter(x=>String(x).endsWith('USDT')));
+  }catch(e){
+   // GitHub-hosted runners can be geo-blocked by Binance Futures (HTTP 451).
+   // Fall back only to a conservative set of commonly listed USDⓈ-M perpetuals,
+   // intersected with live CoinGecko candidates, rather than aborting the whole run.
+   console.log('Binance Futures feed unavailable: '+String(e.message||e)+'; using conservative known-perpetual fallback');
+   const knownPerpetuals=new Set(('1000SATS 1000PEPE 1000SHIB 1INCH AAVE ACE ADA ALGO ANIME APT ARB ARKM ARK ATOM AVAX BCH BEAM BERA BLUR BNB BONK BRETT BTC CFX CHZ COMP CRV DOGE DOT DYDX EGLD ENA ENS ETC ETH FIL FET FLOW FTM GALA GAS GRT HBAR HIFI ICP IMX INJ IOTA JASMY JTO JUP KAS KAVA LDO LINK LISTA LTC MANA MANTA MASK MEME METIS MINA MKR NEAR NEIRO NOT OP ORDI PENDLE PEOPLE PEPE PNUT POL POLYX POPCAT PYTH QNT QTUM RENDER RIF RLC RUNE SAND SEI SHIB SKL SNX SOL STX SUI SUPER SUSHI TAO THETA TIA TLM TNSR TON TRB TRX UNI USUAL VET W WIF WLD XAI XLM XRP XTZ YGG ZEC ZEN ZK ZRO ZRX').split(' '));
+   marketSet=new Set(list.filter(x=>knownPerpetuals.has(x.ticker)).map(x=>x.ticker+'USDT'));
+  }
+ }else{
+  try{
+   const data=await getJson('https://api.binance.com/api/v3/ticker/24hr',15000);
+   marketSet=new Set(data.map(x=>x.symbol).filter(x=>String(x).endsWith('USDT')));
+  }catch(e){
+   console.log('Binance Vision spot-list fallback failed: '+String(e.message||e));
+   // When Binance market endpoints are unreachable, continue using CoinGecko-backed
+   // candidates; their price chart is available separately and publishing can still proceed.
+   marketSet=new Set(list.filter(x=>x.coinId).map(x=>x.ticker+'USDT'));
+  }
+ }
+ const seen=new Set(s.seen||[]);
+ const candidates=list.filter(x=>!seen.has(x.ticker)&&marketSet.has(x.ticker+'USDT')).slice(0,12);
+ let last='No unused token is listed on the required Binance market';
+ for(const original of candidates){
+  const coin={...original,spotUrl:'https://www.binance.com/en/trade/'+original.ticker+'_USDT?type=spot',futuresUrl:'https://www.binance.com/en/futures/'+original.ticker+'USDT'};
+  try{
+   const values=await chartPoints(coin);if(values.length<8)throw Error('Not enough real chart points');
+   const text=await draft(coin,mode),img=await card(coin,values);
+   const r=await publishImage(text,img,'market-'+mode+'-'+coin.ticker.toLowerCase()+'-'+Date.now()+'.png');
+   const entry={at:new Date().toISOString(),ticker:coin.ticker,change:coin.change,volume:coin.volume,marketType:mode,text,url:r.url||null,postId:r.id||null};
+   s.published=(s.published||0)+1;s.perDay[today]=(s.perDay[today]||0)+1;s.seen=(s.seen||[]).concat(coin.ticker).slice(-300);s.history=(s.history||[]).concat(entry).slice(-100);s.lastError=null;
+   console.log('PUBLISHED '+s.published+'/'+maxPosts+' '+mode.toUpperCase()+' $'+coin.ticker+' '+coin.change.toFixed(2)+'% '+(r.url||'no URL'));
+   console.log('MIX spot='+spotCount+' futures='+futuresCount+' targets='+spotTarget+'/'+futuresTarget);
+   console.log('TEXT: '+text);return true;
+  }catch(e){last=String(e.message||e);console.log('Skipped $'+coin.ticker+': '+last);}
+ }
+ throw Error('No eligible '+mode+' token could be published. Last issue: '+last);
+}
+async function main(){
+ let s=await load();const event=process.env.GITHUB_EVENT_NAME||'';
+ if(event==='push'){console.log('Publishing paused: push runs only validate code.');return;}
+ if(event==='schedule'&&s.planVersion!==2){console.log('Scheduled run waiting for manual pilot start.');return;}
+ if(event==='workflow_dispatch'&&s.planVersion!==2){s={active:true,startedAt:new Date().toISOString(),endsAt:new Date(now()+72*3600000).toISOString(),published:0,perDay:{},seen:[],history:[],lastError:null,planVersion:2};console.log('New 3-day pilot starts '+s.startedAt+' ends '+s.endsAt+' target='+maxPosts+' mix spot='+spotTarget+' futures='+futuresTarget);}
+ if(!s.active||(s.published||0)>=maxPosts||now()>=Date.parse(s.endsAt)){s.active=false;s.lastError='Pilot complete or time expired';await save(s);console.log('Finished '+s.published+'/'+maxPosts);return;}
+ try{if(!process.env.BINANCE_SQUARE_OPENAPI_KEY)throw Error('Missing BINANCE_SQUARE_OPENAPI_KEY; no post sent.');await postOne(s);}catch(e){s.lastError=String(e.message||e).slice(0,500);console.error('POST FAILED: '+s.lastError);}
+ if(s.published>=maxPosts||now()>=Date.parse(s.endsAt))s.active=false;await save(s);console.log('PILOT '+(s.active?'ACTIVE':'FINISHED')+' '+s.published+'/'+maxPosts+' perDay='+JSON.stringify(s.perDay)+' error='+(s.lastError||'none'));if(s.lastError)process.exitCode=1;
+}
+main().catch(e=>{console.error('FATAL: '+String(e.message||e));process.exitCode=1;});
++coin.ticker+' on Binance Futures and check the chart before making a move. Manage leverage and risk.\n\n#'+coin.ticker+' #Futures '+bias;
+ }
+ const hook=up?'⚡ BREAKOUT WATCH':'🔻 DOWNSIDE WATCH';
+ const question=up?'clean continuation or a classic fakeout?':'a dip worth watching or another leg down?';
+ return hook+' — 
+async function draft(coin,mode){
+ // Keep captions consistent and mobile-friendly: emojis, market facts, a real question,
+ // and a clear CTA. Never include raw/public URLs in the Binance Square caption.
+ return fallbackDraft(coin,mode);
+}
+async function postOne(s){
+ const today=dayKey();s.perDay=s.perDay||{};
+ if((s.perDay[today]||0)>=maxDaily)throw Error('Daily cap reached');
+ const list=await symbols();if(!list.length)throw Error('No high-volume 24h breakout tokens found; nothing posted.');
+ const history=s.history||[];
+ const spotCount=history.filter(x=>x.marketType==='spot').length;
+ const futuresCount=history.filter(x=>x.marketType==='futures').length;
+ const nextN=(s.published||0)+1;
+ const shouldFutures=futuresCount<Math.floor(nextN*futuresTarget/maxPosts) && futuresCount<futuresTarget;
+ const mode=shouldFutures?'futures':'spot';
+ let marketSet;
+ if(mode==='futures'){
+  try{
+   const data=await getJson('https://fapi.binance.com/fapi/v1/ticker/24hr',15000);
+   marketSet=new Set(data.map(x=>x.symbol).filter(x=>String(x).endsWith('USDT')));
+  }catch(e){
+   // GitHub-hosted runners can be geo-blocked by Binance Futures (HTTP 451).
+   // Fall back only to a conservative set of commonly listed USDⓈ-M perpetuals,
+   // intersected with live CoinGecko candidates, rather than aborting the whole run.
+   console.log('Binance Futures feed unavailable: '+String(e.message||e)+'; using conservative known-perpetual fallback');
+   const knownPerpetuals=new Set(('1000SATS 1000PEPE 1000SHIB 1INCH AAVE ACE ADA ALGO ANIME APT ARB ARKM ARK ATOM AVAX BCH BEAM BERA BLUR BNB BONK BRETT BTC CFX CHZ COMP CRV DOGE DOT DYDX EGLD ENA ENS ETC ETH FIL FET FLOW FTM GALA GAS GRT HBAR HIFI ICP IMX INJ IOTA JASMY JTO JUP KAS KAVA LDO LINK LISTA LTC MANA MANTA MASK MEME METIS MINA MKR NEAR NEIRO NOT OP ORDI PENDLE PEOPLE PEPE PNUT POL POLYX POPCAT PYTH QNT QTUM RENDER RIF RLC RUNE SAND SEI SHIB SKL SNX SOL STX SUI SUPER SUSHI TAO THETA TIA TLM TNSR TON TRB TRX UNI USUAL VET W WIF WLD XAI XLM XRP XTZ YGG ZEC ZEN ZK ZRO ZRX').split(' '));
+   marketSet=new Set(list.filter(x=>knownPerpetuals.has(x.ticker)).map(x=>x.ticker+'USDT'));
+  }
+ }else{
+  try{
+   const data=await getJson('https://api.binance.com/api/v3/ticker/24hr',15000);
+   marketSet=new Set(data.map(x=>x.symbol).filter(x=>String(x).endsWith('USDT')));
+  }catch(e){
+   console.log('Binance Vision spot-list fallback failed: '+String(e.message||e));
+   // When Binance market endpoints are unreachable, continue using CoinGecko-backed
+   // candidates; their price chart is available separately and publishing can still proceed.
+   marketSet=new Set(list.filter(x=>x.coinId).map(x=>x.ticker+'USDT'));
+  }
+ }
+ const seen=new Set(s.seen||[]);
+ const candidates=list.filter(x=>!seen.has(x.ticker)&&marketSet.has(x.ticker+'USDT')).slice(0,12);
+ let last='No unused token is listed on the required Binance market';
+ for(const original of candidates){
+  const coin={...original,spotUrl:'https://www.binance.com/en/trade/'+original.ticker+'_USDT?type=spot',futuresUrl:'https://www.binance.com/en/futures/'+original.ticker+'USDT'};
+  try{
+   const values=await chartPoints(coin);if(values.length<8)throw Error('Not enough real chart points');
+   const text=await draft(coin,mode),img=await card(coin,values);
+   const r=await publishImage(text,img,'market-'+mode+'-'+coin.ticker.toLowerCase()+'-'+Date.now()+'.png');
+   const entry={at:new Date().toISOString(),ticker:coin.ticker,change:coin.change,volume:coin.volume,marketType:mode,text,url:r.url||null,postId:r.id||null};
+   s.published=(s.published||0)+1;s.perDay[today]=(s.perDay[today]||0)+1;s.seen=(s.seen||[]).concat(coin.ticker).slice(-300);s.history=(s.history||[]).concat(entry).slice(-100);s.lastError=null;
+   console.log('PUBLISHED '+s.published+'/'+maxPosts+' '+mode.toUpperCase()+' $'+coin.ticker+' '+coin.change.toFixed(2)+'% '+(r.url||'no URL'));
+   console.log('MIX spot='+spotCount+' futures='+futuresCount+' targets='+spotTarget+'/'+futuresTarget);
+   console.log('TEXT: '+text);return true;
+  }catch(e){last=String(e.message||e);console.log('Skipped $'+coin.ticker+': '+last);}
+ }
+ throw Error('No eligible '+mode+' token could be published. Last issue: '+last);
+}
+async function main(){
+ let s=await load();const event=process.env.GITHUB_EVENT_NAME||'';
+ if(event==='push'){console.log('Publishing paused: push runs only validate code.');return;}
+ if(event==='schedule'&&s.planVersion!==2){console.log('Scheduled run waiting for manual pilot start.');return;}
+ if(event==='workflow_dispatch'&&s.planVersion!==2){s={active:true,startedAt:new Date().toISOString(),endsAt:new Date(now()+72*3600000).toISOString(),published:0,perDay:{},seen:[],history:[],lastError:null,planVersion:2};console.log('New 3-day pilot starts '+s.startedAt+' ends '+s.endsAt+' target='+maxPosts+' mix spot='+spotTarget+' futures='+futuresTarget);}
+ if(!s.active||(s.published||0)>=maxPosts||now()>=Date.parse(s.endsAt)){s.active=false;s.lastError='Pilot complete or time expired';await save(s);console.log('Finished '+s.published+'/'+maxPosts);return;}
+ try{if(!process.env.BINANCE_SQUARE_OPENAPI_KEY)throw Error('Missing BINANCE_SQUARE_OPENAPI_KEY; no post sent.');await postOne(s);}catch(e){s.lastError=String(e.message||e).slice(0,500);console.error('POST FAILED: '+s.lastError);}
+ if(s.published>=maxPosts||now()>=Date.parse(s.endsAt))s.active=false;await save(s);console.log('PILOT '+(s.active?'ACTIVE':'FINISHED')+' '+s.published+'/'+maxPosts+' perDay='+JSON.stringify(s.perDay)+' error='+(s.lastError||'none'));if(s.lastError)process.exitCode=1;
+}
+main().catch(e=>{console.error('FATAL: '+String(e.message||e));process.exitCode=1;});
++coin.ticker+' '+move+' in 24h with '+volume+' traded. That is the kind of move that gets attention. 👀\n\nWhat do you see next: '+question+' Drop your take below. 📈\n\nOpen Binance Spot, search 
+async function draft(coin,mode){
+ // Keep captions consistent and mobile-friendly: emojis, market facts, a real question,
+ // and a clear CTA. Never include raw/public URLs in the Binance Square caption.
+ return fallbackDraft(coin,mode);
+}
+async function postOne(s){
+ const today=dayKey();s.perDay=s.perDay||{};
+ if((s.perDay[today]||0)>=maxDaily)throw Error('Daily cap reached');
+ const list=await symbols();if(!list.length)throw Error('No high-volume 24h breakout tokens found; nothing posted.');
+ const history=s.history||[];
+ const spotCount=history.filter(x=>x.marketType==='spot').length;
+ const futuresCount=history.filter(x=>x.marketType==='futures').length;
+ const nextN=(s.published||0)+1;
+ const shouldFutures=futuresCount<Math.floor(nextN*futuresTarget/maxPosts) && futuresCount<futuresTarget;
+ const mode=shouldFutures?'futures':'spot';
+ let marketSet;
+ if(mode==='futures'){
+  try{
+   const data=await getJson('https://fapi.binance.com/fapi/v1/ticker/24hr',15000);
+   marketSet=new Set(data.map(x=>x.symbol).filter(x=>String(x).endsWith('USDT')));
+  }catch(e){
+   // GitHub-hosted runners can be geo-blocked by Binance Futures (HTTP 451).
+   // Fall back only to a conservative set of commonly listed USDⓈ-M perpetuals,
+   // intersected with live CoinGecko candidates, rather than aborting the whole run.
+   console.log('Binance Futures feed unavailable: '+String(e.message||e)+'; using conservative known-perpetual fallback');
+   const knownPerpetuals=new Set(('1000SATS 1000PEPE 1000SHIB 1INCH AAVE ACE ADA ALGO ANIME APT ARB ARKM ARK ATOM AVAX BCH BEAM BERA BLUR BNB BONK BRETT BTC CFX CHZ COMP CRV DOGE DOT DYDX EGLD ENA ENS ETC ETH FIL FET FLOW FTM GALA GAS GRT HBAR HIFI ICP IMX INJ IOTA JASMY JTO JUP KAS KAVA LDO LINK LISTA LTC MANA MANTA MASK MEME METIS MINA MKR NEAR NEIRO NOT OP ORDI PENDLE PEOPLE PEPE PNUT POL POLYX POPCAT PYTH QNT QTUM RENDER RIF RLC RUNE SAND SEI SHIB SKL SNX SOL STX SUI SUPER SUSHI TAO THETA TIA TLM TNSR TON TRB TRX UNI USUAL VET W WIF WLD XAI XLM XRP XTZ YGG ZEC ZEN ZK ZRO ZRX').split(' '));
+   marketSet=new Set(list.filter(x=>knownPerpetuals.has(x.ticker)).map(x=>x.ticker+'USDT'));
+  }
+ }else{
+  try{
+   const data=await getJson('https://api.binance.com/api/v3/ticker/24hr',15000);
+   marketSet=new Set(data.map(x=>x.symbol).filter(x=>String(x).endsWith('USDT')));
+  }catch(e){
+   console.log('Binance Vision spot-list fallback failed: '+String(e.message||e));
+   // When Binance market endpoints are unreachable, continue using CoinGecko-backed
+   // candidates; their price chart is available separately and publishing can still proceed.
+   marketSet=new Set(list.filter(x=>x.coinId).map(x=>x.ticker+'USDT'));
+  }
+ }
+ const seen=new Set(s.seen||[]);
+ const candidates=list.filter(x=>!seen.has(x.ticker)&&marketSet.has(x.ticker+'USDT')).slice(0,12);
+ let last='No unused token is listed on the required Binance market';
+ for(const original of candidates){
+  const coin={...original,spotUrl:'https://www.binance.com/en/trade/'+original.ticker+'_USDT?type=spot',futuresUrl:'https://www.binance.com/en/futures/'+original.ticker+'USDT'};
+  try{
+   const values=await chartPoints(coin);if(values.length<8)throw Error('Not enough real chart points');
+   const text=await draft(coin,mode),img=await card(coin,values);
+   const r=await publishImage(text,img,'market-'+mode+'-'+coin.ticker.toLowerCase()+'-'+Date.now()+'.png');
+   const entry={at:new Date().toISOString(),ticker:coin.ticker,change:coin.change,volume:coin.volume,marketType:mode,text,url:r.url||null,postId:r.id||null};
+   s.published=(s.published||0)+1;s.perDay[today]=(s.perDay[today]||0)+1;s.seen=(s.seen||[]).concat(coin.ticker).slice(-300);s.history=(s.history||[]).concat(entry).slice(-100);s.lastError=null;
+   console.log('PUBLISHED '+s.published+'/'+maxPosts+' '+mode.toUpperCase()+' $'+coin.ticker+' '+coin.change.toFixed(2)+'% '+(r.url||'no URL'));
+   console.log('MIX spot='+spotCount+' futures='+futuresCount+' targets='+spotTarget+'/'+futuresTarget);
+   console.log('TEXT: '+text);return true;
+  }catch(e){last=String(e.message||e);console.log('Skipped $'+coin.ticker+': '+last);}
+ }
+ throw Error('No eligible '+mode+' token could be published. Last issue: '+last);
+}
+async function main(){
+ let s=await load();const event=process.env.GITHUB_EVENT_NAME||'';
+ if(event==='push'){console.log('Publishing paused: push runs only validate code.');return;}
+ if(event==='schedule'&&s.planVersion!==2){console.log('Scheduled run waiting for manual pilot start.');return;}
+ if(event==='workflow_dispatch'&&s.planVersion!==2){s={active:true,startedAt:new Date().toISOString(),endsAt:new Date(now()+72*3600000).toISOString(),published:0,perDay:{},seen:[],history:[],lastError:null,planVersion:2};console.log('New 3-day pilot starts '+s.startedAt+' ends '+s.endsAt+' target='+maxPosts+' mix spot='+spotTarget+' futures='+futuresTarget);}
+ if(!s.active||(s.published||0)>=maxPosts||now()>=Date.parse(s.endsAt)){s.active=false;s.lastError='Pilot complete or time expired';await save(s);console.log('Finished '+s.published+'/'+maxPosts);return;}
+ try{if(!process.env.BINANCE_SQUARE_OPENAPI_KEY)throw Error('Missing BINANCE_SQUARE_OPENAPI_KEY; no post sent.');await postOne(s);}catch(e){s.lastError=String(e.message||e).slice(0,500);console.error('POST FAILED: '+s.lastError);}
+ if(s.published>=maxPosts||now()>=Date.parse(s.endsAt))s.active=false;await save(s);console.log('PILOT '+(s.active?'ACTIVE':'FINISHED')+' '+s.published+'/'+maxPosts+' perDay='+JSON.stringify(s.perDay)+' error='+(s.lastError||'none'));if(s.lastError)process.exitCode=1;
+}
+main().catch(e=>{console.error('FATAL: '+String(e.message||e));process.exitCode=1;});
++coin.ticker+' and check the live chart. No chasing candles — watch the levels.\n\n#'+coin.ticker+' #BinanceSpot';
 }
 async function draft(coin,mode){
  // Keep captions consistent and mobile-friendly: emojis, market facts, a real question,

@@ -2,17 +2,18 @@
   "active": true,
   "startedAt": "2026-10-19T21:02:07.000Z",
   "endsAt": "2026-10-22T21:02:07.000Z",
-  "published": 5,
+  "published": 6,
   "perDay": {
     "2026-10-19": 4,
-    "2026-10-20": 1
+    "2026-10-20": 2
   },
   "seen": [
     "AGT",
     "WLD",
     "PHA",
     "CRV",
-    "ARB"
+    "ARB",
+    "BR"
   ],
   "history": [
     {
@@ -64,6 +65,16 @@
       "text": "🚀 FUTURES RADAR | $ARB +7.45% in 24h, with $238.3M in volume. 👀\n\nBuyers have the momentum for now — the real test is whether price can hold it. Does $ARB have another leg, or are you watching for a pullback?\n\n📊 Open Binance Futures, search $ARB and check the live chart before making a decision. Momentum can flip fast — manage leverage and risk.\n\n#ARB #Futures #LONG",
       "url": "https://app.binance.com/uni-qr/cpos/379128596770856?r=DZCPIY7B&l=ru",
       "postId": 379128596770856
+    },
+    {
+      "at": "2026-10-20T00:12:26.096Z",
+      "ticker": "BR",
+      "change": 52.94595,
+      "volume": 42648516,
+      "marketType": "spot",
+      "text": "⚡ $BR IS ON THE RADAR | +52.95% in 24h with $42.6M traded. 👀\n\nThat is a serious 24h move — but the next candles matter more than the headline.\n\nCan buyers hold momentum, or is a pullback setting up? What level are you watching? Drop your read below. 📊\n\nOpen Binance Spot, search $BR and check the live chart. No FOMO — let price confirm the move.\n\n#BR #BinanceSpot",
+      "url": "https://app.binance.com/uni-qr/cpos/379141922684626?r=DZCPIY7B&l=ru",
+      "postId": 379141922684626
     }
   ],
   "lastError": null,

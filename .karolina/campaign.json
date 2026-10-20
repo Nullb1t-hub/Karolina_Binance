@@ -99,6 +99,6 @@
       "postId": 379254205515946
     }
   ],
-  "lastError": "No eligible futures token could be published. Last issue: No unused token passed the one-hour momentum and liquidity filters",
+  "lastError": "No eligible futures token could be published. Last issue: api.coingecko.com HTTP 429",
   "planVersion": 2
 }

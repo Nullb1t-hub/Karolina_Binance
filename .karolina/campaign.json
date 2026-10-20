@@ -2,10 +2,10 @@
   "active": true,
   "startedAt": "2026-10-19T21:02:07.000Z",
   "endsAt": "2026-10-22T21:02:07.000Z",
-  "published": 9,
+  "published": 10,
   "perDay": {
     "2026-10-19": 4,
-    "2026-10-20": 5
+    "2026-10-20": 6
   },
   "seen": [
     "AGT",
@@ -16,7 +16,8 @@
     "BR",
     "BEAM",
     "EPIC",
-    "TIA"
+    "TIA",
+    "NEAR"
   ],
   "history": [
     {
@@ -108,6 +109,16 @@
       "text": "🎯 $TIA — LONG SETUP\n\n⚡ 1h move: +1.87% | Volume: $95.6M\nEntry: $0.6376\nTake profit: $0.6546\nStop loss: $0.6282\n\n1h momentum is positive and price is holding above the recent range. Setup is invalid if price hits SL.\n\nWould you take this setup or wait? 👇\n📈 Binance Futures: $TIA\n\n#TIA #LONG #Futures",
       "url": "https://app.binance.com/uni-qr/cpos/379284115345424?r=DZCPIY7B&l=ru",
       "postId": 379284115345424
+    },
+    {
+      "at": "2026-10-20T11:42:12.556Z",
+      "ticker": "NEAR",
+      "change": 0.8023897832753689,
+      "volume": 684518912,
+      "marketType": "futures",
+      "text": "🎯 $NEAR — LONG SETUP\n\n⚡ 1h move: +0.80% | Volume: $684.5M\nEntry: $4.6976\nTake profit: $4.7687\nStop loss: $4.6581\n\n1h momentum is positive and price is holding above the recent range. Setup is invalid if price hits SL.\n\nWould you take this setup or wait? 👇\n📈 Binance Futures: $NEAR\n\n#NEAR #LONG #Futures",
+      "url": "https://app.binance.com/uni-qr/cpos/379311441761818?r=DZCPIY7B&l=ru",
+      "postId": 379311441761818
     }
   ],
   "lastError": null,

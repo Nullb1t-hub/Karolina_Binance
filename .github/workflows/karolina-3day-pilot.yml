@@ -7,11 +7,11 @@ on:
       - '.github/workflows/karolina-3day-pilot.yml'
   workflow_dispatch:
   schedule:
-    - cron: '43 * * * *'
+    - cron: '*/15 * * * *'
 permissions:
   contents: write
 concurrency:
-  group: karolina-3day-pilot
+  group: karolina-7day-campaign
   cancel-in-progress: false
 jobs:
   publish:

@@ -155,7 +155,7 @@ async function draft(coin,mode){
  // and a clear CTA. Never include raw/public URLs in the Binance Square caption.
  return fallbackDraft(coin,mode);
 }
-async function postOne(s){
+async function postOne(s,forcedMode=null){
  const today=dayKey();s.perDay=s.perDay||{};
  if((s.perDay[today]||0)>=maxDaily)throw Error('Daily cap reached');
  const list=await symbols();if(!list.length)throw Error('No high-volume 24h breakout tokens found; nothing posted.');
@@ -164,7 +164,7 @@ async function postOne(s){
  const futuresCount=history.filter(x=>x.marketType==='futures').length;
  const nextN=(s.published||0)+1;
  const shouldFutures=futuresCount<Math.floor(nextN*futuresTarget/maxPosts) && futuresCount<futuresTarget;
- const mode=shouldFutures?'futures':'spot';
+ const mode=forcedMode||(shouldFutures?'futures':'spot');
  let marketSet;
  if(mode==='futures'){
   try{
@@ -257,7 +257,7 @@ async function main(){
  if(event==='schedule'&&s.planVersion!==3){console.log('Scheduled run waiting for manual pilot start.');return;}
  if(event==='workflow_dispatch'&&s.planVersion!==3){s={active:true,startedAt:new Date().toISOString(),endsAt:new Date(now()+7*24*3600000).toISOString(),published:0,perDay:{},seen:[],history:[],lastError:null,planVersion:3};console.log('New 7-day campaign starts '+s.startedAt+' ends '+s.endsAt+' target='+maxPosts+' mix spot='+spotTarget+' futures='+futuresTarget);}
  if(!s.active||(s.published||0)>=maxPosts||now()>=Date.parse(s.endsAt)){s.active=false;s.lastError='Pilot complete or time expired';await save(s);console.log('Finished '+s.published+'/'+maxPosts);return;}
- try{const lastPost=Date.parse((s.history||[]).at(-1)?.at||'');if(event!=='push'&&Number.isFinite(lastPost)&&now()-lastPost<minPostGapMs){console.log('Throttle: last post is less than 55 minutes old; skipping publish.');return;}if(!process.env.BINANCE_SQUARE_OPENAPI_KEY)throw Error('Missing BINANCE_SQUARE_OPENAPI_KEY; no post sent.');await postOne(s);}catch(e){s.lastError=String(e.message||e).slice(0,500);console.error('POST FAILED: '+s.lastError);}
+ try{const lastPost=Date.parse((s.history||[]).at(-1)?.at||'');if(event!=='push'&&Number.isFinite(lastPost)&&now()-lastPost<minPostGapMs){console.log('Throttle: last post is less than 55 minutes old; skipping publish.');return;}if(!process.env.BINANCE_SQUARE_OPENAPI_KEY)throw Error('Missing BINANCE_SQUARE_OPENAPI_KEY; no post sent.');try{await postOne(s);}catch(firstError){if(String(firstError.message||firstError).includes('No eligible futures token')){console.log('Futures scan found no publishable setup; retrying once with Spot.');await postOne(s,'spot');}else throw firstError;}}catch(e){s.lastError=String(e.message||e).slice(0,500);console.error('POST FAILED: '+s.lastError);}
  if(s.published>=maxPosts||now()>=Date.parse(s.endsAt))s.active=false;await save(s);console.log('PILOT '+(s.active?'ACTIVE':'FINISHED')+' '+s.published+'/'+maxPosts+' perDay='+JSON.stringify(s.perDay)+' error='+(s.lastError||'none'));if(s.lastError)process.exitCode=1;
 }
 main().catch(e=>{console.error('FATAL: '+String(e.message||e));process.exitCode=1;});

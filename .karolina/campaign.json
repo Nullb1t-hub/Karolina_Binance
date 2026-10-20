@@ -2,10 +2,10 @@
   "active": true,
   "startedAt": "2026-10-19T21:02:07.000Z",
   "endsAt": "2026-10-22T21:02:07.000Z",
-  "published": 10,
+  "published": 11,
   "perDay": {
     "2026-10-19": 4,
-    "2026-10-20": 6
+    "2026-10-20": 7
   },
   "seen": [
     "AGT",
@@ -17,7 +17,8 @@
     "BEAM",
     "EPIC",
     "TIA",
-    "NEAR"
+    "NEAR",
+    "APR"
   ],
   "history": [
     {
@@ -119,6 +120,16 @@
       "text": "🎯 $NEAR — LONG SETUP\n\n⚡ 1h move: +0.80% | Volume: $684.5M\nEntry: $4.6976\nTake profit: $4.7687\nStop loss: $4.6581\n\n1h momentum is positive and price is holding above the recent range. Setup is invalid if price hits SL.\n\nWould you take this setup or wait? 👇\n📈 Binance Futures: $NEAR\n\n#NEAR #LONG #Futures",
       "url": "https://app.binance.com/uni-qr/cpos/379311441761818?r=DZCPIY7B&l=ru",
       "postId": 379311441761818
+    },
+    {
+      "at": "2026-10-20T13:49:29.921Z",
+      "ticker": "APR",
+      "change": -4.768445175828143,
+      "volume": 7528867,
+      "marketType": "spot",
+      "text": "🎯 $APR — SHORT SETUP\n\n⚡ 1h move: -4.77% | Volume: $7.5M\nEntry: $0.0310\nTake profit: $0.0289\nStop loss: $0.0321\n\n1h momentum is negative and price is pressing below the recent range. Setup is invalid if price hits SL.\n\nWould you take this setup or wait? 👇\n📈 Binance Spot: $APR\n\n#APR #SHORT #Crypto",
+      "url": "https://app.binance.com/uni-qr/cpos/379342724398236?r=DZCPIY7B&l=ru",
+      "postId": 379342724398236
     }
   ],
   "lastError": null,

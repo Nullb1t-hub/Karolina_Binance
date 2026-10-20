@@ -123,17 +123,27 @@ function formatPrice(value){
 }
 function fallbackDraft(coin,mode){
  const up=coin.change>=0,move=(up?'+':'')+Number(coin.change).toFixed(2)+'%',volume=compactMoney(coin.volume);
- if(mode==='futures'){
-  const hook=up?'🚀 FUTURES RADAR':'🔻 FUTURES UNDER PRESSURE';
-  const observation=up?'Buyers have the momentum for now — the real test is whether price can hold it.':'Sellers have control for now — watch whether price keeps slipping or buyers step in.';
-  const question=up?'Does $'+coin.ticker+' have another leg, or are you watching for a pullback?':'More downside ahead, or is this where buyers push back?';
-  const bias=up?'#LONG':'#SHORT';
-  return hook+' | $'+coin.ticker+' '+move+' in 24h, with '+volume+' in volume. 👀\n\n'+observation+' '+question+'\n\n📊 Open Binance Futures, search $'+coin.ticker+' and check the live chart before making a decision. Momentum can flip fast — manage leverage and risk.\n\n#'+coin.ticker+' #Futures '+bias;
- }
- const hook=up?'⚡ $'+coin.ticker+' IS ON THE RADAR':'🔻 $'+coin.ticker+' UNDER PRESSURE';
- const observation=up?'That is a serious 24h move — but the next candles matter more than the headline.':'Sellers have made their mark over 24h; now watch whether the move extends or starts to fade.';
- const question=up?'Can buyers hold momentum, or is a pullback setting up?':'More downside from here, or are buyers ready to step in?';
- return hook+' | '+move+' in 24h with '+volume+' traded. 👀\n\n'+observation+'\n\n'+question+' What level are you watching? Drop your read below. 📊\n\nOpen Binance Spot, search $'+coin.ticker+' and check the live chart. No FOMO — let price confirm the move.\n\n#'+coin.ticker+' #BinanceSpot';
+ const sum=coin.ticker.split('').reduce((n,ch)=>n+ch.charCodeAt(0),0);
+ const upHooks=[
+  '👀 $'+coin.ticker+' is moving — continuation or trap?',
+  '⚡ $'+coin.ticker+' caught attention. Can buyers hold it?',
+  '🚨 $'+coin.ticker+': the next move matters more than the headline',
+  '🔥 $'+coin.ticker+' is heating up — breakout or fakeout?'
+ ];
+ const downHooks=[
+  '🔻 $'+coin.ticker+': is this sell-off just getting started?',
+  '👀 Sellers are pressing $'+coin.ticker+' — bounce or breakdown?',
+  '🚨 $'+coin.ticker+' is under pressure. Bulls need to respond',
+  '⚠️ $'+coin.ticker+': bounce incoming or more downside?'
+ ];
+ const hook=(up?upHooks:downHooks)[sum%4];
+ const observation=up
+  ? 'Up '+move+' with '+volume+' traded. The key now: can price hold the push, or do late buyers get trapped?'
+  : 'Down '+move+' with '+volume+' traded. Watch for a failed bounce — or a reclaim that catches sellers offside.';
+ const question=up
+  ? (mode==='futures'?'Would you chase it or wait for a retest?':'Breakout continuation or bull trap? What is your read?')
+  : (mode==='futures'?'Press the short or wait for confirmation?':'Real breakdown or bounce setup? What are you watching?');
+ return hook+'\n\n'+observation+'\n\n'+question+' 👇\n\n#'+coin.ticker+(mode==='futures'?' #Futures':' #Binance');
 }
 async function draft(coin,mode){
  // Keep captions consistent and mobile-friendly: emojis, market facts, a real question,

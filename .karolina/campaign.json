@@ -2,10 +2,10 @@
   "active": true,
   "startedAt": "2026-10-19T21:02:07.000Z",
   "endsAt": "2026-10-22T21:02:07.000Z",
-  "published": 8,
+  "published": 9,
   "perDay": {
     "2026-10-19": 4,
-    "2026-10-20": 4
+    "2026-10-20": 5
   },
   "seen": [
     "AGT",
@@ -15,7 +15,8 @@
     "ARB",
     "BR",
     "BEAM",
-    "EPIC"
+    "EPIC",
+    "TIA"
   ],
   "history": [
     {
@@ -97,8 +98,18 @@
       "text": "👀 Sellers are pressing $EPIC — bounce or breakdown?\n\nDown -33.29% with $13.7M traded. Watch for a failed bounce — or a reclaim that catches sellers offside.\n\nReal breakdown or bounce setup? What are you watching? 👇\n\n#EPIC #Binance",
       "url": "https://app.binance.com/uni-qr/cpos/379254205515946?r=DZCPIY7B&l=ru",
       "postId": 379254205515946
+    },
+    {
+      "at": "2026-10-20T09:51:01.079Z",
+      "ticker": "TIA",
+      "change": 1.8650620320132336,
+      "volume": 95610297,
+      "marketType": "futures",
+      "text": "🎯 $TIA — LONG SETUP\n\n⚡ 1h move: +1.87% | Volume: $95.6M\nEntry: $0.6376\nTake profit: $0.6546\nStop loss: $0.6282\n\n1h momentum is positive and price is holding above the recent range. Setup is invalid if price hits SL.\n\nWould you take this setup or wait? 👇\n📈 Binance Futures: $TIA\n\n#TIA #LONG #Futures",
+      "url": "https://app.binance.com/uni-qr/cpos/379284115345424?r=DZCPIY7B&l=ru",
+      "postId": 379284115345424
     }
   ],
-  "lastError": "No eligible futures token could be published. Last issue: api.coingecko.com HTTP 429",
+  "lastError": null,
   "planVersion": 2
 }

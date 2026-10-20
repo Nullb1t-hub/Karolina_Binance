@@ -14,11 +14,22 @@ async function save(s){await fs.mkdir('.karolina',{recursive:true});await fs.wri
 function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));}
 function wrap(s,max){const out=[];let line='';for(const w of String(s||'').split(/\s+/)){if((line+' '+w).trim().length>max&&line){out.push(line);line=w;}else line=(line+' '+w).trim();}if(line)out.push(line);return out.slice(0,3);}
 async function getJson(url,timeout=12000){
- let r;
- try{r=await fetch(url,{signal:AbortSignal.timeout(timeout),headers:{'user-agent':'Karolina-MarketScout/2.1'}});}
- catch(e){throw Error('Network request failed for '+new URL(url).host+': '+String(e.cause?.code||e.message||e));}
- if(!r.ok)throw Error(new URL(url).host+' HTTP '+r.status);
- return r.json();
+ const host=new URL(url).host;
+ for(let attempt=0;attempt<4;attempt++){
+  let r;
+  try{r=await fetch(url,{signal:AbortSignal.timeout(timeout),headers:{'user-agent':'Karolina-MarketScout/2.1','accept':'application/json'}});}
+  catch(e){throw Error('Network request failed for '+host+': '+String(e.cause?.code||e.message||e));}
+  if(r.ok)return r.json();
+  if(r.status===429&&attempt<3){
+   const retryAfter=Number(r.headers.get('retry-after'));
+   const waitMs=Number.isFinite(retryAfter)&&retryAfter>0?Math.min(retryAfter*1000,20000):(4000*(attempt+1));
+   console.log(host+' rate limited (429); retry '+(attempt+1)+'/3 after '+Math.round(waitMs/1000)+'s');
+   await new Promise(resolve=>setTimeout(resolve,waitMs));
+   continue;
+  }
+  throw Error(host+' HTTP '+r.status);
+ }
+ throw Error(host+' HTTP 429 after retries');
 }
 const excluded=new Set(['BTC','ETH','BNB','SOL','XRP','DOGE','ADA','TRX','TON','LINK','LTC','BCH','DOT','AVAX','SHIB','USDC','USDT','FDUSD','DAI','EUR','BRL','TRY']);
 async function symbols(){
@@ -179,7 +190,7 @@ async function postOne(s){
   }
  }
  const seen=new Set(s.seen||[]);
- const candidates=list.filter(x=>!seen.has(x.ticker)&&marketSet.has(x.ticker+'USDT')).slice(0,40);
+ const candidates=list.filter(x=>!seen.has(x.ticker)&&marketSet.has(x.ticker+'USDT')).slice(0,12);
  const ranked=[];
  for(const candidate of candidates){
   try{

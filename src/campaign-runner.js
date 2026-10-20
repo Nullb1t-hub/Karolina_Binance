@@ -4,7 +4,7 @@ import sharp from 'sharp';
 import {publishImage} from './publisher.js';
 const statePath='.karolina/campaign.json';
 const feeds=[{name:'CoinDesk',url:'https://www.coindesk.com/arc/outboundfeeds/rss/'},{name:'Cointelegraph',url:'https://cointelegraph.com/rss'},{name:'Decrypt',url:'https://decrypt.co/feed'}];
-const maxPosts=60,maxDaily=24,spotTarget=23,futuresTarget=37,now=()=>Date.now();
+const maxPosts=60,maxDaily=24,spotTarget=23,futuresTarget=37,minPostGapMs=72*60*1000,now=()=>Date.now();
 function decode(s){return String(s||'').replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g,'$1').replace(/<[^>]*>/g,' ').replace(/&amp;/g,'&').replace(/&quot;/g,'"').replace(/&#39;|&apos;/g,"'").replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&#(\d+);/g,(_,n)=>String.fromCharCode(Number(n))).replace(/\s+/g,' ').trim();}
 function tag(b,n){const r=new RegExp('<'+n+'(?:\\s[^>]*)?>([\\s\\S]*?)<\\/'+n+'\\s*>','i'),m=b.match(r);return m?decode(m[1]):'';}
 function parseFeed(xml,source){return xml.split(/<item\b/i).slice(1).map(x=>x.split(/<\/item>/i)[0]).map(b=>({source,title:tag(b,'title'),link:tag(b,'link'),description:tag(b,'description'),date:tag(b,'pubDate')})).filter(x=>x.title&&/^https?:\/\//i.test(x.link));}
@@ -41,7 +41,7 @@ async function chartPoints(coin){
   const d=await getJson('https://api.coingecko.com/api/v3/coins/'+encodeURIComponent(coin.coinId)+'/market_chart?vs_currency=usd&days=1',15000);
   return (d.prices||[]).map(x=>Number(x[1])).filter(x=>Number.isFinite(x)&&x>0);
  }
- const d=await getJson('https://api.binance.vision/api/v3/klines?symbol='+encodeURIComponent(coin.symbol)+'&interval=1h&limit=24',12000);
+ const d=await getJson('https://api.binance.vision/api/v3/klines?symbol='+encodeURIComponent(coin.symbol)+'&interval=1m&limit=60',12000);
  return d.map(x=>Number(x[4])).filter(x=>Number.isFinite(x)&&x>0);
 }
 function linePath(values){
@@ -122,29 +122,22 @@ function formatPrice(value){
  return '$'+n.toPrecision(4);
 }
 function fallbackDraft(coin,mode){
- const up=coin.change>=0,move=(up?'+':'')+Number(coin.change).toFixed(2)+'%',volume=compactMoney(coin.volume);
- const sum=coin.ticker.split('').reduce((n,ch)=>n+ch.charCodeAt(0),0);
- const upHooks=[
-  '👀 $'+coin.ticker+' is moving — continuation or trap?',
-  '⚡ $'+coin.ticker+' caught attention. Can buyers hold it?',
-  '🚨 $'+coin.ticker+': the next move matters more than the headline',
-  '🔥 $'+coin.ticker+' is heating up — breakout or fakeout?'
- ];
- const downHooks=[
-  '🔻 $'+coin.ticker+': is this sell-off just getting started?',
-  '👀 Sellers are pressing $'+coin.ticker+' — bounce or breakdown?',
-  '🚨 $'+coin.ticker+' is under pressure. Bulls need to respond',
-  '⚠️ $'+coin.ticker+': bounce incoming or more downside?'
- ];
- const hook=(up?upHooks:downHooks)[sum%4];
- const observation=up
-  ? 'Up '+move+' with '+volume+' traded. The key now: can price hold the push, or do late buyers get trapped?'
-  : 'Down '+move+' with '+volume+' traded. Watch for a failed bounce — or a reclaim that catches sellers offside.';
- const question=up
-  ? (mode==='futures'?'Would you chase it or wait for a retest?':'Breakout continuation or bull trap? What is your read?')
-  : (mode==='futures'?'Press the short or wait for confirmation?':'Real breakdown or bounce setup? What are you watching?');
- const chartUrl=mode==='futures'?coin.futuresUrl:coin.spotUrl;
- return hook+'\n\n'+observation+'\n\n'+question+' 👇\n\n📈 Chart: '+chartUrl+'\n\n#'+coin.ticker+(mode==='futures'?' #Futures':' #Binance');
+ const side=coin.signalSide|| (coin.change>=0?'LONG':'SHORT');
+ const move=(coin.hourChange>=0?'+':'')+Number(coin.hourChange??coin.change).toFixed(2)+'%';
+ const price=Number(coin.price),tp=Number(coin.takeProfit),sl=Number(coin.stopLoss);
+ const direction=side==='LONG'?'LONG':'SHORT';
+ const reason=side==='LONG'
+  ? '1h momentum is positive and price is holding above the recent range.'
+  : '1h momentum is negative and price is pressing below the recent range.';
+ return '🎯 $'+coin.ticker+' — '+direction+' SETUP\n\n'
+  +'⚡ 1h move: '+move+' | Volume: '+compactMoney(coin.volume)+'\n'
+  +'Entry: '+formatPrice(price)+'\n'
+  +'Take profit: '+formatPrice(tp)+'\n'
+  +'Stop loss: '+formatPrice(sl)+'\n\n'
+  +reason+' Setup is invalid if price hits SL.\n\n'
+  +'Would you take this setup or wait? 👇\n'
+  +'📈 '+(mode==='futures'?'Binance Futures':'Binance Spot')+': $'+coin.ticker+'\n\n'
+  +'#'+coin.ticker+' #'+direction+' '+(mode==='futures'?'#Futures':'#Crypto');
 }
 async function draft(coin,mode){
  // Keep captions consistent and mobile-friendly: emojis, market facts, a real question,
@@ -186,7 +179,57 @@ async function postOne(s){
   }
  }
  const seen=new Set(s.seen||[]);
- const candidates=list.filter(x=>!seen.has(x.ticker)&&marketSet.has(x.ticker+'USDT')).slice(0,12);
+ const candidates=list.filter(x=>!seen.has(x.ticker)&&marketSet.has(x.ticker+'USDT')).slice(0,40);
+ // Rank smaller liquid coins by the latest 60 one-minute candles, not only 24h movers.
+ const ranked=[];
+ for(const candidate of candidates){
+  try{
+   const candles=await getJson('https://api.binance.vision/api/v3/klines?symbol='+encodeURIComponent(candidate.symbol)+'&interval=1m&limit=60',10000);
+   if(candles.length<50)continue;
+   const closes=candles.map(x=>Number(x[4])),highs=candles.map(x=>Number(x[2])),lows=candles.map(x=>Number(x[3]));
+   const first=closes[0],last=closes[closes.length-1],hourChange=(last-first)/first*100;
+   const recentHigh=Math.max(...highs.slice(-15)),recentLow=Math.min(...lows.slice(-15));
+   const ranges=candles.slice(-20).map(x=>Number(x[2])-Number(x[3])).filter(x=>x>0);
+   const atr=ranges.reduce((n,x)=>n+x,0)/Math.max(1,ranges.length);
+   if(!Number.isFinite(hourChange)||Math.abs(hourChange)<0.8||!atr||last<=0)continue;
+   const side=hourChange>0?'LONG':'SHORT';
+   const entry=last;
+   const stopLoss=side==='LONG'?Math.min(recentLow,entry-1.35*atr):Math.max(recentHigh,entry+1.35*atr);
+   const risk=Math.abs(entry-stopLoss);
+   if(!risk||risk/entry>0.045)continue;
+   const takeProfit=side==='LONG'?entry+1.8*risk:entry-1.8*risk;
+   ranked.push({...candidate,price:entry,hourChange,signalSide:side,takeProfit,stopLoss,rank:Math.abs(hourChange)*Math.log10(1+candidate.volume)});
+  }catch(e){console.log('1m scan skipped 
+ let last='No unused token is listed on the required Binance market';
+ for(const original of candidatesRanked){
+  const coin={...original,spotUrl:'https://www.binance.com/en/trade/'+original.ticker+'_USDT?type=spot',futuresUrl:'https://www.binance.com/en/futures/'+original.ticker+'USDT'};
+  try{
+   const values=await chartPoints(coin);if(values.length<8)throw Error('Not enough real chart points');
+   const text=await draft(coin,mode),img=await card(coin,values);
+   const r=await publishImage(text,img,'market-'+mode+'-'+coin.ticker.toLowerCase()+'-'+Date.now()+'.png');
+   const entry={at:new Date().toISOString(),ticker:coin.ticker,change:coin.change,volume:coin.volume,marketType:mode,text,url:r.url||null,postId:r.id||null};
+   s.published=(s.published||0)+1;s.perDay[today]=(s.perDay[today]||0)+1;s.seen=(s.seen||[]).concat(coin.ticker).slice(-300);s.history=(s.history||[]).concat(entry).slice(-100);s.lastError=null;
+   console.log('PUBLISHED '+s.published+'/'+maxPosts+' '+mode.toUpperCase()+' $'+coin.ticker+' '+coin.change.toFixed(2)+'% '+(r.url||'no URL'));
+   console.log('MIX spot='+spotCount+' futures='+futuresCount+' targets='+spotTarget+'/'+futuresTarget);
+   console.log('TEXT: '+text);return true;
+  }catch(e){last=String(e.message||e);console.log('Skipped $'+coin.ticker+': '+last);}
+ }
+ throw Error('No eligible '+mode+' token could be published. Last issue: '+last);
+}
+async function main(){
+ let s=await load();const event=process.env.GITHUB_EVENT_NAME||'';
+ if(event==='push'){console.log('Publishing paused: push runs only validate code.');return;}
+ if(event==='schedule'&&s.planVersion!==2){console.log('Scheduled run waiting for manual pilot start.');return;}
+ if(event==='workflow_dispatch'&&s.planVersion!==2){s={active:true,startedAt:new Date().toISOString(),endsAt:new Date(now()+72*3600000).toISOString(),published:0,perDay:{},seen:[],history:[],lastError:null,planVersion:2};console.log('New 3-day pilot starts '+s.startedAt+' ends '+s.endsAt+' target='+maxPosts+' mix spot='+spotTarget+' futures='+futuresTarget);}
+ if(!s.active||(s.published||0)>=maxPosts||now()>=Date.parse(s.endsAt)){s.active=false;s.lastError='Pilot complete or time expired';await save(s);console.log('Finished '+s.published+'/'+maxPosts);return;}
+ try{const lastPost=Date.parse((s.history||[]).at(-1)?.at||'');if(event==='schedule'&&Number.isFinite(lastPost)&&now()-lastPost<minPostGapMs){console.log('Throttle: last post is less than 72 minutes old; skipping publish.');return;}if(!process.env.BINANCE_SQUARE_OPENAPI_KEY)throw Error('Missing BINANCE_SQUARE_OPENAPI_KEY; no post sent.');await postOne(s);}catch(e){s.lastError=String(e.message||e).slice(0,500);console.error('POST FAILED: '+s.lastError);}
+ if(s.published>=maxPosts||now()>=Date.parse(s.endsAt))s.active=false;await save(s);console.log('PILOT '+(s.active?'ACTIVE':'FINISHED')+' '+s.published+'/'+maxPosts+' perDay='+JSON.stringify(s.perDay)+' error='+(s.lastError||'none'));if(s.lastError)process.exitCode=1;
+}
+main().catch(e=>{console.error('FATAL: '+String(e.message||e));process.exitCode=1;});
++candidate.ticker+': '+e.message);}
+ }
+ ranked.sort((a,b)=>b.rank-a.rank);
+ const candidatesRanked=ranked.slice(0,12);
  let last='No unused token is listed on the required Binance market';
  for(const original of candidates){
   const coin={...original,spotUrl:'https://www.binance.com/en/trade/'+original.ticker+'_USDT?type=spot',futuresUrl:'https://www.binance.com/en/futures/'+original.ticker+'USDT'};

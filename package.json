@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "node src/index.js",
-    "check": "node --check src/index.js && node --check src/bot.js && node --check src/market.js && node --check src/writer.js && node --check src/publisher.js && node --check src/scheduler.js && node --check src/store.js && node --check src/chart.js && node --check src/control-runner.js",
+    "check": "node --check src/index.js && node --check src/bot.js && node --check src/market.js && node --check src/writer.js && node --check src/publisher.js && node --check src/scheduler.js && node --check src/store.js && node --check src/chart.js && node --check src/control-runner.js && node --check src/campaign-runner.js",
     "controller": "node src/control-runner.js"
   },
   "dependencies": {

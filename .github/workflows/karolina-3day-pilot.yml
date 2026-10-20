@@ -1,4 +1,4 @@
-name: Karolina 3-day pilot
+name: Karolina 7-day campaign
 on:
   push:
     branches: [main]

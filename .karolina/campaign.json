@@ -1,12 +1,9 @@
 {
   "active": true,
-  "startedAt": "2026-10-20T17:34:00.000Z",
-  "endsAt": "2026-10-27T17:34:00.000Z",
-  "published": 11,
-  "perDay": {
-    "2026-10-19": 4,
-    "2026-10-20": 7
-  },
+  "startedAt": "2026-10-20T17:49:00.000Z",
+  "endsAt": "2026-10-27T17:49:00.000Z",
+  "published": 0,
+  "perDay": {},
   "seen": [
     "AGT",
     "WLD",
@@ -20,7 +17,10 @@
     "NEAR",
     "APR"
   ],
-  "history": [
+  "history": [],
+  "lastError": null,
+  "planVersion": 3,
+  "archiveHistory": [
     {
       "at": "2026-10-19T20:20:50.517Z",
       "ticker": "AGT",
@@ -131,7 +131,5 @@
       "url": "https://app.binance.com/uni-qr/cpos/379342724398236?r=DZCPIY7B&l=ru",
       "postId": 379342724398236
     }
-  ],
-  "lastError": null,
-  "planVersion": 3
+  ]
 }

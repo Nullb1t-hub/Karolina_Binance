@@ -1,7 +1,7 @@
 {
   "active": true,
-  "startedAt": "2026-10-19T21:02:07.000Z",
-  "endsAt": "2026-10-22T21:02:07.000Z",
+  "startedAt": "2026-10-20T17:34:00.000Z",
+  "endsAt": "2026-10-27T17:34:00.000Z",
   "published": 11,
   "perDay": {
     "2026-10-19": 4,
@@ -133,5 +133,5 @@
     }
   ],
   "lastError": null,
-  "planVersion": 2
+  "planVersion": 3
 }

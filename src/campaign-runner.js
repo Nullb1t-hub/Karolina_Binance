@@ -180,27 +180,28 @@ async function postOne(s){
  }
  const seen=new Set(s.seen||[]);
  const candidates=list.filter(x=>!seen.has(x.ticker)&&marketSet.has(x.ticker+'USDT')).slice(0,40);
- // Rank smaller liquid coins by the latest 60 one-minute candles, not only 24h movers.
  const ranked=[];
  for(const candidate of candidates){
   try{
    const candles=await getJson('https://api.binance.vision/api/v3/klines?symbol='+encodeURIComponent(candidate.symbol)+'&interval=1m&limit=60',10000);
    if(candles.length<50)continue;
    const closes=candles.map(x=>Number(x[4])),highs=candles.map(x=>Number(x[2])),lows=candles.map(x=>Number(x[3]));
-   const first=closes[0],last=closes[closes.length-1],hourChange=(last-first)/first*100;
+   const first=closes[0],lastPrice=closes[closes.length-1],hourChange=(lastPrice-first)/first*100;
    const recentHigh=Math.max(...highs.slice(-15)),recentLow=Math.min(...lows.slice(-15));
    const ranges=candles.slice(-20).map(x=>Number(x[2])-Number(x[3])).filter(x=>x>0);
    const atr=ranges.reduce((n,x)=>n+x,0)/Math.max(1,ranges.length);
-   if(!Number.isFinite(hourChange)||Math.abs(hourChange)<0.8||!atr||last<=0)continue;
-   const side=hourChange>0?'LONG':'SHORT';
-   const entry=last;
-   const stopLoss=side==='LONG'?Math.min(recentLow,entry-1.35*atr):Math.max(recentHigh,entry+1.35*atr);
-   const risk=Math.abs(entry-stopLoss);
-   if(!risk||risk/entry>0.045)continue;
-   const takeProfit=side==='LONG'?entry+1.8*risk:entry-1.8*risk;
-   ranked.push({...candidate,price:entry,hourChange,signalSide:side,takeProfit,stopLoss,rank:Math.abs(hourChange)*Math.log10(1+candidate.volume)});
-  }catch(e){console.log('1m scan skipped 
- let last='No unused token is listed on the required Binance market';
+   if(!Number.isFinite(hourChange)||Math.abs(hourChange)<0.8||!atr||lastPrice<=0)continue;
+   const signalSide=hourChange>0?'LONG':'SHORT',price=lastPrice;
+   const stopLoss=signalSide==='LONG'?Math.min(recentLow,price-1.35*atr):Math.max(recentHigh,price+1.35*atr);
+   const risk=Math.abs(price-stopLoss);
+   if(!risk||risk/price>0.045)continue;
+   const takeProfit=signalSide==='LONG'?price+1.8*risk:price-1.8*risk;
+   ranked.push({...candidate,price,change:hourChange,hourChange,signalSide,takeProfit,stopLoss,rank:Math.abs(hourChange)*Math.log10(1+candidate.volume)});
+  }catch(e){console.log('1m scan skipped '+candidate.ticker+': '+String(e.message||e));}
+ }
+ ranked.sort((a,b)=>b.rank-a.rank);
+ const candidatesRanked=ranked.slice(0,12);
+ let last='No unused token passed the one-hour momentum and liquidity filters';
  for(const original of candidatesRanked){
   const coin={...original,spotUrl:'https://www.binance.com/en/trade/'+original.ticker+'_USDT?type=spot',futuresUrl:'https://www.binance.com/en/futures/'+original.ticker+'USDT'};
   try{

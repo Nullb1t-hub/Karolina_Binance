@@ -2,10 +2,10 @@
   "active": true,
   "startedAt": "2026-10-19T21:02:07.000Z",
   "endsAt": "2026-10-22T21:02:07.000Z",
-  "published": 7,
+  "published": 8,
   "perDay": {
     "2026-10-19": 4,
-    "2026-10-20": 3
+    "2026-10-20": 4
   },
   "seen": [
     "AGT",
@@ -14,7 +14,8 @@
     "CRV",
     "ARB",
     "BR",
-    "BEAM"
+    "BEAM",
+    "EPIC"
   ],
   "history": [
     {
@@ -86,6 +87,16 @@
       "text": "🚀 FUTURES RADAR | $BEAM +12.12% in 24h, with $10.2M in volume. 👀\n\nBuyers have the momentum for now — the real test is whether price can hold it. Does $BEAM have another leg, or are you watching for a pullback?\n\n📊 Open Binance Futures, search $BEAM and check the live chart before making a decision. Momentum can flip fast — manage leverage and risk.\n\n#BEAM #Futures #LONG",
       "url": "https://app.binance.com/uni-qr/cpos/379225320756551?r=DZCPIY7B&l=ru",
       "postId": 379225320756551
+    },
+    {
+      "at": "2026-10-20T07:49:18.894Z",
+      "ticker": "EPIC",
+      "change": -33.28947,
+      "volume": 13744817,
+      "marketType": "spot",
+      "text": "👀 Sellers are pressing $EPIC — bounce or breakdown?\n\nDown -33.29% with $13.7M traded. Watch for a failed bounce — or a reclaim that catches sellers offside.\n\nReal breakdown or bounce setup? What are you watching? 👇\n\n#EPIC #Binance",
+      "url": "https://app.binance.com/uni-qr/cpos/379254205515946?r=DZCPIY7B&l=ru",
+      "postId": 379254205515946
     }
   ],
   "lastError": null,

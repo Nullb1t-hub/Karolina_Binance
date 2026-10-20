@@ -143,7 +143,8 @@ function fallbackDraft(coin,mode){
  const question=up
   ? (mode==='futures'?'Would you chase it or wait for a retest?':'Breakout continuation or bull trap? What is your read?')
   : (mode==='futures'?'Press the short or wait for confirmation?':'Real breakdown or bounce setup? What are you watching?');
- return hook+'\n\n'+observation+'\n\n'+question+' 👇\n\n#'+coin.ticker+(mode==='futures'?' #Futures':' #Binance');
+ const chartUrl=mode==='futures'?coin.futuresUrl:coin.spotUrl;
+ return hook+'\n\n'+observation+'\n\n'+question+' 👇\n\n📈 Chart: '+chartUrl+'\n\n#'+coin.ticker+(mode==='futures'?' #Futures':' #Binance');
 }
 async function draft(coin,mode){
  // Keep captions consistent and mobile-friendly: emojis, market facts, a real question,

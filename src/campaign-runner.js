@@ -62,7 +62,7 @@ async function card(coin,values){
    }
   }catch{}
   const ticker=esc(coin.ticker),fullName=esc(coin.name||coin.fullName||coin.ticker);
-  const move=(up?'+':'')+Number(coin.change).toFixed(2)+'%';
+  const move=(Number(coin.hourChange??coin.change)>=0?'+':'')+Number(coin.hourChange??coin.change).toFixed(2)+'%';
   const min=Math.min(...values),max=Math.max(...values),span=max-min||1;
   const endX=1112,endY=(490-(values[values.length-1]-min)/span*165).toFixed(1);
   const grid=Array.from({length:6},(_,i)=>'<line x1="72" y1="'+(205+i*58)+'" x2="1128" y2="'+(205+i*58)+'" stroke="#203047" stroke-width="1" opacity=".78"/>').join('');
@@ -95,7 +95,7 @@ async function card(coin,values){
   '<g transform="translate(1010 225) scale(.9)"><path d="'+(up?'M0 48 L31 17 L48 34 L82 0 M54 0 H82 V28':'M0 0 L31 31 L48 14 L82 48 M54 48 H82 V20')+'" fill="none" stroke="'+accent+'" stroke-width="18" opacity=".25" filter="url(#glow)" stroke-linecap="round" stroke-linejoin="round"/>'+trend+'</g>'+
   '<rect x="56" y="535" width="1088" height="93" rx="24" fill="url(#panel)" stroke="#34445E" stroke-opacity=".78"/>'+
   '<line x1="420" y1="552" x2="420" y2="611" stroke="#34445E"/><line x1="790" y1="552" x2="790" y2="611" stroke="#34445E"/>'+
-  '<text x="82" y="568" font-family="Arial,Helvetica,sans-serif" font-size="13" font-weight="700" letter-spacing="2.5" fill="#9BAAC0">24H PRICE MOVE</text>'+
+  '<text x="82" y="568" font-family="Arial,Helvetica,sans-serif" font-size="13" font-weight="700" letter-spacing="2.5" fill="#9BAAC0">1H PRICE MOVE</text>'+
   '<text x="80" y="613" font-family="Arial,Helvetica,sans-serif" font-size="48" font-weight="900" letter-spacing="-1.5" fill="'+accent+'">'+esc(move)+'</text>'+
   '<text x="455" y="568" font-family="Arial,Helvetica,sans-serif" font-size="13" font-weight="700" letter-spacing="2.5" fill="#9BAAC0">24H VOLUME</text>'+
   '<text x="455" y="607" font-family="Arial,Helvetica,sans-serif" font-size="31" font-weight="800" fill="#FFFFFF">'+esc(compactMoney(coin.volume))+'</text>'+

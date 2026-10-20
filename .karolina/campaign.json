@@ -32,7 +32,7 @@
       "postId": 379414429112410
     }
   ],
-  "lastError": null,
+  "lastError": "No eligible futures token could be published. Last issue: No unused token passed the one-hour momentum and liquidity filters",
   "planVersion": 3,
   "archiveHistory": [
     {

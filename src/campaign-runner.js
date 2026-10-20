@@ -183,21 +183,45 @@ async function postOne(s){
  const ranked=[];
  for(const candidate of candidates){
   try{
-   const candles=await getJson('https://api.binance.vision/api/v3/klines?symbol='+encodeURIComponent(candidate.symbol)+'&interval=1m&limit=60',10000);
-   if(candles.length<50)continue;
-   const closes=candles.map(x=>Number(x[4])),highs=candles.map(x=>Number(x[2])),lows=candles.map(x=>Number(x[3]));
-   const first=closes[0],lastPrice=closes[closes.length-1],hourChange=(lastPrice-first)/first*100;
-   const recentHigh=Math.max(...highs.slice(-15)),recentLow=Math.min(...lows.slice(-15));
-   const ranges=candles.slice(-20).map(x=>Number(x[2])-Number(x[3])).filter(x=>x>0);
-   const atr=ranges.reduce((n,x)=>n+x,0)/Math.max(1,ranges.length);
-   if(!Number.isFinite(hourChange)||Math.abs(hourChange)<0.8||!atr||lastPrice<=0)continue;
-   const signalSide=hourChange>0?'LONG':'SHORT',price=lastPrice;
-   const stopLoss=signalSide==='LONG'?Math.min(recentLow,price-1.35*atr):Math.max(recentHigh,price+1.35*atr);
-   const risk=Math.abs(price-stopLoss);
-   if(!risk||risk/price>0.045)continue;
-   const takeProfit=signalSide==='LONG'?price+1.8*risk:price-1.8*risk;
-   ranked.push({...candidate,price,change:hourChange,hourChange,signalSide,takeProfit,stopLoss,rank:Math.abs(hourChange)*Math.log10(1+candidate.volume)});
-  }catch(e){console.log('1m scan skipped '+candidate.ticker+': '+String(e.message||e));}
+   let closes,highs,lows,atr;
+   if(candidate.coinId){
+    // Binance endpoints are geo/DNS blocked on some GitHub-hosted runners.
+    // CoinGecko's market chart provides a usable fallback for hourly momentum.
+    const prices=await chartPoints(candidate);
+    if(prices.length<8)continue;
+    closes=prices;
+    const recent=prices.slice(-4);
+    highs=recent;lows=recent;
+    const hourIndex=Math.max(0,prices.length-13);
+    const first=prices[hourIndex],lastPrice=prices[prices.length-1];
+    const moves=prices.slice(-13).slice(1).map((v,i)=>Math.abs(v-prices[prices.length-13+i])).filter(v=>Number.isFinite(v)&&v>0);
+    atr=moves.length?moves.reduce((n,x)=>n+x,0)/moves.length*2.5:0;
+    const hourChange=(lastPrice-first)/first*100;
+    const recentHigh=Math.max(...highs),recentLow=Math.min(...lows);
+    if(!Number.isFinite(hourChange)||Math.abs(hourChange)<0.8||!atr||lastPrice<=0)continue;
+    const signalSide=hourChange>0?'LONG':'SHORT',price=lastPrice;
+    const stopLoss=signalSide==='LONG'?Math.min(recentLow,price-1.35*atr):Math.max(recentHigh,price+1.35*atr);
+    const risk=Math.abs(price-stopLoss);
+    if(!risk||risk/price>0.045)continue;
+    const takeProfit=signalSide==='LONG'?price+1.8*risk:price-1.8*risk;
+    ranked.push({...candidate,price,change:hourChange,hourChange,signalSide,takeProfit,stopLoss,rank:Math.abs(hourChange)*Math.log10(1+candidate.volume)});
+   }else{
+    const candles=await getJson('https://api.binance.vision/api/v3/klines?symbol='+encodeURIComponent(candidate.symbol)+'&interval=1m&limit=60',10000);
+    if(candles.length<50)continue;
+    closes=candles.map(x=>Number(x[4]));highs=candles.map(x=>Number(x[2]));lows=candles.map(x=>Number(x[3]));
+    const first=closes[0],lastPrice=closes[closes.length-1],hourChange=(lastPrice-first)/first*100;
+    const recentHigh=Math.max(...highs.slice(-15)),recentLow=Math.min(...lows.slice(-15));
+    const ranges=candles.slice(-20).map(x=>Number(x[2])-Number(x[3])).filter(x=>x>0);
+    atr=ranges.reduce((n,x)=>n+x,0)/Math.max(1,ranges.length);
+    if(!Number.isFinite(hourChange)||Math.abs(hourChange)<0.8||!atr||lastPrice<=0)continue;
+    const signalSide=hourChange>0?'LONG':'SHORT',price=lastPrice;
+    const stopLoss=signalSide==='LONG'?Math.min(recentLow,price-1.35*atr):Math.max(recentHigh,price+1.35*atr);
+    const risk=Math.abs(price-stopLoss);
+    if(!risk||risk/price>0.045)continue;
+    const takeProfit=signalSide==='LONG'?price+1.8*risk:price-1.8*risk;
+    ranked.push({...candidate,price,change:hourChange,hourChange,signalSide,takeProfit,stopLoss,rank:Math.abs(hourChange)*Math.log10(1+candidate.volume)});
+   }
+  }catch(e){console.log('market scan skipped '+candidate.ticker+': '+String(e.message||e));}
  }
  ranked.sort((a,b)=>b.rank-a.rank);
  const candidatesRanked=ranked.slice(0,12);

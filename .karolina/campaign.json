@@ -2,9 +2,9 @@
   "active": true,
   "startedAt": "2026-10-20T17:49:00.000Z",
   "endsAt": "2026-10-27T17:49:00.000Z",
-  "published": 1,
+  "published": 2,
   "perDay": {
-    "2026-10-20": 1
+    "2026-10-20": 2
   },
   "seen": [
     "AGT",
@@ -18,7 +18,8 @@
     "TIA",
     "NEAR",
     "APR",
-    "IOST"
+    "IOST",
+    "PEPE"
   ],
   "history": [
     {
@@ -30,9 +31,19 @@
       "text": "🎯 $IOST — LONG SETUP\n\n⚡ 1h move: +4.07% | Volume: $24.1M\nEntry: $0.0009461\nTake profit: $0.0009805\nStop loss: $0.0009269\n\n1h momentum is positive and price is holding above the recent range. Setup is invalid if price hits SL.\n\nWould you take this setup or wait? 👇\n📈 Binance Spot: $IOST\n\n#IOST #LONG #Crypto",
       "url": "https://app.binance.com/uni-qr/cpos/379414429112410?r=DZCPIY7B&l=ru",
       "postId": 379414429112410
+    },
+    {
+      "at": "2026-10-20T21:37:57.763Z",
+      "ticker": "PEPE",
+      "change": -1.1375890282545997,
+      "volume": 489691518,
+      "marketType": "futures",
+      "text": "🎯 $PEPE — SHORT SETUP\n\n⚡ 1h move: -1.14% | Volume: $489.7M\nEntry: $0.000004518\nTake profit: $0.000004455\nStop loss: $0.000004554\n\n1h momentum is negative and price is pressing below the recent range. Setup is invalid if price hits SL.\n\nWould you take this setup or wait? 👇\n📈 Binance Futures: $PEPE\n\n#PEPE #SHORT #Futures",
+      "url": "https://app.binance.com/uni-qr/cpos/379457854008766?r=DZCPIY7B&l=ru",
+      "postId": 379457854008766
     }
   ],
-  "lastError": "No eligible futures token could be published. Last issue: No unused token passed the one-hour momentum and liquidity filters",
+  "lastError": null,
   "planVersion": 3,
   "archiveHistory": [
     {

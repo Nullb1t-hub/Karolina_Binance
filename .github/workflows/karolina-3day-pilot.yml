@@ -7,7 +7,7 @@ on:
       - '.github/workflows/karolina-3day-pilot.yml'
   workflow_dispatch:
   schedule:
-    - cron: '*/15 * * * *'
+    - cron: '13,28,43,58 * * * *'
 permissions:
   contents: write
 concurrency:
@@ -26,7 +26,6 @@ jobs:
       - name: Check campaign script syntax
         run: node --check src/campaign-runner.js
       - name: Publish one breakout token post
-        if: github.event_name != 'push'
         run: node src/campaign-runner.js
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}

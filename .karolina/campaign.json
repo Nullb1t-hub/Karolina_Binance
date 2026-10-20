@@ -2,10 +2,10 @@
   "active": true,
   "startedAt": "2026-10-19T21:02:07.000Z",
   "endsAt": "2026-10-22T21:02:07.000Z",
-  "published": 6,
+  "published": 7,
   "perDay": {
     "2026-10-19": 4,
-    "2026-10-20": 2
+    "2026-10-20": 3
   },
   "seen": [
     "AGT",
@@ -13,7 +13,8 @@
     "PHA",
     "CRV",
     "ARB",
-    "BR"
+    "BR",
+    "BEAM"
   ],
   "history": [
     {
@@ -75,6 +76,16 @@
       "text": "⚡ $BR IS ON THE RADAR | +52.95% in 24h with $42.6M traded. 👀\n\nThat is a serious 24h move — but the next candles matter more than the headline.\n\nCan buyers hold momentum, or is a pullback setting up? What level are you watching? Drop your read below. 📊\n\nOpen Binance Spot, search $BR and check the live chart. No FOMO — let price confirm the move.\n\n#BR #BinanceSpot",
       "url": "https://app.binance.com/uni-qr/cpos/379141922684626?r=DZCPIY7B&l=ru",
       "postId": 379141922684626
+    },
+    {
+      "at": "2026-10-20T05:51:46.933Z",
+      "ticker": "BEAM",
+      "change": 12.12151,
+      "volume": 10242072,
+      "marketType": "futures",
+      "text": "🚀 FUTURES RADAR | $BEAM +12.12% in 24h, with $10.2M in volume. 👀\n\nBuyers have the momentum for now — the real test is whether price can hold it. Does $BEAM have another leg, or are you watching for a pullback?\n\n📊 Open Binance Futures, search $BEAM and check the live chart before making a decision. Momentum can flip fast — manage leverage and risk.\n\n#BEAM #Futures #LONG",
+      "url": "https://app.binance.com/uni-qr/cpos/379225320756551?r=DZCPIY7B&l=ru",
+      "postId": 379225320756551
     }
   ],
   "lastError": null,

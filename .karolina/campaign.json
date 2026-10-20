@@ -2,8 +2,10 @@
   "active": true,
   "startedAt": "2026-10-20T17:49:00.000Z",
   "endsAt": "2026-10-27T17:49:00.000Z",
-  "published": 0,
-  "perDay": {},
+  "published": 1,
+  "perDay": {
+    "2026-10-20": 1
+  },
   "seen": [
     "AGT",
     "WLD",
@@ -15,9 +17,21 @@
     "EPIC",
     "TIA",
     "NEAR",
-    "APR"
+    "APR",
+    "IOST"
   ],
-  "history": [],
+  "history": [
+    {
+      "at": "2026-10-20T18:41:15.966Z",
+      "ticker": "IOST",
+      "change": 4.067027346739602,
+      "volume": 24134451,
+      "marketType": "spot",
+      "text": "🎯 $IOST — LONG SETUP\n\n⚡ 1h move: +4.07% | Volume: $24.1M\nEntry: $0.0009461\nTake profit: $0.0009805\nStop loss: $0.0009269\n\n1h momentum is positive and price is holding above the recent range. Setup is invalid if price hits SL.\n\nWould you take this setup or wait? 👇\n📈 Binance Spot: $IOST\n\n#IOST #LONG #Crypto",
+      "url": "https://app.binance.com/uni-qr/cpos/379414429112410?r=DZCPIY7B&l=ru",
+      "postId": 379414429112410
+    }
+  ],
   "lastError": null,
   "planVersion": 3,
   "archiveHistory": [

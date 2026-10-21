@@ -42,15 +42,28 @@ async function symbols(){
   if(rows.length>=3)return rows.slice(0,100);
   console.log('Binance market feed returned too few breakouts; falling back to CoinGecko');
  }catch(e){console.log('Binance market feed failed: '+e.message+'; falling back to CoinGecko');}
- const d=await getJson('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=volume_desc&per_page=250&page=1&price_change_percentage=24h',18000);
- return d.map(x=>({ticker:String(x.symbol||'').toUpperCase(),name:x.name,symbol:String(x.symbol||'').toUpperCase()+'USDT',price:Number(x.current_price),change:Number(x.price_change_percentage_24h),volume:Number(x.total_volume),marketCap:Number(x.market_cap||0),coinId:x.id,image:x.image,source:'CoinGecko'}))
-  .filter(x=>x.ticker&&!excluded.has(x.ticker)&&x.price>0&&x.volume>=1500000&&Math.abs(x.change)>=4.5&&(!x.marketCap||x.marketCap<15000000000))
+ try{
+  const d=await getJson('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=volume_desc&per_page=250&page=1&price_change_percentage=24h',18000);
+  const rows=d.map(x=>({ticker:String(x.symbol||'').toUpperCase(),name:x.name,symbol:String(x.symbol||'').toUpperCase()+'USDT',price:Number(x.current_price),change:Number(x.price_change_percentage_24h),volume:Number(x.total_volume),marketCap:Number(x.market_cap||0),coinId:x.id,image:x.image,source:'CoinGecko'}))
+   .filter(x=>x.ticker&&!excluded.has(x.ticker)&&x.price>0&&x.volume>=1500000&&Math.abs(x.change)>=4.5&&(!x.marketCap||x.marketCap<15000000000))
+   .sort((a,b)=>Math.abs(b.change)*Math.log10(1+b.volume)-Math.abs(a.change)*Math.log10(1+a.volume)).slice(0,100);
+  if(rows.length>=3)return rows;
+  console.log('CoinGecko returned too few candidates; falling back to OKX');
+ }catch(e){console.log('CoinGecko market feed failed: '+e.message+'; falling back to OKX');}
+ const d=await getJson('https://www.okx.com/api/v5/market/tickers?instType=SPOT',15000);
+ return (d.data||[]).filter(x=>String(x.instId).endsWith('-USDT'))
+  .map(x=>({ticker:String(x.instId).slice(0,-5),name:String(x.instId).slice(0,-5),symbol:x.instId,price:Number(x.last),change:(Number(x.last)/Number(x.open24h)-1)*100,volume:Number(x.volCcy24h||0)*Number(x.last),marketCap:0,source:'OKX'}))
+  .filter(x=>x.ticker&&!excluded.has(x.ticker)&&x.price>0&&Number.isFinite(x.change)&&x.volume>=1500000&&Math.abs(x.change)>=4.5)
   .sort((a,b)=>Math.abs(b.change)*Math.log10(1+b.volume)-Math.abs(a.change)*Math.log10(1+a.volume)).slice(0,100);
 }
 async function chartPoints(coin){
  if(coin.coinId){
   const d=await getJson('https://api.coingecko.com/api/v3/coins/'+encodeURIComponent(coin.coinId)+'/market_chart?vs_currency=usd&days=1',15000);
   return (d.prices||[]).map(x=>Number(x[1])).filter(x=>Number.isFinite(x)&&x>0);
+ }
+ if(coin.source==='OKX'){
+  const d=await getJson('https://www.okx.com/api/v5/market/candles?instId='+encodeURIComponent(coin.symbol)+'&bar=1m&limit=60',12000);
+  return (d.data||[]).slice().reverse().map(x=>Number(x[4])).filter(x=>Number.isFinite(x)&&x>0);
  }
  const d=await getJson('https://api.binance.vision/api/v3/klines?symbol='+encodeURIComponent(coin.symbol)+'&interval=1m&limit=60',12000);
  return d.map(x=>Number(x[4])).filter(x=>Number.isFinite(x)&&x>0);
@@ -186,7 +199,7 @@ async function postOne(s,forcedMode=null){
    console.log('Binance Vision spot-list fallback failed: '+String(e.message||e));
    // When Binance market endpoints are unreachable, continue using CoinGecko-backed
    // candidates; their price chart is available separately and publishing can still proceed.
-   marketSet=new Set(list.filter(x=>x.coinId).map(x=>x.ticker+'USDT'));
+   marketSet=new Set(list.map(x=>x.ticker+'USDT'));
   }
  }
  const seen=new Set(s.seen||[]);
@@ -195,9 +208,8 @@ async function postOne(s,forcedMode=null){
  for(const candidate of candidates){
   try{
    let closes,highs,lows,atr;
-   if(candidate.coinId){
-    // Binance endpoints are geo/DNS blocked on some GitHub-hosted runners.
-    // CoinGecko's market chart provides a usable fallback for hourly momentum.
+   if(candidate.coinId||candidate.source==='OKX'){
+    // Use CoinGecko or OKX candles when Binance endpoints are blocked on the runner.
     const prices=await chartPoints(candidate);
     if(prices.length<8)continue;
     closes=prices;

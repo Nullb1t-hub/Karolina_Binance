@@ -2,10 +2,10 @@
   "active": true,
   "startedAt": "2026-10-20T17:49:00.000Z",
   "endsAt": "2026-10-27T17:49:00.000Z",
-  "published": 3,
+  "published": 4,
   "perDay": {
     "2026-10-20": 2,
-    "2026-10-21": 1
+    "2026-10-21": 2
   },
   "seen": [
     "AGT",
@@ -21,7 +21,8 @@
     "APR",
     "IOST",
     "PEPE",
-    "GTC"
+    "GTC",
+    "COMP"
   ],
   "history": [
     {
@@ -53,6 +54,16 @@
       "text": "🎯 $GTC — SHORT SETUP\n\n⚡ 1h move: -4.19% | Volume: $99.2M\nEntry: $0.3100\nTake profit: $0.2961\nStop loss: $0.3177\n\n1h momentum is negative and price is pressing below the recent range. Setup is invalid if price hits SL.\n\nWould you take this setup or wait? 👇\n📈 Binance Spot: $GTC\n\n#GTC #SHORT #Crypto",
       "url": "https://app.binance.com/uni-qr/cpos/379502733086159?r=DZCPIY7B&l=ru",
       "postId": 379502733086159
+    },
+    {
+      "at": "2026-10-21T06:05:29.025Z",
+      "ticker": "COMP",
+      "change": -1.5557050396298902,
+      "volume": 134050753,
+      "marketType": "futures",
+      "text": "🎯 $COMP — SHORT SETUP\n\n⚡ 1h move: -1.56% | Volume: $134.1M\nEntry: $25.6611\nTake profit: $25.2277\nStop loss: $25.9018\n\n1h momentum is negative and price is pressing below the recent range. Setup is invalid if price hits SL.\n\nWould you take this setup or wait? 👇\n📈 Binance Futures: $COMP\n\n#COMP #SHORT #Futures",
+      "url": "https://app.binance.com/uni-qr/cpos/379582582428653?r=DZCPIY7B&l=ru",
+      "postId": 379582582428653
     }
   ],
   "lastError": null,

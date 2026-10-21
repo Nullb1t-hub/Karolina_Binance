@@ -2,10 +2,10 @@
   "active": true,
   "startedAt": "2026-10-20T17:49:00.000Z",
   "endsAt": "2026-10-27T17:49:00.000Z",
-  "published": 4,
+  "published": 5,
   "perDay": {
     "2026-10-20": 2,
-    "2026-10-21": 2
+    "2026-10-21": 3
   },
   "seen": [
     "AGT",
@@ -22,7 +22,8 @@
     "IOST",
     "PEPE",
     "GTC",
-    "COMP"
+    "COMP",
+    "ENA"
   ],
   "history": [
     {
@@ -64,6 +65,16 @@
       "text": "🎯 $COMP — SHORT SETUP\n\n⚡ 1h move: -1.56% | Volume: $134.1M\nEntry: $25.6611\nTake profit: $25.2277\nStop loss: $25.9018\n\n1h momentum is negative and price is pressing below the recent range. Setup is invalid if price hits SL.\n\nWould you take this setup or wait? 👇\n📈 Binance Futures: $COMP\n\n#COMP #SHORT #Futures",
       "url": "https://app.binance.com/uni-qr/cpos/379582582428653?r=DZCPIY7B&l=ru",
       "postId": 379582582428653
+    },
+    {
+      "at": "2026-10-21T11:52:04.324Z",
+      "ticker": "ENA",
+      "change": 1.890048933930323,
+      "volume": 483735668,
+      "marketType": "futures",
+      "text": "🎯 $ENA — LONG SETUP\n\n⚡ 1h move: +1.89% | Volume: $483.7M\nEntry: $0.2094\nTake profit: $0.2136\nStop loss: $0.2071\n\n1h momentum is positive and price is holding above the recent range. Setup is invalid if price hits SL.\n\nWould you take this setup or wait? 👇\n📈 Binance Futures: $ENA\n\n#ENA #LONG #Futures",
+      "url": "https://app.binance.com/uni-qr/cpos/379667759946323?r=DZCPIY7B&l=ru",
+      "postId": 379667759946323
     }
   ],
   "lastError": null,

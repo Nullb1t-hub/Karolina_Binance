@@ -2,10 +2,10 @@
   "active": true,
   "startedAt": "2026-10-20T17:49:00.000Z",
   "endsAt": "2026-10-27T17:49:00.000Z",
-  "published": 6,
+  "published": 7,
   "perDay": {
     "2026-10-20": 2,
-    "2026-10-21": 4
+    "2026-10-21": 5
   },
   "seen": [
     "AGT",
@@ -24,7 +24,8 @@
     "GTC",
     "COMP",
     "ENA",
-    "ARC"
+    "ARC",
+    "W"
   ],
   "history": [
     {
@@ -86,6 +87,16 @@
       "text": "🎯 $ARC — LONG SETUP\n\n⚡ 1h move: +5.18% | Volume: $13.2M\nEntry: $0.0627\nTake profit: $0.0666\nStop loss: $0.0605\n\n1h momentum is positive and price is holding above the recent range. Setup is invalid if price hits SL.\n\nWould you take this setup or wait? 👇\n📈 Binance Spot: $ARC\n\n#ARC #LONG #Crypto",
       "url": "https://app.binance.com/uni-qr/cpos/379747125334687?r=DZCPIY7B&l=ru",
       "postId": 379747125334687
+    },
+    {
+      "at": "2026-10-21T17:18:05.305Z",
+      "ticker": "W",
+      "change": -3.5004278171378975,
+      "volume": 72993664,
+      "marketType": "futures",
+      "text": "🎯 $W — SHORT SETUP\n\n⚡ 1h move: -3.50% | Volume: $73.0M\nEntry: $0.0154\nTake profit: $0.0149\nStop loss: $0.0157\n\n1h momentum is negative and price is pressing below the recent range. Setup is invalid if price hits SL.\n\nWould you take this setup or wait? 👇\n📈 Binance Futures: $W\n\n#W #SHORT #Futures",
+      "url": "https://app.binance.com/uni-qr/cpos/379747881749415?r=DZCPIY7B&l=ru",
+      "postId": 379747881749415
     }
   ],
   "lastError": null,

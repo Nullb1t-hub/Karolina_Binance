@@ -2,10 +2,10 @@
   "active": true,
   "startedAt": "2026-10-20T17:49:00.000Z",
   "endsAt": "2026-10-27T17:49:00.000Z",
-  "published": 5,
+  "published": 6,
   "perDay": {
     "2026-10-20": 2,
-    "2026-10-21": 3
+    "2026-10-21": 4
   },
   "seen": [
     "AGT",
@@ -23,7 +23,8 @@
     "PEPE",
     "GTC",
     "COMP",
-    "ENA"
+    "ENA",
+    "ARC"
   ],
   "history": [
     {
@@ -75,6 +76,16 @@
       "text": "🎯 $ENA — LONG SETUP\n\n⚡ 1h move: +1.89% | Volume: $483.7M\nEntry: $0.2094\nTake profit: $0.2136\nStop loss: $0.2071\n\n1h momentum is positive and price is holding above the recent range. Setup is invalid if price hits SL.\n\nWould you take this setup or wait? 👇\n📈 Binance Futures: $ENA\n\n#ENA #LONG #Futures",
       "url": "https://app.binance.com/uni-qr/cpos/379667759946323?r=DZCPIY7B&l=ru",
       "postId": 379667759946323
+    },
+    {
+      "at": "2026-10-21T17:15:00.626Z",
+      "ticker": "ARC",
+      "change": 5.177881908485295,
+      "volume": 13190799,
+      "marketType": "spot",
+      "text": "🎯 $ARC — LONG SETUP\n\n⚡ 1h move: +5.18% | Volume: $13.2M\nEntry: $0.0627\nTake profit: $0.0666\nStop loss: $0.0605\n\n1h momentum is positive and price is holding above the recent range. Setup is invalid if price hits SL.\n\nWould you take this setup or wait? 👇\n📈 Binance Spot: $ARC\n\n#ARC #LONG #Crypto",
+      "url": "https://app.binance.com/uni-qr/cpos/379747125334687?r=DZCPIY7B&l=ru",
+      "postId": 379747125334687
     }
   ],
   "lastError": null,

@@ -2,10 +2,25 @@
   "active": true,
   "startedAt": "2026-10-22T12:41:00.000Z",
   "endsAt": "2026-11-21T12:41:00.000Z",
-  "published": 0,
-  "perDay": {},
-  "seen": [],
-  "history": [],
+  "published": 1,
+  "perDay": {
+    "2026-10-22": 1
+  },
+  "seen": [
+    "HUMA"
+  ],
+  "history": [
+    {
+      "at": "2026-10-22T13:24:07.388Z",
+      "ticker": "HUMA",
+      "change": -8.842214938166933,
+      "volume": 11120132,
+      "marketType": "spot",
+      "text": "Spot radar 👀 $HUMA\n\n1H move: -8.84% · 24H change: -13.30% · volume: $11.1M\n\nMy plan: watch $0.0265 for an entry and $0.0252 as the next target through the next 24 hours. Below $0.0272, this setup needs a rethink.\n\nIs $HUMA still running, or is the move getting tired?\n#HUMA #SpotTrading",
+      "url": "https://app.binance.com/uni-qr/cpos/380044276779105?r=DZCPIY7B&l=ru",
+      "postId": 380044276779105
+    }
+  ],
   "lastError": null,
   "planVersion": 4,
   "archiveHistory": [

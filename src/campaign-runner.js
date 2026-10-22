@@ -278,7 +278,7 @@ async function main(){
  if(s.published>=maxPosts||now()>=Date.parse(s.endsAt))s.active=false;await save(s);console.log('PILOT '+(s.active?'ACTIVE':'FINISHED')+' '+s.published+'/'+maxPosts+' perDay='+JSON.stringify(s.perDay)+' error='+(s.lastError||'none'));if(s.lastError)process.exitCode=1;
 }
 main().catch(e=>{console.error('FATAL: '+String(e.message||e));process.exitCode=1;});
-+coin.ticker,vol=compactMoney(coin.volume),entry=formatPrice(price),target=formatPrice(tp),stop=formatPrice(sl),move24=(Number(coin.change24h)>=0?'+':'')+Number(coin.change24h??0).toFixed(2)+'% 24H;
++coin.ticker,vol=compactMoney(coin.volume),entry=formatPrice(price),target=formatPrice(tp),stop=formatPrice(sl),move24=(Number(coin.change24h)>=0?'+':'')+Number(coin.change24h??0).toFixed(2)+'% 24H';
  const seed=(Math.floor(Date.now()/3600000)+[...coin.ticker].reduce((n,ch)=>n+ch.charCodeAt(0),0))%3;
  if(mode==='futures'){
   const lines=[

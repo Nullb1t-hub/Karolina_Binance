@@ -279,25 +279,6 @@ async function main(){
  if(s.published>=maxPosts||now()>=Date.parse(s.endsAt))s.active=false;await save(s);console.log('PILOT '+(s.active?'ACTIVE':'FINISHED')+' '+s.published+'/'+maxPosts+' perDay='+JSON.stringify(s.perDay)+' error='+(s.lastError||'none'));if(s.lastError)process.exitCode=1;
 }
 main().catch(e=>{console.error('FATAL: '+String(e.message||e));process.exitCode=1;});
-+coin.ticker,vol=compactMoney(coin.volume),entry=formatPrice(price),target=formatPrice(tp),stop=formatPrice(sl),move24=(Number(coin.change24h)>=0?'+':'')+Number(coin.change24h??0).toFixed(2)+'% 24H';
- const seed=(Math.floor(Date.now()/3600000)+[...coin.ticker].reduce((n,ch)=>n+ch.charCodeAt(0),0))%3;
- if(mode==='futures'){
-  const lines=[
-   '⚡ '+ticker+' is moving. The 1H chart is '+move+' ('+move24+') and volume is at '+vol+'.\n\n'+(direction==='LONG'?'I’m watching the LONG side while buyers keep pushing':'I’m watching the SHORT side while sellers stay in control')+'.\n\nEntry: '+entry+'\nTake profit: '+target+'\nStop loss: '+stop+'\n\nIf momentum follows through, this setup has room to run. If the level breaks, the idea is off. Would you take this move?\n\nBinance Futures · '+ticker+'\n#'+coin.ticker+' #'+direction+' #Futures',
-   '👀 Futures radar: '+ticker+'\n\n'+move+' over the last hour · '+move24+' · '+vol+' in volume. '+(direction==='LONG'?'Momentum favours a push higher':'Momentum favours another leg down')+' — that’s the setup I’m watching.\n\nEntry '+entry+'\nTP '+target+'\nSL '+stop+'\n\nChart first, then decide. What’s your read on '+ticker+'?\n#'+coin.ticker+' #'+direction+' #BinanceFutures',
-   'This one is worth watching: '+ticker+' | 1H '+move+' | 24H '+move24+' | volume '+vol+'.\n\n'+(direction==='LONG'?'LONG idea':'SHORT idea')+'\nEntry: '+entry+'\nTarget: '+target+'\nInvalidation: '+stop+'\n\nI want to see the momentum continue before calling it a clean move. Are you trading this or sitting it out?\n\n'+ticker+' on Binance Futures\n#'+coin.ticker+' #'+direction+' #Futures'
-  ];
-  return lines[seed];
- }
- const horizon=['over the next few hours','through the next 24 hours','over the next 1–2 days'][seed];
- const lines=[
-  '📈 '+ticker+' is on my Spot watchlist. It moved '+move+' in the last hour ('+move24+'), with '+vol+' traded over 24H.\n\n'+(direction==='LONG'?'If buyers keep control, I’m watching '+target+' as the next area':'I’m watching for a bounce toward '+target+' if buyers step back in')+' '+horizon+'.\n\nEntry area: '+entry+'\nLevel that changes the idea: '+stop+'\n\nWould you add '+ticker+' to your watchlist?\n#'+coin.ticker+' #BinanceSpot #Crypto',
-  'Spot radar 👀 '+ticker+'\n\n1H move: '+move+' · 24H change: '+move24+' · volume: '+vol+'\n\nMy plan: watch '+entry+' for an entry and '+target+' as the next target '+horizon+'. Below '+stop+', this setup needs a rethink.\n\nIs '+ticker+' still running, or is the move getting tired?\n#'+coin.ticker+' #SpotTrading',
-  'Keeping an eye on '+ticker+' today. The 1H move is '+move+', the 24H change is '+move24+', and volume is '+vol+'.\n\n'+(direction==='LONG'?'If momentum holds, the next area I’m watching is ':'If buyers reclaim momentum, the bounce area I’m watching is ')+target+'. Entry reference: '+entry+' · invalidation: '+stop+'.\n\nThis is my chart read for the next '+(seed===2?'24–48 hours':'few hours')+' — what are you seeing?\n#'+coin.ticker+' #BinanceSpot #Crypto'
- ];
- return lines[seed];
-}
-async function draft(coin,mode){return fallbackDraft(coin,mode);}
 async function postOne(s,forcedMode=null){
  const today=dayKey();s.perDay=s.perDay||{};
  if((s.perDay[today]||0)>=maxDaily)throw Error('Daily cap reached');

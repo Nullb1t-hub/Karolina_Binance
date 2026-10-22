@@ -268,6 +268,7 @@ async function postOne(s,forcedMode=null){
 }
 async function main(){
  let s=await load();const event=process.env.GITHUB_EVENT_NAME||'';
+ if(event==='push'){console.log('Push-triggered run is validation-only; scheduled/manual runs handle publishing.');return;}
  if(event==='schedule'&&s.planVersion!==3){console.log('Scheduled run waiting for manual pilot start.');return;}
  if(event==='workflow_dispatch'&&s.planVersion!==3){s={active:true,startedAt:new Date().toISOString(),endsAt:new Date(now()+7*24*3600000).toISOString(),published:0,perDay:{},seen:[],history:[],lastError:null,planVersion:3};console.log('New 7-day campaign starts '+s.startedAt+' ends '+s.endsAt+' target='+maxPosts+' mix spot='+spotTarget+' futures='+futuresTarget);}
  if(!s.active||(s.published||0)>=maxPosts||now()>=Date.parse(s.endsAt)){s.active=false;s.lastError='Pilot complete or time expired';await save(s);console.log('Finished '+s.published+'/'+maxPosts);return;}

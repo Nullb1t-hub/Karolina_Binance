@@ -147,27 +147,38 @@ function formatPrice(value){
 }
 function fallbackDraft(coin,mode){
  const side=coin.signalSide||(coin.hourChange>=0?'LONG':'SHORT');
- const move=(Number(coin.hourChange??coin.change)>=0?'+':'')+Number(coin.hourChange??coin.change).toFixed(2)+'%';
- const move24=(Number(coin.change24h??0)>=0?'+':'')+Number(coin.change24h??0).toFixed(2)+'%';
+ const hour=Number(coin.hourChange??coin.change),day=Number(coin.change24h??0);
+ const move=(hour>=0?'+':'')+hour.toFixed(2)+'%';
+ const move24=(day>=0?'+':'')+day.toFixed(2)+'%';
  const price=Number(coin.price),tp=Number(coin.takeProfit),sl=Number(coin.stopLoss);
- const direction=side==='LONG'?'LONG':'SHORT';
- const ticker='$'+coin.ticker,vol=compactMoney(coin.volume),entry=formatPrice(price),target=formatPrice(tp),stop=formatPrice(sl);
- const seed=Math.floor(Math.random()*3);
+ const ticker='$'+coin.ticker,vol=compactMoney(coin.volume);
+ const entry=formatPrice(price),target=formatPrice(tp),stop=formatPrice(sl);
  if(mode==='futures'){
-  const lines=[
-   '⚡ '+ticker+' is moving. The 1H chart is '+move+' ('+move24+' over 24H) and volume is at '+vol+'.\n\n'+(direction==='LONG'?'I’m watching the LONG side while buyers keep pushing':'I’m watching the SHORT side while sellers stay in control')+'.\n\nEntry: '+entry+'\nTake profit: '+target+'\nStop loss: '+stop+'\n\nIf momentum follows through, this setup has room to run. If the level breaks, the idea is off. Would you take this move?\n\nBinance Futures · '+ticker+'\n#'+coin.ticker+' #'+direction+' #Futures',
-   '👀 Futures radar: '+ticker+'\n\n'+move+' over the last hour · '+move24+' in 24H change · '+vol+' in volume. '+(direction==='LONG'?'Momentum favours a push higher':'Momentum favours another leg down')+' — that’s the setup I’m watching.\n\nEntry '+entry+'\nTP '+target+'\nSL '+stop+'\n\nChart first, then decide. What’s your read on '+ticker+'?\n#'+coin.ticker+' #'+direction+' #BinanceFutures',
-   'This one is worth watching: '+ticker+' | 1H '+move+' | 24H '+move24+' | volume '+vol+'.\n\n'+(direction==='LONG'?'LONG idea':'SHORT idea')+'\nEntry: '+entry+'\nTarget: '+target+'\nInvalidation: '+stop+'\n\nI want to see the momentum continue before calling it a clean move. Are you trading this or sitting it out?\n\n'+ticker+' on Binance Futures\n#'+coin.ticker+' #'+direction+' #Futures'
-  ];
-  return lines[seed];
+  const direction=side==='LONG'?'LONG':'SHORT';
+  const headline=direction==='LONG'
+   ? '🚨 MOMENTUM ALERT: '+ticker+' just moved '+move+' in 1H'
+   : '🔻 SELLERS ARE PRESSING '+ticker+': '+move+' in 1H';
+  return headline+'\n\n24H: '+move24+' · 24H volume: '+vol+'\n\n'+
+   (direction==='LONG'?'📈 LONG setup to watch':'📉 SHORT setup to watch')+'\n'+
+   'Entry: '+entry+'\nTake profit: '+target+'\nStop loss: '+stop+'\n\n'+
+   'If momentum follows through, these are the levels I’m watching. If SL breaks, the idea is invalid — no guarantees, especially with leverage.\n\n'+
+   'Tap '+ticker+' to check the coin chart, then verify the live price on Binance Futures. Would you take this setup or fade it?\n'+
+   '#'+coin.ticker+' #'+direction+' #Futures';
  }
- const horizon=['over the next few hours','through the next 24 hours','over the next 1–2 days'][seed];
- const lines=[
-  '📈 '+ticker+' is on my Spot watchlist. It moved '+move+' in the last hour ('+move24+' over 24H), with '+vol+' traded over 24H.\n\n'+(direction==='LONG'?'If buyers keep control, I’m watching '+target+' as the next area':'I’m watching for a bounce toward '+target+' if buyers step back in')+' '+horizon+'.\n\nEntry area: '+entry+'\nLevel that changes the idea: '+stop+'\n\nWould you add '+ticker+' to your watchlist?\n#'+coin.ticker+' #BinanceSpot #Crypto',
-  'Spot radar 👀 '+ticker+'\n\n1H move: '+move+' · 24H change: '+move24+' · volume: '+vol+'\n\nMy plan: watch '+entry+' for an entry and '+target+' as the next target '+horizon+'. Below '+stop+', this setup needs a rethink.\n\nIs '+ticker+' still running, or is the move getting tired?\n#'+coin.ticker+' #SpotTrading',
-  'Keeping an eye on '+ticker+' today. The 1H move is '+move+', the 24H change is '+move24+', and volume is '+vol+'.\n\n'+(direction==='LONG'?'If momentum holds, the next area I’m watching is ':'If buyers reclaim momentum, the bounce area I’m watching is ')+target+'. Entry reference: '+entry+' · invalidation: '+stop+'.\n\nThis is my chart read for the next '+(seed===2?'24–48 hours':'few hours')+' — what are you seeing?\n#'+coin.ticker+' #BinanceSpot #Crypto'
- ];
- return lines[seed];
+ if(side==='LONG'){
+  return '⚡ BREAKOUT WATCH — '+ticker+' '+move+' in the last hour\n\n'+
+   '24H move: '+move24+' · 24H volume: '+vol+'\n\n'+
+   'The move is big enough to watch, but the next candle decides whether it continues or turns into a fakeout.\n\n'+
+   'Price reference: '+entry+'\nNext target: '+target+'\nInvalidation: '+stop+'\n\n'+
+   'Tap '+ticker+' to open the coin chart and check whether buyers are still in control. Breakout or trap? 👇\n'+
+   '#'+coin.ticker+' #BinanceSpot #Crypto';
+ }
+ return '⚠️ SELL-OFF WATCH — '+ticker+' '+move+' in the last hour\n\n'+
+  '24H move: '+move24+' · 24H volume: '+vol+'\n\n'+
+  'That is a sharp move — but a bounce can be just as violent. Don’t buy blindly while price is falling.\n\n'+
+  'Price reference: '+entry+'\nDownside level to watch: '+target+'\nInvalidation / reclaim: '+stop+'\n\n'+
+  'Tap '+ticker+' to check the live chart on Square, then decide whether this is a breakdown or a bounce setup. 👇\n'+
+  '#'+coin.ticker+' #BinanceSpot #Crypto';
 }
 async function draft(coin,mode){return fallbackDraft(coin,mode);}
 async function postOne(s,forcedMode=null){

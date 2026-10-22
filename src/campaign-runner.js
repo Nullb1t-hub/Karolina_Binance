@@ -227,6 +227,7 @@ async function postOne(s,forcedMode=null){
     const risk=Math.abs(price-stopLoss);
     if(!risk||risk/price>0.045)continue;
     const takeProfit=signalSide==='LONG'?price+1.8*risk:price-1.8*risk;
+    if(Math.abs(takeProfit-price)/price<0.012)continue; // avoid tiny targets that leave too little room for fees/slippage
     ranked.push({...candidate,price,change:hourChange,hourChange,signalSide,takeProfit,stopLoss,rank:Math.abs(hourChange)*Math.log10(1+candidate.volume)});
    }else{
     const candles=await getJson('https://api.binance.vision/api/v3/klines?symbol='+encodeURIComponent(candidate.symbol)+'&interval=1m&limit=60',10000);
@@ -242,6 +243,7 @@ async function postOne(s,forcedMode=null){
     const risk=Math.abs(price-stopLoss);
     if(!risk||risk/price>0.045)continue;
     const takeProfit=signalSide==='LONG'?price+1.8*risk:price-1.8*risk;
+    if(Math.abs(takeProfit-price)/price<0.012)continue; // avoid tiny targets that leave too little room for fees/slippage
     ranked.push({...candidate,price,change:hourChange,hourChange,signalSide,takeProfit,stopLoss,rank:Math.abs(hourChange)*Math.log10(1+candidate.volume)});
    }
   }catch(e){console.log('market scan skipped '+candidate.ticker+': '+String(e.message||e));}

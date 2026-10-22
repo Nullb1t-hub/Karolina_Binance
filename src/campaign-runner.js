@@ -271,7 +271,7 @@ async function postOne(s,forcedMode=null){
 }
 async function main(){
  let s=await load();const event=process.env.GITHUB_EVENT_NAME||'';
- if(event==='push'&&(s.published||0)>0){console.log('Push-triggered run is validation-only because the campaign already has published posts.');return;}
+ if(event==='push'&&(s.published||0)>0){const lastPost=Date.parse((s.history||[]).at(-1)?.at||'');if(Number.isFinite(lastPost)&&now()-lastPost<minPostGapMs){console.log('Push-triggered check skipped: last published post is less than 55 minutes old.');return;}console.log('Push-triggered recovery: last post is at least 55 minutes old; attempting publication.');}
  if(event==='schedule'&&s.planVersion!==4){console.log('Scheduled run waiting for manual pilot start.');return;}
  if(event==='workflow_dispatch'&&s.planVersion!==4){s={active:true,startedAt:new Date().toISOString(),endsAt:new Date(now()+30*24*3600000).toISOString(),published:0,perDay:{},seen:[],history:[],lastError:null,planVersion:4};console.log('New 30-day campaign starts '+s.startedAt+' ends '+s.endsAt+' target='+maxPosts+' mix spot='+spotTarget+' futures='+futuresTarget);}
  if(!s.active||(s.published||0)>=maxPosts||now()>=Date.parse(s.endsAt)){s.active=false;s.lastError='Pilot complete or time expired';await save(s);console.log('Finished '+s.published+'/'+maxPosts);return;}

@@ -22,7 +22,7 @@ async function getJson(url,timeout=12000){
   if(r.ok)return r.json();
   if(r.status===429&&attempt<3){
    const retryAfter=Number(r.headers.get('retry-after'));
-   const waitMs=Number.isFinite(retryAfter)&&retryAfter>0?Math.min(retryAfter*1000,20000):(4000*(attempt+1));
+   const waitMs=Number.isFinite(retryAfter)&&retryAfter>0?Math.min(retryAfter*1000,3000):(1500*(attempt+1));
    console.log(host+' rate limited (429); retry '+(attempt+1)+'/3 after '+Math.round(waitMs/1000)+'s');
    await new Promise(resolve=>setTimeout(resolve,waitMs));
    continue;

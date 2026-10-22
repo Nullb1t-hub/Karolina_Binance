@@ -2,11 +2,11 @@
   "active": true,
   "startedAt": "2026-10-20T17:49:00.000Z",
   "endsAt": "2026-10-27T17:49:00.000Z",
-  "published": 9,
+  "published": 10,
   "perDay": {
     "2026-10-20": 2,
     "2026-10-21": 6,
-    "2026-10-22": 1
+    "2026-10-22": 2
   },
   "seen": [
     "AGT",
@@ -28,7 +28,8 @@
     "ARC",
     "W",
     "IRYS",
-    "PEOPLE"
+    "PEOPLE",
+    "SAND"
   ],
   "history": [
     {
@@ -120,6 +121,16 @@
       "text": "🎯 $PEOPLE — SHORT SETUP\n\n⚡ 1h move: -1.14% | Volume: $14.0M\nEntry: $0.008617\nTake profit: $0.008481\nStop loss: $0.008693\n\n1h momentum is negative and price is pressing below the recent range. Setup is invalid if price hits SL.\n\nWould you take this setup or wait? 👇\n📈 Binance Futures: $PEOPLE\n\n#PEOPLE #SHORT #Futures",
       "url": "https://app.binance.com/uni-qr/cpos/379847088548869?r=DZCPIY7B&l=ru",
       "postId": 379847088548869
+    },
+    {
+      "at": "2026-10-22T04:46:56.755Z",
+      "ticker": "SAND",
+      "change": -1.0288771844804023,
+      "volume": 43623766,
+      "marketType": "futures",
+      "text": "🎯 $SAND — SHORT SETUP\n\n⚡ 1h move: -1.03% | Volume: $43.6M\nEntry: $0.0550\nTake profit: $0.0545\nStop loss: $0.0553\n\n1h momentum is negative and price is pressing below the recent range. Setup is invalid if price hits SL.\n\nWould you take this setup or wait? 👇\n📈 Binance Futures: $SAND\n\n#SAND #SHORT #Futures",
+      "url": "https://app.binance.com/uni-qr/cpos/379917175466127?r=DZCPIY7B&l=ru",
+      "postId": 379917175466127
     }
   ],
   "lastError": null,

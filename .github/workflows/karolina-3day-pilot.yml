@@ -1,4 +1,4 @@
-name: Karolina 7-day campaign
+name: Karolina 30-day campaign
 on:
   push:
     branches: [main]
@@ -11,7 +11,7 @@ on:
 permissions:
   contents: write
 concurrency:
-  group: karolina-7day-campaign
+  group: karolina-30day-campaign
   cancel-in-progress: false
 jobs:
   publish:

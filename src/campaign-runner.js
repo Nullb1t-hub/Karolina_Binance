@@ -4,7 +4,7 @@ import sharp from 'sharp';
 import {publishImage} from './publisher.js';
 const statePath='.karolina/campaign.json';
 const feeds=[{name:'CoinDesk',url:'https://www.coindesk.com/arc/outboundfeeds/rss/'},{name:'Cointelegraph',url:'https://cointelegraph.com/rss'},{name:'Decrypt',url:'https://decrypt.co/feed'}];
-const maxPosts=168,maxDaily=24,spotTarget=64,futuresTarget=104,minPostGapMs=55*60*1000,now=()=>Date.now();
+const maxPosts=720,maxDaily=24,spotTarget=274,futuresTarget=446,minPostGapMs=55*60*1000,now=()=>Date.now();
 function decode(s){return String(s||'').replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g,'$1').replace(/<[^>]*>/g,' ').replace(/&amp;/g,'&').replace(/&quot;/g,'"').replace(/&#39;|&apos;/g,"'").replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&#(\d+);/g,(_,n)=>String.fromCharCode(Number(n))).replace(/\s+/g,' ').trim();}
 function tag(b,n){const r=new RegExp('<'+n+'(?:\\s[^>]*)?>([\\s\\S]*?)<\\/'+n+'\\s*>','i'),m=b.match(r);return m?decode(m[1]):'';}
 function parseFeed(xml,source){return xml.split(/<item\b/i).slice(1).map(x=>x.split(/<\/item>/i)[0]).map(b=>({source,title:tag(b,'title'),link:tag(b,'link'),description:tag(b,'description'),date:tag(b,'pubDate')})).filter(x=>x.title&&/^https?:\/\//i.test(x.link));}
@@ -146,28 +146,29 @@ function formatPrice(value){
  return '$'+n.toPrecision(4);
 }
 function fallbackDraft(coin,mode){
- const side=coin.signalSide|| (coin.change>=0?'LONG':'SHORT');
- const move=(coin.hourChange>=0?'+':'')+Number(coin.hourChange??coin.change).toFixed(2)+'%';
+ const side=coin.signalSide||(coin.hourChange>=0?'LONG':'SHORT');
+ const move=(Number(coin.hourChange??coin.change)>=0?'+':'')+Number(coin.hourChange??coin.change).toFixed(2)+'%';
  const price=Number(coin.price),tp=Number(coin.takeProfit),sl=Number(coin.stopLoss);
  const direction=side==='LONG'?'LONG':'SHORT';
- const reason=side==='LONG'
-  ? '1h momentum is positive and price is holding above the recent range.'
-  : '1h momentum is negative and price is pressing below the recent range.';
- return '🎯 $'+coin.ticker+' — '+direction+' SETUP\n\n'
-  +'⚡ 1h move: '+move+' | Volume: '+compactMoney(coin.volume)+'\n'
-  +'Entry: '+formatPrice(price)+'\n'
-  +'Take profit: '+formatPrice(tp)+'\n'
-  +'Stop loss: '+formatPrice(sl)+'\n\n'
-  +reason+' Setup is invalid if price hits SL.\n\n'
-  +'Would you take this setup or wait? 👇\n'
-  +'📈 '+(mode==='futures'?'Binance Futures':'Binance Spot')+': $'+coin.ticker+'\n\n'
-  +'#'+coin.ticker+' #'+direction+' '+(mode==='futures'?'#Futures':'#Crypto');
+ const ticker='$'+coin.ticker,vol=compactMoney(coin.volume),entry=formatPrice(price),target=formatPrice(tp),stop=formatPrice(sl);
+ const seed=[...coin.ticker].reduce((n,ch)=>n+ch.charCodeAt(0),0)%3;
+ if(mode==='futures'){
+  const lines=[
+   '⚡ '+ticker+' is moving. The 1H chart is '+move+' and volume is at '+vol+'.\n\n'+(direction==='LONG'?'I’m watching the LONG side while buyers keep pushing':'I’m watching the SHORT side while sellers stay in control')+'.\n\nEntry: '+entry+'\nTake profit: '+target+'\nStop loss: '+stop+'\n\nIf momentum follows through, this setup has room to run. If the level breaks, the idea is off. Would you take this move?\n\nBinance Futures · '+ticker+'\n#'+coin.ticker+' #'+direction+' #Futures',
+   '👀 Futures radar: '+ticker+'\n\n'+move+' over the last hour · '+vol+' in 24H volume. '+(direction==='LONG'?'Momentum favours a push higher':'Momentum favours another leg down')+' — that’s the setup I’m watching.\n\nEntry '+entry+'\nTP '+target+'\nSL '+stop+'\n\nChart first, then decide. What’s your read on '+ticker+'?\n#'+coin.ticker+' #'+direction+' #BinanceFutures',
+   'This one is worth watching: '+ticker+' | 1H '+move+' | volume '+vol+'.\n\n'+(direction==='LONG'?'LONG idea':'SHORT idea')+'\nEntry: '+entry+'\nTarget: '+target+'\nInvalidation: '+stop+'\n\nI want to see the momentum continue before calling it a clean move. Are you trading this or sitting it out?\n\n'+ticker+' on Binance Futures\n#'+coin.ticker+' #'+direction+' #Futures'
+  ];
+  return lines[seed];
+ }
+ const horizon=['over the next few hours','through the next 24 hours','over the next 1–2 days'][seed];
+ const lines=[
+  '📈 '+ticker+' is on my Spot watchlist. It moved '+move+' in the last hour, with '+vol+' traded over 24H.\n\n'+(direction==='LONG'?'If buyers keep control, I’m watching '+target+' as the next area':'I’m watching for a bounce toward '+target+' if buyers step back in')+' '+horizon+'.\n\nEntry area: '+entry+'\nLevel that changes the idea: '+stop+'\n\nWould you add '+ticker+' to your watchlist?\n#'+coin.ticker+' #BinanceSpot #Crypto',
+  'Spot radar 👀 '+ticker+'\n\n1H move: '+move+' · 24H volume: '+vol+'\n\nMy plan: watch '+entry+' for an entry and '+target+' as the next target '+horizon+'. Below '+stop+', this setup needs a rethink.\n\nIs '+ticker+' still running, or is the move getting tired?\n#'+coin.ticker+' #SpotTrading',
+  'Keeping an eye on '+ticker+' today. The 1H move is '+move+' and 24H volume is '+vol+'.\n\n'+(direction==='LONG'?'If momentum holds, the next area I’m watching is ':'If buyers reclaim momentum, the bounce area I’m watching is ')+target+'. Entry reference: '+entry+' · invalidation: '+stop+'.\n\nThis is my chart read for the next '+(seed===2?'24–48 hours':'few hours')+' — what are you seeing?\n#'+coin.ticker+' #BinanceSpot #Crypto'
+ ];
+ return lines[seed];
 }
-async function draft(coin,mode){
- // Keep captions consistent and mobile-friendly: emojis, market facts, a real question,
- // and a clear CTA. Never include raw/public URLs in the Binance Square caption.
- return fallbackDraft(coin,mode);
-}
+async function draft(coin,mode){return fallbackDraft(coin,mode);}
 async function postOne(s,forcedMode=null){
  const today=dayKey();s.perDay=s.perDay||{};
  if((s.perDay[today]||0)>=maxDaily)throw Error('Daily cap reached');
@@ -202,8 +203,9 @@ async function postOne(s,forcedMode=null){
    marketSet=new Set(list.map(x=>x.ticker+'USDT'));
   }
  }
- const seen=new Set(s.seen||[]);
- const candidates=list.filter(x=>!seen.has(x.ticker)&&marketSet.has(x.ticker+'USDT')).slice(0,12);
+ const cooldownMs=6*60*60*1000;
+ const recentUsed=new Set(history.filter(x=>now()-Date.parse(x.at||'')<cooldownMs).map(x=>x.ticker));
+ const candidates=list.filter(x=>!recentUsed.has(x.ticker)&&marketSet.has(x.ticker+'USDT')).slice(0,24);
  const ranked=[];
  for(const candidate of candidates){
   try{
@@ -269,8 +271,8 @@ async function postOne(s,forcedMode=null){
 async function main(){
  let s=await load();const event=process.env.GITHUB_EVENT_NAME||'';
  if(event==='push'){console.log('Push-triggered run is validation-only; scheduled/manual runs handle publishing.');return;}
- if(event==='schedule'&&s.planVersion!==3){console.log('Scheduled run waiting for manual pilot start.');return;}
- if(event==='workflow_dispatch'&&s.planVersion!==3){s={active:true,startedAt:new Date().toISOString(),endsAt:new Date(now()+7*24*3600000).toISOString(),published:0,perDay:{},seen:[],history:[],lastError:null,planVersion:3};console.log('New 7-day campaign starts '+s.startedAt+' ends '+s.endsAt+' target='+maxPosts+' mix spot='+spotTarget+' futures='+futuresTarget);}
+ if(event==='schedule'&&s.planVersion!==4){console.log('Scheduled run waiting for manual pilot start.');return;}
+ if(event==='workflow_dispatch'&&s.planVersion!==4){s={active:true,startedAt:new Date().toISOString(),endsAt:new Date(now()+30*24*3600000).toISOString(),published:0,perDay:{},seen:[],history:[],lastError:null,planVersion:4};console.log('New 30-day campaign starts '+s.startedAt+' ends '+s.endsAt+' target='+maxPosts+' mix spot='+spotTarget+' futures='+futuresTarget);}
  if(!s.active||(s.published||0)>=maxPosts||now()>=Date.parse(s.endsAt)){s.active=false;s.lastError='Pilot complete or time expired';await save(s);console.log('Finished '+s.published+'/'+maxPosts);return;}
  try{const lastPost=Date.parse((s.history||[]).at(-1)?.at||'');if(event!=='push'&&Number.isFinite(lastPost)&&now()-lastPost<minPostGapMs){console.log('Throttle: last post is less than 55 minutes old; skipping publish.');return;}if(!process.env.BINANCE_SQUARE_OPENAPI_KEY)throw Error('Missing BINANCE_SQUARE_OPENAPI_KEY; no post sent.');try{await postOne(s);}catch(firstError){if(String(firstError.message||firstError).includes('No eligible futures token')){console.log('Futures scan found no publishable setup; retrying once with Spot.');await postOne(s,'spot');}else throw firstError;}}catch(e){s.lastError=String(e.message||e).slice(0,500);console.error('POST FAILED: '+s.lastError);}
  if(s.published>=maxPosts||now()>=Date.parse(s.endsAt))s.active=false;await save(s);console.log('PILOT '+(s.active?'ACTIVE':'FINISHED')+' '+s.published+'/'+maxPosts+' perDay='+JSON.stringify(s.perDay)+' error='+(s.lastError||'none'));if(s.lastError)process.exitCode=1;

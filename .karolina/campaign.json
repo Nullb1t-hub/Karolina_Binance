@@ -2,13 +2,14 @@
   "active": true,
   "startedAt": "2026-10-22T12:41:00.000Z",
   "endsAt": "2026-11-21T12:41:00.000Z",
-  "published": 2,
+  "published": 3,
   "perDay": {
-    "2026-10-22": 2
+    "2026-10-22": 3
   },
   "seen": [
     "HUMA",
-    "BILL"
+    "BILL",
+    "IOST"
   ],
   "history": [
     {
@@ -30,6 +31,16 @@
       "text": "⚡ BREAKOUT WATCH — $BILL +7.35% in the last hour\n\n24H move: +17.06% · 24H volume: $37.0M\n\nThe move is big enough to watch, but the next candle decides whether it continues or turns into a fakeout.\n\nPrice reference: $0.006873\nNext target: $0.007219\nInvalidation: $0.006681\n\nTap $BILL to open the coin chart and check whether buyers are still in control. Breakout or trap? 👇\n#BILL #BinanceSpot #Crypto",
       "url": "https://app.binance.com/uni-qr/cpos/380100809698213?r=DZCPIY7B&l=ru",
       "postId": 380100809698213
+    },
+    {
+      "at": "2026-10-22T20:39:03.029Z",
+      "ticker": "IOST",
+      "change": -1.7029110574157211,
+      "volume": 67212111,
+      "marketType": "spot",
+      "text": "⚠️ SELL-OFF WATCH — $IOST -1.70% in the last hour\n\n24H move: -48.87% · 24H volume: $67.2M\n\nThat is a sharp move — but a bounce can be just as violent. Don’t buy blindly while price is falling.\n\nPrice reference: $0.0008543\nDownside level to watch: $0.0008316\nInvalidation / reclaim: $0.0008669\n\nTap $IOST to check the live chart on Square, then decide whether this is a breakdown or a bounce setup. 👇\n#IOST #BinanceSpot #Crypto",
+      "url": "https://app.binance.com/uni-qr/cpos/380151164632253?r=DZCPIY7B&l=ru",
+      "postId": 380151164632253
     }
   ],
   "lastError": null,

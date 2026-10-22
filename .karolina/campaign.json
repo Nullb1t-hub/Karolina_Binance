@@ -2,12 +2,13 @@
   "active": true,
   "startedAt": "2026-10-22T12:41:00.000Z",
   "endsAt": "2026-11-21T12:41:00.000Z",
-  "published": 1,
+  "published": 2,
   "perDay": {
-    "2026-10-22": 1
+    "2026-10-22": 2
   },
   "seen": [
-    "HUMA"
+    "HUMA",
+    "BILL"
   ],
   "history": [
     {
@@ -19,6 +20,16 @@
       "text": "Spot radar 👀 $HUMA\n\n1H move: -8.84% · 24H change: -13.30% · volume: $11.1M\n\nMy plan: watch $0.0265 for an entry and $0.0252 as the next target through the next 24 hours. Below $0.0272, this setup needs a rethink.\n\nIs $HUMA still running, or is the move getting tired?\n#HUMA #SpotTrading",
       "url": "https://app.binance.com/uni-qr/cpos/380044276779105?r=DZCPIY7B&l=ru",
       "postId": 380044276779105
+    },
+    {
+      "at": "2026-10-22T17:14:09.340Z",
+      "ticker": "BILL",
+      "change": 7.350034137560647,
+      "volume": 37029295,
+      "marketType": "spot",
+      "text": "⚡ BREAKOUT WATCH — $BILL +7.35% in the last hour\n\n24H move: +17.06% · 24H volume: $37.0M\n\nThe move is big enough to watch, but the next candle decides whether it continues or turns into a fakeout.\n\nPrice reference: $0.006873\nNext target: $0.007219\nInvalidation: $0.006681\n\nTap $BILL to open the coin chart and check whether buyers are still in control. Breakout or trap? 👇\n#BILL #BinanceSpot #Crypto",
+      "url": "https://app.binance.com/uni-qr/cpos/380100809698213?r=DZCPIY7B&l=ru",
+      "postId": 380100809698213
     }
   ],
   "lastError": null,

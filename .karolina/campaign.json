@@ -1,140 +1,13 @@
 {
   "active": true,
-  "startedAt": "2026-10-20T17:49:00.000Z",
-  "endsAt": "2026-10-27T17:49:00.000Z",
-  "published": 10,
-  "perDay": {
-    "2026-10-20": 2,
-    "2026-10-21": 6,
-    "2026-10-22": 2
-  },
-  "seen": [
-    "AGT",
-    "WLD",
-    "PHA",
-    "CRV",
-    "ARB",
-    "BR",
-    "BEAM",
-    "EPIC",
-    "TIA",
-    "NEAR",
-    "APR",
-    "IOST",
-    "PEPE",
-    "GTC",
-    "COMP",
-    "ENA",
-    "ARC",
-    "W",
-    "IRYS",
-    "PEOPLE",
-    "SAND"
-  ],
-  "history": [
-    {
-      "at": "2026-10-20T18:41:15.966Z",
-      "ticker": "IOST",
-      "change": 4.067027346739602,
-      "volume": 24134451,
-      "marketType": "spot",
-      "text": "🎯 $IOST — LONG SETUP\n\n⚡ 1h move: +4.07% | Volume: $24.1M\nEntry: $0.0009461\nTake profit: $0.0009805\nStop loss: $0.0009269\n\n1h momentum is positive and price is holding above the recent range. Setup is invalid if price hits SL.\n\nWould you take this setup or wait? 👇\n📈 Binance Spot: $IOST\n\n#IOST #LONG #Crypto",
-      "url": "https://app.binance.com/uni-qr/cpos/379414429112410?r=DZCPIY7B&l=ru",
-      "postId": 379414429112410
-    },
-    {
-      "at": "2026-10-20T21:37:57.763Z",
-      "ticker": "PEPE",
-      "change": -1.1375890282545997,
-      "volume": 489691518,
-      "marketType": "futures",
-      "text": "🎯 $PEPE — SHORT SETUP\n\n⚡ 1h move: -1.14% | Volume: $489.7M\nEntry: $0.000004518\nTake profit: $0.000004455\nStop loss: $0.000004554\n\n1h momentum is negative and price is pressing below the recent range. Setup is invalid if price hits SL.\n\nWould you take this setup or wait? 👇\n📈 Binance Futures: $PEPE\n\n#PEPE #SHORT #Futures",
-      "url": "https://app.binance.com/uni-qr/cpos/379457854008766?r=DZCPIY7B&l=ru",
-      "postId": 379457854008766
-    },
-    {
-      "at": "2026-10-21T00:40:34.514Z",
-      "ticker": "GTC",
-      "change": -4.186196881291146,
-      "volume": 99200011,
-      "marketType": "spot",
-      "text": "🎯 $GTC — SHORT SETUP\n\n⚡ 1h move: -4.19% | Volume: $99.2M\nEntry: $0.3100\nTake profit: $0.2961\nStop loss: $0.3177\n\n1h momentum is negative and price is pressing below the recent range. Setup is invalid if price hits SL.\n\nWould you take this setup or wait? 👇\n📈 Binance Spot: $GTC\n\n#GTC #SHORT #Crypto",
-      "url": "https://app.binance.com/uni-qr/cpos/379502733086159?r=DZCPIY7B&l=ru",
-      "postId": 379502733086159
-    },
-    {
-      "at": "2026-10-21T06:05:29.025Z",
-      "ticker": "COMP",
-      "change": -1.5557050396298902,
-      "volume": 134050753,
-      "marketType": "futures",
-      "text": "🎯 $COMP — SHORT SETUP\n\n⚡ 1h move: -1.56% | Volume: $134.1M\nEntry: $25.6611\nTake profit: $25.2277\nStop loss: $25.9018\n\n1h momentum is negative and price is pressing below the recent range. Setup is invalid if price hits SL.\n\nWould you take this setup or wait? 👇\n📈 Binance Futures: $COMP\n\n#COMP #SHORT #Futures",
-      "url": "https://app.binance.com/uni-qr/cpos/379582582428653?r=DZCPIY7B&l=ru",
-      "postId": 379582582428653
-    },
-    {
-      "at": "2026-10-21T11:52:04.324Z",
-      "ticker": "ENA",
-      "change": 1.890048933930323,
-      "volume": 483735668,
-      "marketType": "futures",
-      "text": "🎯 $ENA — LONG SETUP\n\n⚡ 1h move: +1.89% | Volume: $483.7M\nEntry: $0.2094\nTake profit: $0.2136\nStop loss: $0.2071\n\n1h momentum is positive and price is holding above the recent range. Setup is invalid if price hits SL.\n\nWould you take this setup or wait? 👇\n📈 Binance Futures: $ENA\n\n#ENA #LONG #Futures",
-      "url": "https://app.binance.com/uni-qr/cpos/379667759946323?r=DZCPIY7B&l=ru",
-      "postId": 379667759946323
-    },
-    {
-      "at": "2026-10-21T17:15:00.626Z",
-      "ticker": "ARC",
-      "change": 5.177881908485295,
-      "volume": 13190799,
-      "marketType": "spot",
-      "text": "🎯 $ARC — LONG SETUP\n\n⚡ 1h move: +5.18% | Volume: $13.2M\nEntry: $0.0627\nTake profit: $0.0666\nStop loss: $0.0605\n\n1h momentum is positive and price is holding above the recent range. Setup is invalid if price hits SL.\n\nWould you take this setup or wait? 👇\n📈 Binance Spot: $ARC\n\n#ARC #LONG #Crypto",
-      "url": "https://app.binance.com/uni-qr/cpos/379747125334687?r=DZCPIY7B&l=ru",
-      "postId": 379747125334687
-    },
-    {
-      "at": "2026-10-21T17:18:05.305Z",
-      "ticker": "W",
-      "change": -3.5004278171378975,
-      "volume": 72993664,
-      "marketType": "futures",
-      "text": "🎯 $W — SHORT SETUP\n\n⚡ 1h move: -3.50% | Volume: $73.0M\nEntry: $0.0154\nTake profit: $0.0149\nStop loss: $0.0157\n\n1h momentum is negative and price is pressing below the recent range. Setup is invalid if price hits SL.\n\nWould you take this setup or wait? 👇\n📈 Binance Futures: $W\n\n#W #SHORT #Futures",
-      "url": "https://app.binance.com/uni-qr/cpos/379747881749415?r=DZCPIY7B&l=ru",
-      "postId": 379747881749415
-    },
-    {
-      "at": "2026-10-21T20:44:36.123Z",
-      "ticker": "IRYS",
-      "change": 2.5923562759050096,
-      "volume": 116145502,
-      "marketType": "spot",
-      "text": "🎯 $IRYS — LONG SETUP\n\n⚡ 1h move: +2.59% | Volume: $116.1M\nEntry: $0.0209\nTake profit: $0.0220\nStop loss: $0.0203\n\n1h momentum is positive and price is holding above the recent range. Setup is invalid if price hits SL.\n\nWould you take this setup or wait? 👇\n📈 Binance Spot: $IRYS\n\n#IRYS #LONG #Crypto",
-      "url": "https://app.binance.com/uni-qr/cpos/379798634581355?r=DZCPIY7B&l=ru",
-      "postId": 379798634581355
-    },
-    {
-      "at": "2026-10-22T00:01:45.694Z",
-      "ticker": "PEOPLE",
-      "change": -1.140161925482447,
-      "volume": 13952419,
-      "marketType": "futures",
-      "text": "🎯 $PEOPLE — SHORT SETUP\n\n⚡ 1h move: -1.14% | Volume: $14.0M\nEntry: $0.008617\nTake profit: $0.008481\nStop loss: $0.008693\n\n1h momentum is negative and price is pressing below the recent range. Setup is invalid if price hits SL.\n\nWould you take this setup or wait? 👇\n📈 Binance Futures: $PEOPLE\n\n#PEOPLE #SHORT #Futures",
-      "url": "https://app.binance.com/uni-qr/cpos/379847088548869?r=DZCPIY7B&l=ru",
-      "postId": 379847088548869
-    },
-    {
-      "at": "2026-10-22T04:46:56.755Z",
-      "ticker": "SAND",
-      "change": -1.0288771844804023,
-      "volume": 43623766,
-      "marketType": "futures",
-      "text": "🎯 $SAND — SHORT SETUP\n\n⚡ 1h move: -1.03% | Volume: $43.6M\nEntry: $0.0550\nTake profit: $0.0545\nStop loss: $0.0553\n\n1h momentum is negative and price is pressing below the recent range. Setup is invalid if price hits SL.\n\nWould you take this setup or wait? 👇\n📈 Binance Futures: $SAND\n\n#SAND #SHORT #Futures",
-      "url": "https://app.binance.com/uni-qr/cpos/379917175466127?r=DZCPIY7B&l=ru",
-      "postId": 379917175466127
-    }
-  ],
+  "startedAt": "2026-10-22T12:41:00.000Z",
+  "endsAt": "2026-11-21T12:41:00.000Z",
+  "published": 0,
+  "perDay": {},
+  "seen": [],
+  "history": [],
   "lastError": null,
-  "planVersion": 3,
+  "planVersion": 4,
   "archiveHistory": [
     {
       "at": "2026-10-19T20:20:50.517Z",
@@ -245,6 +118,106 @@
       "text": "🎯 $APR — SHORT SETUP\n\n⚡ 1h move: -4.77% | Volume: $7.5M\nEntry: $0.0310\nTake profit: $0.0289\nStop loss: $0.0321\n\n1h momentum is negative and price is pressing below the recent range. Setup is invalid if price hits SL.\n\nWould you take this setup or wait? 👇\n📈 Binance Spot: $APR\n\n#APR #SHORT #Crypto",
       "url": "https://app.binance.com/uni-qr/cpos/379342724398236?r=DZCPIY7B&l=ru",
       "postId": 379342724398236
+    },
+    {
+      "at": "2026-10-20T18:41:15.966Z",
+      "ticker": "IOST",
+      "change": 4.067027346739602,
+      "volume": 24134451,
+      "marketType": "spot",
+      "text": "🎯 $IOST — LONG SETUP\n\n⚡ 1h move: +4.07% | Volume: $24.1M\nEntry: $0.0009461\nTake profit: $0.0009805\nStop loss: $0.0009269\n\n1h momentum is positive and price is holding above the recent range. Setup is invalid if price hits SL.\n\nWould you take this setup or wait? 👇\n📈 Binance Spot: $IOST\n\n#IOST #LONG #Crypto",
+      "url": "https://app.binance.com/uni-qr/cpos/379414429112410?r=DZCPIY7B&l=ru",
+      "postId": 379414429112410
+    },
+    {
+      "at": "2026-10-20T21:37:57.763Z",
+      "ticker": "PEPE",
+      "change": -1.1375890282545997,
+      "volume": 489691518,
+      "marketType": "futures",
+      "text": "🎯 $PEPE — SHORT SETUP\n\n⚡ 1h move: -1.14% | Volume: $489.7M\nEntry: $0.000004518\nTake profit: $0.000004455\nStop loss: $0.000004554\n\n1h momentum is negative and price is pressing below the recent range. Setup is invalid if price hits SL.\n\nWould you take this setup or wait? 👇\n📈 Binance Futures: $PEPE\n\n#PEPE #SHORT #Futures",
+      "url": "https://app.binance.com/uni-qr/cpos/379457854008766?r=DZCPIY7B&l=ru",
+      "postId": 379457854008766
+    },
+    {
+      "at": "2026-10-21T00:40:34.514Z",
+      "ticker": "GTC",
+      "change": -4.186196881291146,
+      "volume": 99200011,
+      "marketType": "spot",
+      "text": "🎯 $GTC — SHORT SETUP\n\n⚡ 1h move: -4.19% | Volume: $99.2M\nEntry: $0.3100\nTake profit: $0.2961\nStop loss: $0.3177\n\n1h momentum is negative and price is pressing below the recent range. Setup is invalid if price hits SL.\n\nWould you take this setup or wait? 👇\n📈 Binance Spot: $GTC\n\n#GTC #SHORT #Crypto",
+      "url": "https://app.binance.com/uni-qr/cpos/379502733086159?r=DZCPIY7B&l=ru",
+      "postId": 379502733086159
+    },
+    {
+      "at": "2026-10-21T06:05:29.025Z",
+      "ticker": "COMP",
+      "change": -1.5557050396298902,
+      "volume": 134050753,
+      "marketType": "futures",
+      "text": "🎯 $COMP — SHORT SETUP\n\n⚡ 1h move: -1.56% | Volume: $134.1M\nEntry: $25.6611\nTake profit: $25.2277\nStop loss: $25.9018\n\n1h momentum is negative and price is pressing below the recent range. Setup is invalid if price hits SL.\n\nWould you take this setup or wait? 👇\n📈 Binance Futures: $COMP\n\n#COMP #SHORT #Futures",
+      "url": "https://app.binance.com/uni-qr/cpos/379582582428653?r=DZCPIY7B&l=ru",
+      "postId": 379582582428653
+    },
+    {
+      "at": "2026-10-21T11:52:04.324Z",
+      "ticker": "ENA",
+      "change": 1.890048933930323,
+      "volume": 483735668,
+      "marketType": "futures",
+      "text": "🎯 $ENA — LONG SETUP\n\n⚡ 1h move: +1.89% | Volume: $483.7M\nEntry: $0.2094\nTake profit: $0.2136\nStop loss: $0.2071\n\n1h momentum is positive and price is holding above the recent range. Setup is invalid if price hits SL.\n\nWould you take this setup or wait? 👇\n📈 Binance Futures: $ENA\n\n#ENA #LONG #Futures",
+      "url": "https://app.binance.com/uni-qr/cpos/379667759946323?r=DZCPIY7B&l=ru",
+      "postId": 379667759946323
+    },
+    {
+      "at": "2026-10-21T17:15:00.626Z",
+      "ticker": "ARC",
+      "change": 5.177881908485295,
+      "volume": 13190799,
+      "marketType": "spot",
+      "text": "🎯 $ARC — LONG SETUP\n\n⚡ 1h move: +5.18% | Volume: $13.2M\nEntry: $0.0627\nTake profit: $0.0666\nStop loss: $0.0605\n\n1h momentum is positive and price is holding above the recent range. Setup is invalid if price hits SL.\n\nWould you take this setup or wait? 👇\n📈 Binance Spot: $ARC\n\n#ARC #LONG #Crypto",
+      "url": "https://app.binance.com/uni-qr/cpos/379747125334687?r=DZCPIY7B&l=ru",
+      "postId": 379747125334687
+    },
+    {
+      "at": "2026-10-21T17:18:05.305Z",
+      "ticker": "W",
+      "change": -3.5004278171378975,
+      "volume": 72993664,
+      "marketType": "futures",
+      "text": "🎯 $W — SHORT SETUP\n\n⚡ 1h move: -3.50% | Volume: $73.0M\nEntry: $0.0154\nTake profit: $0.0149\nStop loss: $0.0157\n\n1h momentum is negative and price is pressing below the recent range. Setup is invalid if price hits SL.\n\nWould you take this setup or wait? 👇\n📈 Binance Futures: $W\n\n#W #SHORT #Futures",
+      "url": "https://app.binance.com/uni-qr/cpos/379747881749415?r=DZCPIY7B&l=ru",
+      "postId": 379747881749415
+    },
+    {
+      "at": "2026-10-21T20:44:36.123Z",
+      "ticker": "IRYS",
+      "change": 2.5923562759050096,
+      "volume": 116145502,
+      "marketType": "spot",
+      "text": "🎯 $IRYS — LONG SETUP\n\n⚡ 1h move: +2.59% | Volume: $116.1M\nEntry: $0.0209\nTake profit: $0.0220\nStop loss: $0.0203\n\n1h momentum is positive and price is holding above the recent range. Setup is invalid if price hits SL.\n\nWould you take this setup or wait? 👇\n📈 Binance Spot: $IRYS\n\n#IRYS #LONG #Crypto",
+      "url": "https://app.binance.com/uni-qr/cpos/379798634581355?r=DZCPIY7B&l=ru",
+      "postId": 379798634581355
+    },
+    {
+      "at": "2026-10-22T00:01:45.694Z",
+      "ticker": "PEOPLE",
+      "change": -1.140161925482447,
+      "volume": 13952419,
+      "marketType": "futures",
+      "text": "🎯 $PEOPLE — SHORT SETUP\n\n⚡ 1h move: -1.14% | Volume: $14.0M\nEntry: $0.008617\nTake profit: $0.008481\nStop loss: $0.008693\n\n1h momentum is negative and price is pressing below the recent range. Setup is invalid if price hits SL.\n\nWould you take this setup or wait? 👇\n📈 Binance Futures: $PEOPLE\n\n#PEOPLE #SHORT #Futures",
+      "url": "https://app.binance.com/uni-qr/cpos/379847088548869?r=DZCPIY7B&l=ru",
+      "postId": 379847088548869
+    },
+    {
+      "at": "2026-10-22T04:46:56.755Z",
+      "ticker": "SAND",
+      "change": -1.0288771844804023,
+      "volume": 43623766,
+      "marketType": "futures",
+      "text": "🎯 $SAND — SHORT SETUP\n\n⚡ 1h move: -1.03% | Volume: $43.6M\nEntry: $0.0550\nTake profit: $0.0545\nStop loss: $0.0553\n\n1h momentum is negative and price is pressing below the recent range. Setup is invalid if price hits SL.\n\nWould you take this setup or wait? 👇\n📈 Binance Futures: $SAND\n\n#SAND #SHORT #Futures",
+      "url": "https://app.binance.com/uni-qr/cpos/379917175466127?r=DZCPIY7B&l=ru",
+      "postId": 379917175466127
     }
   ]
 }

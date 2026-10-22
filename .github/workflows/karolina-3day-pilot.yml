@@ -7,7 +7,9 @@ on:
       - '.github/workflows/karolina-3day-pilot.yml'
   workflow_dispatch:
   schedule:
-    - cron: '0 * * * *'
+    # Frequent checks recover from delayed/missed GitHub scheduled events.
+    # The runner enforces a 55-minute publication gap, so this won't post 3x/hour.
+    - cron: '0,20,40 * * * *'
 permissions:
   contents: write
 concurrency:

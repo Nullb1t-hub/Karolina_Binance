@@ -2,10 +2,11 @@
   "active": true,
   "startedAt": "2026-10-20T17:49:00.000Z",
   "endsAt": "2026-10-27T17:49:00.000Z",
-  "published": 8,
+  "published": 9,
   "perDay": {
     "2026-10-20": 2,
-    "2026-10-21": 6
+    "2026-10-21": 6,
+    "2026-10-22": 1
   },
   "seen": [
     "AGT",
@@ -26,7 +27,8 @@
     "ENA",
     "ARC",
     "W",
-    "IRYS"
+    "IRYS",
+    "PEOPLE"
   ],
   "history": [
     {
@@ -108,6 +110,16 @@
       "text": "🎯 $IRYS — LONG SETUP\n\n⚡ 1h move: +2.59% | Volume: $116.1M\nEntry: $0.0209\nTake profit: $0.0220\nStop loss: $0.0203\n\n1h momentum is positive and price is holding above the recent range. Setup is invalid if price hits SL.\n\nWould you take this setup or wait? 👇\n📈 Binance Spot: $IRYS\n\n#IRYS #LONG #Crypto",
       "url": "https://app.binance.com/uni-qr/cpos/379798634581355?r=DZCPIY7B&l=ru",
       "postId": 379798634581355
+    },
+    {
+      "at": "2026-10-22T00:01:45.694Z",
+      "ticker": "PEOPLE",
+      "change": -1.140161925482447,
+      "volume": 13952419,
+      "marketType": "futures",
+      "text": "🎯 $PEOPLE — SHORT SETUP\n\n⚡ 1h move: -1.14% | Volume: $14.0M\nEntry: $0.008617\nTake profit: $0.008481\nStop loss: $0.008693\n\n1h momentum is negative and price is pressing below the recent range. Setup is invalid if price hits SL.\n\nWould you take this setup or wait? 👇\n📈 Binance Futures: $PEOPLE\n\n#PEOPLE #SHORT #Futures",
+      "url": "https://app.binance.com/uni-qr/cpos/379847088548869?r=DZCPIY7B&l=ru",
+      "postId": 379847088548869
     }
   ],
   "lastError": null,

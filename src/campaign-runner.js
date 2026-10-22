@@ -57,15 +57,21 @@ async function symbols(){
   .sort((a,b)=>Math.abs(b.change)*Math.log10(1+b.volume)-Math.abs(a.change)*Math.log10(1+a.volume)).slice(0,100);
 }
 async function chartPoints(coin){
+ // Prefer OKX minute candles for CoinGecko-discovered tokens. This avoids
+ // hammering CoinGecko's rate-limited chart endpoint once per candidate.
+ if(coin.source==='OKX'||coin.coinId){
+  const instId=coin.source==='OKX'?coin.symbol:(coin.ticker+'-USDT');
+  try{
+   const d=await getJson('https://www.okx.com/api/v5/market/candles?instId='+encodeURIComponent(instId)+'&bar=1m&limit=60',10000);
+   const values=(d.data||[]).slice().reverse().map(x=>Number(x[4])).filter(x=>Number.isFinite(x)&&x>0);
+   if(values.length>=8)return values;
+  }catch(e){console.log('OKX candles unavailable for '+coin.ticker+': '+String(e.message||e));}
+ }
  if(coin.coinId){
-  const d=await getJson('https://api.coingecko.com/api/v3/coins/'+encodeURIComponent(coin.coinId)+'/market_chart?vs_currency=usd&days=1',15000);
+  const d=await getJson('https://api.coingecko.com/api/v3/coins/'+encodeURIComponent(coin.coinId)+'/market_chart?vs_currency=usd&days=1',10000);
   return (d.prices||[]).map(x=>Number(x[1])).filter(x=>Number.isFinite(x)&&x>0);
  }
- if(coin.source==='OKX'){
-  const d=await getJson('https://www.okx.com/api/v5/market/candles?instId='+encodeURIComponent(coin.symbol)+'&bar=1m&limit=60',12000);
-  return (d.data||[]).slice().reverse().map(x=>Number(x[4])).filter(x=>Number.isFinite(x)&&x>0);
- }
- const d=await getJson('https://api.binance.vision/api/v3/klines?symbol='+encodeURIComponent(coin.symbol)+'&interval=1m&limit=60',12000);
+ const d=await getJson('https://api.binance.vision/api/v3/klines?symbol='+encodeURIComponent(coin.symbol)+'&interval=1m&limit=60',10000);
  return d.map(x=>Number(x[4])).filter(x=>Number.isFinite(x)&&x>0);
 }
 function linePath(values){

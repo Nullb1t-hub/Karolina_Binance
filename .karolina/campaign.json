@@ -2,10 +2,10 @@
   "active": true,
   "startedAt": "2026-10-22T12:41:00.000Z",
   "endsAt": "2026-11-21T12:41:00.000Z",
-  "published": 7,
+  "published": 8,
   "perDay": {
     "2026-10-22": 3,
-    "2026-10-23": 4
+    "2026-10-23": 5
   },
   "seen": [
     "HUMA",
@@ -14,7 +14,8 @@
     "QNT",
     "W",
     "PEARL",
-    "SOPH"
+    "SOPH",
+    "ARK"
   ],
   "history": [
     {
@@ -86,6 +87,16 @@
       "text": "⚠️ SELL-OFF WATCH — $SOPH -6.12% in the last hour\n\n24H move: +22.48% · 24H volume: $19.6M\n\nThat is a sharp move — but a bounce can be just as violent. Don’t buy blindly while price is falling.\n\nPrice reference: $0.001948\nDownside level to watch: $0.001876\nInvalidation / reclaim: $0.001988\n\nTap $SOPH to check the live chart on Square, then decide whether this is a breakdown or a bounce setup. 👇\n#SOPH #BinanceSpot #Crypto",
       "url": "https://app.binance.com/uni-qr/cpos/380390751432425?r=DZCPIY7B&l=ru",
       "postId": 380390751432425
+    },
+    {
+      "at": "2026-10-23T17:46:53.171Z",
+      "ticker": "ARK",
+      "change": -2.244643834102739,
+      "volume": 48117664,
+      "marketType": "futures",
+      "text": "🔻 SELLERS ARE PRESSING $ARK: -2.24% in 1H\n\n24H: +20.57% · 24H volume: $48.1M\n\n📉 SHORT setup to watch\nEntry: $0.2159\nTake profit: $0.2022\nStop loss: $0.2234\n\nIf momentum follows through, these are the levels I’m watching. If SL breaks, the idea is invalid — no guarantees, especially with leverage.\n\nTap $ARK to check the coin chart, then verify the live price on Binance Futures. Would you take this setup or fade it?\n#ARK #SHORT #Futures",
+      "url": "https://app.binance.com/uni-qr/cpos/380462747910037?r=DZCPIY7B&l=ru",
+      "postId": 380462747910037
     }
   ],
   "lastError": null,

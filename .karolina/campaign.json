@@ -2,17 +2,18 @@
   "active": true,
   "startedAt": "2026-10-22T12:41:00.000Z",
   "endsAt": "2026-11-21T12:41:00.000Z",
-  "published": 5,
+  "published": 6,
   "perDay": {
     "2026-10-22": 3,
-    "2026-10-23": 2
+    "2026-10-23": 3
   },
   "seen": [
     "HUMA",
     "BILL",
     "IOST",
     "QNT",
-    "W"
+    "W",
+    "PEARL"
   ],
   "history": [
     {
@@ -64,6 +65,16 @@
       "text": "🔻 SELLERS ARE PRESSING $W: -1.05% in 1H\n\n24H: -6.94% · 24H volume: $26.3M\n\n📉 SHORT setup to watch\nEntry: $0.0132\nTake profit: $0.0130\nStop loss: $0.0133\n\nIf momentum follows through, these are the levels I’m watching. If SL breaks, the idea is invalid — no guarantees, especially with leverage.\n\nTap $W to check the coin chart, then verify the live price on Binance Futures. Would you take this setup or fade it?\n#W #SHORT #Futures",
       "url": "https://app.binance.com/uni-qr/cpos/380229566797316?r=DZCPIY7B&l=ru",
       "postId": 380229566797316
+    },
+    {
+      "at": "2026-10-23T07:23:33.860Z",
+      "ticker": "PEARL",
+      "change": -1.8819312490734048,
+      "volume": 8924973,
+      "marketType": "spot",
+      "text": "⚠️ SELL-OFF WATCH — $PEARL -1.88% in the last hour\n\n24H move: -10.97% · 24H volume: $8.9M\n\nThat is a sharp move — but a bounce can be just as violent. Don’t buy blindly while price is falling.\n\nPrice reference: $2.0615\nDownside level to watch: $2.0121\nInvalidation / reclaim: $2.0889\n\nTap $PEARL to check the live chart on Square, then decide whether this is a breakdown or a bounce setup. 👇\n#PEARL #BinanceSpot #Crypto",
+      "url": "https://app.binance.com/uni-qr/cpos/380309560311663?r=DZCPIY7B&l=ru",
+      "postId": 380309560311663
     }
   ],
   "lastError": null,

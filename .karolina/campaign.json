@@ -2,10 +2,10 @@
   "active": true,
   "startedAt": "2026-10-22T12:41:00.000Z",
   "endsAt": "2026-11-21T12:41:00.000Z",
-  "published": 6,
+  "published": 7,
   "perDay": {
     "2026-10-22": 3,
-    "2026-10-23": 3
+    "2026-10-23": 4
   },
   "seen": [
     "HUMA",
@@ -13,7 +13,8 @@
     "IOST",
     "QNT",
     "W",
-    "PEARL"
+    "PEARL",
+    "SOPH"
   ],
   "history": [
     {
@@ -75,6 +76,16 @@
       "text": "⚠️ SELL-OFF WATCH — $PEARL -1.88% in the last hour\n\n24H move: -10.97% · 24H volume: $8.9M\n\nThat is a sharp move — but a bounce can be just as violent. Don’t buy blindly while price is falling.\n\nPrice reference: $2.0615\nDownside level to watch: $2.0121\nInvalidation / reclaim: $2.0889\n\nTap $PEARL to check the live chart on Square, then decide whether this is a breakdown or a bounce setup. 👇\n#PEARL #BinanceSpot #Crypto",
       "url": "https://app.binance.com/uni-qr/cpos/380309560311663?r=DZCPIY7B&l=ru",
       "postId": 380309560311663
+    },
+    {
+      "at": "2026-10-23T12:53:55.883Z",
+      "ticker": "SOPH",
+      "change": -6.12048192771084,
+      "volume": 19621247,
+      "marketType": "spot",
+      "text": "⚠️ SELL-OFF WATCH — $SOPH -6.12% in the last hour\n\n24H move: +22.48% · 24H volume: $19.6M\n\nThat is a sharp move — but a bounce can be just as violent. Don’t buy blindly while price is falling.\n\nPrice reference: $0.001948\nDownside level to watch: $0.001876\nInvalidation / reclaim: $0.001988\n\nTap $SOPH to check the live chart on Square, then decide whether this is a breakdown or a bounce setup. 👇\n#SOPH #BinanceSpot #Crypto",
+      "url": "https://app.binance.com/uni-qr/cpos/380390751432425?r=DZCPIY7B&l=ru",
+      "postId": 380390751432425
     }
   ],
   "lastError": null,

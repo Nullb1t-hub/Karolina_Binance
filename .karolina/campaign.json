@@ -2,11 +2,11 @@
   "active": true,
   "startedAt": "2026-10-22T12:41:00.000Z",
   "endsAt": "2026-11-21T12:41:00.000Z",
-  "published": 12,
+  "published": 13,
   "perDay": {
     "2026-10-22": 3,
     "2026-10-23": 6,
-    "2026-10-24": 3
+    "2026-10-24": 4
   },
   "seen": [
     "HUMA",
@@ -20,7 +20,8 @@
     "BEAM",
     "BIRB",
     "ARK",
-    "DOS"
+    "DOS",
+    "NCT"
   ],
   "history": [
     {
@@ -142,6 +143,16 @@
       "text": "⚡ BREAKOUT WATCH — $DOS +1.47% in the last hour\n\n24H move: +19.44% · 24H volume: $73.5M\n\nThe move is big enough to watch, but the next candle decides whether it continues or turns into a fakeout.\n\nPrice reference: $0.2684\nNext target: $0.2747\nInvalidation: $0.2649\n\nTap $DOS to open the coin chart and check whether buyers are still in control. Breakout or trap? 👇\n#DOS #BinanceSpot #Crypto",
       "url": "https://app.binance.com/uni-qr/cpos/380683976743780?r=DZCPIY7B&l=ru",
       "postId": 380683976743780
+    },
+    {
+      "at": "2026-10-24T13:13:08.027Z",
+      "ticker": "NCT",
+      "change": -2.9260848513433007,
+      "volume": 35958765,
+      "marketType": "spot",
+      "text": "⚠️ SELL-OFF WATCH — $NCT -2.93% in the last hour\n\n24H move: +16.20% · 24H volume: $36.0M\n\nThat is a sharp move — but a bounce can be just as violent. Don’t buy blindly while price is falling.\n\nPrice reference: $0.0105\nDownside level to watch: $0.009838\nInvalidation / reclaim: $0.0108\n\nTap $NCT to check the live chart on Square, then decide whether this is a breakdown or a bounce setup. 👇\n#NCT #BinanceSpot #Crypto",
+      "url": "https://app.binance.com/uni-qr/cpos/380749364869710?r=DZCPIY7B&l=ru",
+      "postId": 380749364869710
     }
   ],
   "lastError": null,

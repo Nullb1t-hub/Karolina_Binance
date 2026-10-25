@@ -2,12 +2,12 @@
   "active": true,
   "startedAt": "2026-10-22T12:41:00.000Z",
   "endsAt": "2026-11-21T12:41:00.000Z",
-  "published": 21,
+  "published": 22,
   "perDay": {
     "2026-10-22": 3,
     "2026-10-23": 6,
     "2026-10-24": 7,
-    "2026-10-25": 5
+    "2026-10-25": 6
   },
   "seen": [
     "HUMA",
@@ -30,7 +30,8 @@
     "ARK",
     "XEC",
     "RLC",
-    "COMP"
+    "COMP",
+    "QNT"
   ],
   "history": [
     {
@@ -242,6 +243,16 @@
       "text": "🚨 MOMENTUM ALERT: $COMP just moved +4.73% in 1H\n\n24H: +4.68% · 24H volume: $11.6M\n\n📈 LONG setup to watch\nEntry: $24.59\nTake profit: $25.3858\nStop loss: $24.1479\n\nIf momentum follows through, these are the levels I’m watching. If SL breaks, the idea is invalid — no guarantees, especially with leverage.\n\nTap $COMP to check the coin chart, then verify the live price on Binance Futures. Would you take this setup or fade it?\n#COMP #LONG #Futures",
       "url": "https://app.binance.com/uni-qr/cpos/381166539411428?r=DZCPIY7B&l=ru",
       "postId": 381166539411428
+    },
+    {
+      "at": "2026-10-25T19:56:33.114Z",
+      "ticker": "QNT",
+      "change": 1.4635620363810409,
+      "volume": 63778876,
+      "marketType": "futures",
+      "text": "🚨 MOMENTUM ALERT: $QNT just moved +1.46% in 1H\n\n24H: +9.35% · 24H volume: $63.8M\n\n📈 LONG setup to watch\nEntry: $195.3825\nTake profit: $200.3509\nStop loss: $192.6223\n\nIf momentum follows through, these are the levels I’m watching. If SL breaks, the idea is invalid — no guarantees, especially with leverage.\n\nTap $QNT to check the coin chart, then verify the live price on Binance Futures. Would you take this setup or fade it?\n#QNT #LONG #Futures",
+      "url": "https://app.binance.com/uni-qr/cpos/381202403389533?r=DZCPIY7B&l=ru",
+      "postId": 381202403389533
     }
   ],
   "lastError": null,

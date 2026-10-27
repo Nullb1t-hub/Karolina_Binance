@@ -2,14 +2,14 @@
   "active": true,
   "startedAt": "2026-10-22T12:41:00.000Z",
   "endsAt": "2026-11-21T12:41:00.000Z",
-  "published": 28,
+  "published": 29,
   "perDay": {
     "2026-10-22": 3,
     "2026-10-23": 6,
     "2026-10-24": 7,
     "2026-10-25": 7,
     "2026-10-26": 4,
-    "2026-10-27": 1
+    "2026-10-27": 2
   },
   "seen": [
     "HUMA",
@@ -39,7 +39,8 @@
     "QNT",
     "POLYX",
     "ZRO",
-    "QNT"
+    "QNT",
+    "IRYS"
   ],
   "history": [
     {
@@ -321,6 +322,16 @@
       "text": "🔻 SELLERS ARE PRESSING $QNT: -1.23% in 1H\n\n24H: +4.80% · 24H volume: $170.3M\n\n📉 SHORT setup to watch\nEntry: $201.1827\nTake profit: $198.4062\nStop loss: $202.7252\n\nIf momentum follows through, these are the levels I’m watching. If SL breaks, the idea is invalid — no guarantees, especially with leverage.\n\nTap $QNT to check the coin chart, then verify the live price on Binance Futures. Would you take this setup or fade it?\n#QNT #SHORT #Futures",
       "url": "https://app.binance.com/uni-qr/cpos/381602423127847?r=DZCPIY7B&l=ru",
       "postId": 381602423127847
+    },
+    {
+      "at": "2026-10-27T02:11:35.960Z",
+      "ticker": "IRYS",
+      "change": 2.025316455696186,
+      "volume": 160109301,
+      "marketType": "spot",
+      "text": "⚡ BREAKOUT WATCH — $IRYS +2.03% in the last hour\n\n24H move: -13.69% · 24H volume: $160.1M\n\nThe move is big enough to watch, but the next candle decides whether it continues or turns into a fakeout.\n\nPrice reference: $0.0322\nNext target: $0.0337\nInvalidation: $0.0314\n\nTap $IRYS to open the coin chart and check whether buyers are still in control. Breakout or trap? 👇\n#IRYS #BinanceSpot #Crypto",
+      "url": "https://app.binance.com/uni-qr/cpos/381648469380629?r=DZCPIY7B&l=ru",
+      "postId": 381648469380629
     }
   ],
   "lastError": null,

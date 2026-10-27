@@ -2,14 +2,14 @@
   "active": true,
   "startedAt": "2026-10-22T12:41:00.000Z",
   "endsAt": "2026-11-21T12:41:00.000Z",
-  "published": 30,
+  "published": 31,
   "perDay": {
     "2026-10-22": 3,
     "2026-10-23": 6,
     "2026-10-24": 7,
     "2026-10-25": 7,
     "2026-10-26": 4,
-    "2026-10-27": 3
+    "2026-10-27": 4
   },
   "seen": [
     "HUMA",
@@ -41,7 +41,8 @@
     "ZRO",
     "QNT",
     "IRYS",
-    "QNT"
+    "QNT",
+    "ANIME"
   ],
   "history": [
     {
@@ -343,6 +344,16 @@
       "text": "🚨 MOMENTUM ALERT: $QNT just moved +3.77% in 1H\n\n24H: +6.74% · 24H volume: $186.2M\n\n📈 LONG setup to watch\nEntry: $207.7806\nTake profit: $216.0484\nStop loss: $203.1873\n\nIf momentum follows through, these are the levels I’m watching. If SL breaks, the idea is invalid — no guarantees, especially with leverage.\n\nTap $QNT to check the coin chart, then verify the live price on Binance Futures. Would you take this setup or fade it?\n#QNT #LONG #Futures",
       "url": "https://app.binance.com/uni-qr/cpos/381734338817893?r=DZCPIY7B&l=ru",
       "postId": 381734338817893
+    },
+    {
+      "at": "2026-10-27T14:39:41.017Z",
+      "ticker": "ANIME",
+      "change": -0.9555189456342652,
+      "volume": 34970447,
+      "marketType": "futures",
+      "text": "🔻 SELLERS ARE PRESSING $ANIME: -0.96% in 1H\n\n24H: +7.65% · 24H volume: $35.0M\n\n📉 SHORT setup to watch\nEntry: $0.003006\nTake profit: $0.002957\nStop loss: $0.003033\n\nIf momentum follows through, these are the levels I’m watching. If SL breaks, the idea is invalid — no guarantees, especially with leverage.\n\nTap $ANIME to check the coin chart, then verify the live price on Binance Futures. Would you take this setup or fade it?\n#ANIME #SHORT #Futures",
+      "url": "https://app.binance.com/uni-qr/cpos/381832318560293?r=DZCPIY7B&l=ru",
+      "postId": 381832318560293
     }
   ],
   "lastError": null,

@@ -2,14 +2,15 @@
   "active": true,
   "startedAt": "2026-10-22T12:41:00.000Z",
   "endsAt": "2026-11-21T12:41:00.000Z",
-  "published": 32,
+  "published": 33,
   "perDay": {
     "2026-10-22": 3,
     "2026-10-23": 6,
     "2026-10-24": 7,
     "2026-10-25": 7,
     "2026-10-26": 4,
-    "2026-10-27": 5
+    "2026-10-27": 5,
+    "2026-10-28": 1
   },
   "seen": [
     "HUMA",
@@ -43,7 +44,8 @@
     "IRYS",
     "QNT",
     "ANIME",
-    "GRVT"
+    "GRVT",
+    "BANK"
   ],
   "history": [
     {
@@ -365,6 +367,16 @@
       "text": "⚠️ SELL-OFF WATCH — $GRVT -2.93% in the last hour\n\n24H move: +19.56% · 24H volume: $28.5M\n\nThat is a sharp move — but a bounce can be just as violent. Don’t buy blindly while price is falling.\n\nPrice reference: $0.2389\nDownside level to watch: $0.2332\nInvalidation / reclaim: $0.2421\n\nTap $GRVT to check the live chart on Square, then decide whether this is a breakdown or a bounce setup. 👇\n#GRVT #BinanceSpot #Crypto",
       "url": "https://app.binance.com/uni-qr/cpos/381906773970849?r=DZCPIY7B&l=ru",
       "postId": 381906773970849
+    },
+    {
+      "at": "2026-10-27T23:17:36.415Z",
+      "ticker": "BANK",
+      "change": -2.5219203019946823,
+      "volume": 52955405,
+      "marketType": "spot",
+      "text": "⚠️ SELL-OFF WATCH — $BANK -2.52% in the last hour\n\n24H move: +25.39% · 24H volume: $53.0M\n\nThat is a sharp move — but a bounce can be just as violent. Don’t buy blindly while price is falling.\n\nPrice reference: $0.0321\nDownside level to watch: $0.0299\nInvalidation / reclaim: $0.0333\n\nTap $BANK to check the live chart on Square, then decide whether this is a breakdown or a bounce setup. 👇\n#BANK #BinanceSpot #Crypto",
+      "url": "https://app.binance.com/uni-qr/cpos/381959603425885?r=DZCPIY7B&l=ru",
+      "postId": 381959603425885
     }
   ],
   "lastError": null,

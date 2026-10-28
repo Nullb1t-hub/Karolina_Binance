@@ -2,7 +2,7 @@
   "active": true,
   "startedAt": "2026-10-22T12:41:00.000Z",
   "endsAt": "2026-11-21T12:41:00.000Z",
-  "published": 34,
+  "published": 35,
   "perDay": {
     "2026-10-22": 3,
     "2026-10-23": 6,
@@ -10,7 +10,7 @@
     "2026-10-25": 7,
     "2026-10-26": 4,
     "2026-10-27": 5,
-    "2026-10-28": 2
+    "2026-10-28": 3
   },
   "seen": [
     "HUMA",
@@ -46,7 +46,8 @@
     "ANIME",
     "GRVT",
     "BANK",
-    "COLLECT"
+    "COLLECT",
+    "BLUR"
   ],
   "history": [
     {
@@ -388,6 +389,16 @@
       "text": "⚠️ SELL-OFF WATCH — $COLLECT -4.05% in the last hour\n\n24H move: +23.99% · 24H volume: $15.3M\n\nThat is a sharp move — but a bounce can be just as violent. Don’t buy blindly while price is falling.\n\nPrice reference: $0.0273\nDownside level to watch: $0.0261\nInvalidation / reclaim: $0.0279\n\nTap $COLLECT to check the live chart on Square, then decide whether this is a breakdown or a bounce setup. 👇\n#COLLECT #BinanceSpot #Crypto",
       "url": "https://app.binance.com/uni-qr/cpos/382005860614257?r=DZCPIY7B&l=ru",
       "postId": 382005860614257
+    },
+    {
+      "at": "2026-10-28T08:58:29.703Z",
+      "ticker": "BLUR",
+      "change": 3.874234573716453,
+      "volume": 24707401,
+      "marketType": "futures",
+      "text": "🚨 MOMENTUM ALERT: $BLUR just moved +3.87% in 1H\n\n24H: +19.30% · 24H volume: $24.7M\n\n📈 LONG setup to watch\nEntry: $0.008821\nTake profit: $0.009104\nStop loss: $0.008664\n\nIf momentum follows through, these are the levels I’m watching. If SL breaks, the idea is invalid — no guarantees, especially with leverage.\n\nTap $BLUR to check the coin chart, then verify the live price on Binance Futures. Would you take this setup or fade it?\n#BLUR #LONG #Futures",
+      "url": "https://app.binance.com/uni-qr/cpos/382102362380743?r=DZCPIY7B&l=ru",
+      "postId": 382102362380743
     }
   ],
   "lastError": null,

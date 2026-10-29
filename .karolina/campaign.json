@@ -2,7 +2,7 @@
   "active": true,
   "startedAt": "2026-10-22T12:41:00.000Z",
   "endsAt": "2026-11-21T12:41:00.000Z",
-  "published": 41,
+  "published": 42,
   "perDay": {
     "2026-10-22": 3,
     "2026-10-23": 6,
@@ -11,7 +11,8 @@
     "2026-10-26": 4,
     "2026-10-27": 5,
     "2026-10-28": 5,
-    "2026-10-29": 4
+    "2026-10-29": 4,
+    "2026-10-30": 1
   },
   "seen": [
     "HUMA",
@@ -54,7 +55,8 @@
     "SKHYB",
     "BLUR",
     "JASMY",
-    "PARTI"
+    "PARTI",
+    "PEPE"
   ],
   "history": [
     {
@@ -466,6 +468,16 @@
       "text": "⚠️ SELL-OFF WATCH — $PARTI -2.32% in the last hour\n\n24H move: +44.20% · 24H volume: $134.2M\n\nThat is a sharp move — but a bounce can be just as violent. Don’t buy blindly while price is falling.\n\nPrice reference: $0.0557\nDownside level to watch: $0.0522\nInvalidation / reclaim: $0.0576\n\nTap $PARTI to check the live chart on Square, then decide whether this is a breakdown or a bounce setup. 👇\n#PARTI #BinanceSpot #Crypto",
       "url": "https://app.binance.com/uni-qr/cpos/382611383347507?r=DZCPIY7B&l=ru",
       "postId": 382611383347507
+    },
+    {
+      "at": "2026-10-29T23:34:58.680Z",
+      "ticker": "PEPE",
+      "change": -1.989461232390588,
+      "volume": 1447702012,
+      "marketType": "futures",
+      "text": "🔻 SELLERS ARE PRESSING $PEPE: -1.99% in 1H\n\n24H: -8.53% · 24H volume: $1.4B\n\n📉 SHORT setup to watch\nEntry: $0.000004557\nTake profit: $0.000004388\nStop loss: $0.000004651\n\nIf momentum follows through, these are the levels I’m watching. If SL breaks, the idea is invalid — no guarantees, especially with leverage.\n\nTap $PEPE to check the coin chart, then verify the live price on Binance Futures. Would you take this setup or fade it?\n#PEPE #SHORT #Futures",
+      "url": "https://app.binance.com/uni-qr/cpos/382671661297152?r=DZCPIY7B&l=ru",
+      "postId": 382671661297152
     }
   ],
   "lastError": null,

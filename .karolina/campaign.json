@@ -2,7 +2,7 @@
   "active": true,
   "startedAt": "2026-10-22T12:41:00.000Z",
   "endsAt": "2026-11-21T12:41:00.000Z",
-  "published": 39,
+  "published": 40,
   "perDay": {
     "2026-10-22": 3,
     "2026-10-23": 6,
@@ -11,7 +11,7 @@
     "2026-10-26": 4,
     "2026-10-27": 5,
     "2026-10-28": 5,
-    "2026-10-29": 2
+    "2026-10-29": 3
   },
   "seen": [
     "HUMA",
@@ -52,7 +52,8 @@
     "BFC",
     "BLUR",
     "SKHYB",
-    "BLUR"
+    "BLUR",
+    "JASMY"
   ],
   "history": [
     {
@@ -444,6 +445,16 @@
       "text": "🔻 SELLERS ARE PRESSING $BLUR: -1.56% in 1H\n\n24H: +13.87% · 24H volume: $63.9M\n\n📉 SHORT setup to watch\nEntry: $0.008540\nTake profit: $0.008334\nStop loss: $0.008654\n\nIf momentum follows through, these are the levels I’m watching. If SL breaks, the idea is invalid — no guarantees, especially with leverage.\n\nTap $BLUR to check the coin chart, then verify the live price on Binance Futures. Would you take this setup or fade it?\n#BLUR #SHORT #Futures",
       "url": "https://app.binance.com/uni-qr/cpos/382419939348426?r=DZCPIY7B&l=ru",
       "postId": 382419939348426
+    },
+    {
+      "at": "2026-10-29T13:42:49.621Z",
+      "ticker": "JASMY",
+      "change": -1.039783130346094,
+      "volume": 30317335,
+      "marketType": "futures",
+      "text": "🔻 SELLERS ARE PRESSING $JASMY: -1.04% in 1H\n\n24H: -7.97% · 24H volume: $30.3M\n\n📉 SHORT setup to watch\nEntry: $0.003883\nTake profit: $0.003763\nStop loss: $0.003950\n\nIf momentum follows through, these are the levels I’m watching. If SL breaks, the idea is invalid — no guarantees, especially with leverage.\n\nTap $JASMY to check the coin chart, then verify the live price on Binance Futures. Would you take this setup or fade it?\n#JASMY #SHORT #Futures",
+      "url": "https://app.binance.com/uni-qr/cpos/382526134412534?r=DZCPIY7B&l=ru",
+      "postId": 382526134412534
     }
   ],
   "lastError": null,

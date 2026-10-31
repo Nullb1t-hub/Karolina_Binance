@@ -569,7 +569,7 @@
       "postId": 383296550285174
     }
   ],
-  "lastError": null,
+  "lastError": "No eligible spot token could be published. Last issue: No unused token passed the one-hour momentum and liquidity filters",
   "planVersion": 4,
   "archiveHistory": [
     {

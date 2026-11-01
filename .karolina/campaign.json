@@ -2,7 +2,7 @@
   "active": true,
   "startedAt": "2026-10-22T12:41:00.000Z",
   "endsAt": "2026-11-21T12:41:00.000Z",
-  "published": 50,
+  "published": 51,
   "perDay": {
     "2026-10-22": 3,
     "2026-10-23": 6,
@@ -13,7 +13,8 @@
     "2026-10-28": 5,
     "2026-10-29": 4,
     "2026-10-30": 5,
-    "2026-10-31": 4
+    "2026-10-31": 4,
+    "2026-11-01": 1
   },
   "seen": [
     "HUMA",
@@ -65,7 +66,8 @@
     "PYTH",
     "Q",
     "RUNE",
-    "LSK"
+    "LSK",
+    "WET"
   ],
   "history": [
     {
@@ -567,9 +569,19 @@
       "text": "⚠️ SELL-OFF WATCH — $LSK -2.84% in the last hour\n\n24H move: +33.22% · 24H volume: $167.4M\n\nThat is a sharp move — but a bounce can be just as violent. Don’t buy blindly while price is falling.\n\nPrice reference: $0.2747\nDownside level to watch: $0.2676\nInvalidation / reclaim: $0.2787\n\nTap $LSK to check the live chart on Square, then decide whether this is a breakdown or a bounce setup. 👇\n#LSK #BinanceSpot #Crypto",
       "url": "https://app.binance.com/uni-qr/cpos/383296550285174?r=DZCPIY7B&l=ru",
       "postId": 383296550285174
+    },
+    {
+      "at": "2026-11-01T00:14:47.339Z",
+      "ticker": "WET",
+      "change": 2.0529351883271167,
+      "volume": 15169071,
+      "marketType": "spot",
+      "text": "⚡ BREAKOUT WATCH — $WET +2.05% in the last hour\n\n24H move: +10.81% · 24H volume: $15.2M\n\nThe move is big enough to watch, but the next candle decides whether it continues or turns into a fakeout.\n\nPrice reference: $0.0602\nNext target: $0.0621\nInvalidation: $0.0591\n\nTap $WET to open the coin chart and check whether buyers are still in control. Breakout or trap? 👇\n#WET #BinanceSpot #Crypto",
+      "url": "https://app.binance.com/uni-qr/cpos/383389234093276?r=DZCPIY7B&l=ru",
+      "postId": 383389234093276
     }
   ],
-  "lastError": "No eligible spot token could be published. Last issue: No unused token passed the one-hour momentum and liquidity filters",
+  "lastError": null,
   "planVersion": 4,
   "archiveHistory": [
     {

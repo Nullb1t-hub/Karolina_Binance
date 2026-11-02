@@ -152,38 +152,46 @@ function formatPrice(value){
  return '$'+n.toPrecision(4);
 }
 function fallbackDraft(coin,mode){
- const side=coin.signalSide||(coin.hourChange>=0?'LONG':'SHORT');
+ const side=coin.signalSide||(Number(coin.hourChange??coin.change)>=0?'LONG':'SHORT');
  const hour=Number(coin.hourChange??coin.change),day=Number(coin.change24h??0);
- const move=(hour>=0?'+':'')+hour.toFixed(2)+'%';
- const move24=(day>=0?'+':'')+day.toFixed(2)+'%';
  const price=Number(coin.price),tp=Number(coin.takeProfit),sl=Number(coin.stopLoss);
+ if(!(price>0&&tp>0&&sl>0))throw Error('Invalid entry/TP/SL levels');
  const ticker='$'+coin.ticker,vol=compactMoney(coin.volume);
- const entry=formatPrice(price),target=formatPrice(tp),stop=formatPrice(sl);
+ const signed=n=>(n>=0?'+':'')+n.toFixed(2)+'%';
+ const move=signed(hour),dayMove=signed(day);
+ const favorable=(side==='LONG'?(tp/price-1):(price/tp-1))*100;
+ const adverse=(side==='LONG'?(1-sl/price):(sl/price-1))*100;
+ const leverage=mode==='futures'?5:1;
+ const potential=Math.max(0,favorable*leverage),risk=Math.max(0,adverse*leverage);
+ const target=formatPrice(tp),stop=formatPrice(sl),entry=formatPrice(price);
+ const variants=[
+  'I’m watching this one NOW.',
+  'This is the level I want to see hold.',
+  'Momentum is here. The next move matters.',
+  'Not chasing blindly — waiting for this setup.',
+  'One clean move could make this interesting.'
+ ];
+ let hash=0;for(const c of coin.ticker)hash=(hash*31+c.charCodeAt(0))>>>0;
+ const hook=variants[hash%variants.length];
  if(mode==='futures'){
   const direction=side==='LONG'?'LONG':'SHORT';
-  const headline=direction==='LONG'
-   ? '🚨 MOMENTUM ALERT: '+ticker+' just moved '+move+' in 1H'
-   : '🔻 SELLERS ARE PRESSING '+ticker+': '+move+' in 1H';
-  return headline+'\n\n24H: '+move24+' · 24H volume: '+vol+'\n\n'+
-   (direction==='LONG'?'📈 LONG setup to watch':'📉 SHORT setup to watch')+'\n'+
-   'Entry: '+entry+'\nTake profit: '+target+'\nStop loss: '+stop+'\n\n'+
-   'If momentum follows through, these are the levels I’m watching. If SL breaks, the idea is invalid — no guarantees, especially with leverage.\n\n'+
-   'Tap '+ticker+' to check the coin chart, then verify the live price on Binance Futures. Would you take this setup or fade it?\n'+
+  const action=direction==='LONG'?'BUYERS ARE PUSHING':'SELLERS ARE IN CONTROL';
+  return action+' '+ticker+' · '+move+' in 1H\n'+
+   '24H '+dayMove+' | Vol '+vol+'\n\n'+
+   hook+' '+direction+' idea:\n'+
+   'Entry '+entry+' → TP '+target+' ('+signed(favorable)+')\n'+
+   'SL '+stop+' ('+signed(-adverse)+')\n'+
+   'At 5x: approx. +'+potential.toFixed(1)+'% / -'+risk.toFixed(1)+'% gross, before fees/funding.\n\n'+
+   'Tap '+ticker+' and check the live Futures chart. Would you take this move or wait for a pullback?\n'+
    '#'+coin.ticker+' #'+direction+' #Futures';
  }
- if(side==='LONG'){
-  return '⚡ BREAKOUT WATCH — '+ticker+' '+move+' in the last hour\n\n'+
-   '24H move: '+move24+' · 24H volume: '+vol+'\n\n'+
-   'The move is big enough to watch, but the next candle decides whether it continues or turns into a fakeout.\n\n'+
-   'Price reference: '+entry+'\nNext target: '+target+'\nInvalidation: '+stop+'\n\n'+
-   'Tap '+ticker+' to open the coin chart and check whether buyers are still in control. Breakout or trap? 👇\n'+
-   '#'+coin.ticker+' #BinanceSpot #Crypto';
- }
- return '⚠️ SELL-OFF WATCH — '+ticker+' '+move+' in the last hour\n\n'+
-  '24H move: '+move24+' · 24H volume: '+vol+'\n\n'+
-  'That is a sharp move — but a bounce can be just as violent. Don’t buy blindly while price is falling.\n\n'+
-  'Price reference: '+entry+'\nDownside level to watch: '+target+'\nInvalidation / reclaim: '+stop+'\n\n'+
-  'Tap '+ticker+' to check the live chart on Square, then decide whether this is a breakdown or a bounce setup. 👇\n'+
+ const opener=side==='LONG'?'BREAKOUT WATCH':'BREAKDOWN WATCH';
+ return opener+' · '+ticker+' '+move+' in 1H\n'+
+  '24H '+dayMove+' | Vol '+vol+'\n\n'+
+  hook+'\n'+
+  (side==='LONG'?'Entry ':'Reference ')+entry+' → TP '+target+' ('+signed(favorable)+')\n'+
+  'Invalidation '+stop+' ('+signed(-adverse)+')\n\n'+
+  'Tap '+ticker+' to open the chart. Is this the start of a bigger move — or a fakeout?\n'+
   '#'+coin.ticker+' #BinanceSpot #Crypto';
 }
 async function draft(coin,mode){return fallbackDraft(coin,mode);}

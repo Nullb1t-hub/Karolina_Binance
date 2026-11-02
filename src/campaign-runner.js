@@ -185,11 +185,18 @@ function fallbackDraft(coin,mode){
    'Tap '+ticker+' and check the live Futures chart. Would you take this move or wait for a pullback?\n'+
    '#'+coin.ticker+' #'+direction+' #Futures';
  }
- const opener=side==='LONG'?'BREAKOUT WATCH':'BREAKDOWN WATCH';
- return opener+' · '+ticker+' '+move+' in 1H\n'+
+ if(side==='SHORT'){
+  return 'SELL PRESSURE · '+ticker+' '+move+' in 1H\n'+
+   '24H '+dayMove+' | Vol '+vol+'\n\n'+
+   'I’m not buying this drop blindly. Downside level: '+target+'\n'+
+   'Bullish reclaim needed above: '+stop+'\n\n'+
+   'Tap '+ticker+' and watch the level. Would you wait for a bounce or stay away?\n'+
+   '#'+coin.ticker+' #BinanceSpot #Crypto';
+ }
+ return 'BREAKOUT WATCH · '+ticker+' '+move+' in 1H\n'+
   '24H '+dayMove+' | Vol '+vol+'\n\n'+
   hook+'\n'+
-  (side==='LONG'?'Entry ':'Reference ')+entry+' → TP '+target+' ('+signed(favorable)+')\n'+
+  'Entry '+entry+' → TP '+target+' ('+signed(favorable)+')\n'+
   'Invalidation '+stop+' ('+signed(-adverse)+')\n\n'+
   'Tap '+ticker+' to open the chart. Is this the start of a bigger move — or a fakeout?\n'+
   '#'+coin.ticker+' #BinanceSpot #Crypto';

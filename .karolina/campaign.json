@@ -2,7 +2,7 @@
   "active": true,
   "startedAt": "2026-10-22T12:41:00.000Z",
   "endsAt": "2026-11-21T12:41:00.000Z",
-  "published": 56,
+  "published": 57,
   "perDay": {
     "2026-10-22": 3,
     "2026-10-23": 6,
@@ -15,7 +15,7 @@
     "2026-10-30": 5,
     "2026-10-31": 4,
     "2026-11-01": 5,
-    "2026-11-02": 1
+    "2026-11-02": 2
   },
   "seen": [
     "HUMA",
@@ -73,7 +73,8 @@
     "ZRO",
     "RUNE",
     "BEAM",
-    "RUNE"
+    "RUNE",
+    "BEAM"
   ],
   "history": [
     {
@@ -635,6 +636,16 @@
       "text": "SELLERS ARE IN CONTROL $RUNE · -4.39% in 1H\n24H -15.77% | Vol $13.3M\n\nOne clean move could make this interesting. SHORT idea:\nEntry $0.5176 → TP $0.4949 (+4.59%)\nSL $0.5302 (-2.44%)\nAt 5x: approx. +22.9% / -12.2% gross, before fees/funding.\n\nTap $RUNE and check the live Futures chart. Would you take this move or wait for a pullback?\n#RUNE #SHORT #Futures",
       "url": "https://app.binance.com/uni-qr/cpos/383763784104351?r=DZCPIY7B&l=ru",
       "postId": 383763784104351
+    },
+    {
+      "at": "2026-11-02T09:02:11.993Z",
+      "ticker": "BEAM",
+      "change": -3.6757527219811315,
+      "volume": 94924583,
+      "marketType": "futures",
+      "text": "SELLERS ARE IN CONTROL $BEAM · -3.68% in 1H\n24H -12.52% | Vol $94.9M\n\nMomentum is here. The next move matters. SHORT idea:\nEntry $0.004778 → TP $0.004646 (+2.84%)\nSL $0.004851 (-1.53%)\nAt 5x: approx. +14.2% / -7.7% gross, before fees/funding.\n\nTap $BEAM and check the live Futures chart. Would you take this move or wait for a pullback?\n#BEAM #SHORT #Futures",
+      "url": "https://app.binance.com/uni-qr/cpos/383872744972794?r=DZCPIY7B&l=ru",
+      "postId": 383872744972794
     }
   ],
   "lastError": null,

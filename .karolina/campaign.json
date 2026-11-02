@@ -2,7 +2,7 @@
   "active": true,
   "startedAt": "2026-10-22T12:41:00.000Z",
   "endsAt": "2026-11-21T12:41:00.000Z",
-  "published": 57,
+  "published": 58,
   "perDay": {
     "2026-10-22": 3,
     "2026-10-23": 6,
@@ -15,7 +15,7 @@
     "2026-10-30": 5,
     "2026-10-31": 4,
     "2026-11-01": 5,
-    "2026-11-02": 2
+    "2026-11-02": 3
   },
   "seen": [
     "HUMA",
@@ -74,7 +74,8 @@
     "RUNE",
     "BEAM",
     "RUNE",
-    "BEAM"
+    "BEAM",
+    "IDOL"
   ],
   "history": [
     {
@@ -646,6 +647,16 @@
       "text": "SELLERS ARE IN CONTROL $BEAM · -3.68% in 1H\n24H -12.52% | Vol $94.9M\n\nMomentum is here. The next move matters. SHORT idea:\nEntry $0.004778 → TP $0.004646 (+2.84%)\nSL $0.004851 (-1.53%)\nAt 5x: approx. +14.2% / -7.7% gross, before fees/funding.\n\nTap $BEAM and check the live Futures chart. Would you take this move or wait for a pullback?\n#BEAM #SHORT #Futures",
       "url": "https://app.binance.com/uni-qr/cpos/383872744972794?r=DZCPIY7B&l=ru",
       "postId": 383872744972794
+    },
+    {
+      "at": "2026-11-02T19:38:40.510Z",
+      "ticker": "IDOL",
+      "change": -1.9846705486133358,
+      "volume": 24634889,
+      "marketType": "spot",
+      "text": "SELL PRESSURE · $IDOL -1.98% in 1H\n24H -44.42% | Vol $24.6M\n\nI’m not buying this drop blindly. Downside level: $0.0123\nBullish reclaim needed above: $0.0131\n\nTap $IDOL and watch the level. Would you wait for a bounce or stay away?\n#IDOL #BinanceSpot #Crypto",
+      "url": "https://app.binance.com/uni-qr/cpos/384029165082869?r=DZCPIY7B&l=ru",
+      "postId": 384029165082869
     }
   ],
   "lastError": null,

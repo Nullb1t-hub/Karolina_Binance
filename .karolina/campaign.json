@@ -2,7 +2,7 @@
   "active": true,
   "startedAt": "2026-10-22T12:41:00.000Z",
   "endsAt": "2026-11-21T12:41:00.000Z",
-  "published": 58,
+  "published": 59,
   "perDay": {
     "2026-10-22": 3,
     "2026-10-23": 6,
@@ -15,7 +15,8 @@
     "2026-10-30": 5,
     "2026-10-31": 4,
     "2026-11-01": 5,
-    "2026-11-02": 3
+    "2026-11-02": 3,
+    "2026-11-03": 1
   },
   "seen": [
     "HUMA",
@@ -75,7 +76,8 @@
     "BEAM",
     "RUNE",
     "BEAM",
-    "IDOL"
+    "IDOL",
+    "HUMA"
   ],
   "history": [
     {
@@ -657,6 +659,16 @@
       "text": "SELL PRESSURE · $IDOL -1.98% in 1H\n24H -44.42% | Vol $24.6M\n\nI’m not buying this drop blindly. Downside level: $0.0123\nBullish reclaim needed above: $0.0131\n\nTap $IDOL and watch the level. Would you wait for a bounce or stay away?\n#IDOL #BinanceSpot #Crypto",
       "url": "https://app.binance.com/uni-qr/cpos/384029165082869?r=DZCPIY7B&l=ru",
       "postId": 384029165082869
+    },
+    {
+      "at": "2026-11-03T01:49:38.058Z",
+      "ticker": "HUMA",
+      "change": -1.6021361815754303,
+      "volume": 18755551,
+      "marketType": "spot",
+      "text": "SELL PRESSURE · $HUMA -1.60% in 1H\n24H -18.67% | Vol $18.8M\n\nI’m not buying this drop blindly. Downside level: $0.0217\nBullish reclaim needed above: $0.0224\n\nTap $HUMA and watch the level. Would you wait for a bounce or stay away?\n#HUMA #BinanceSpot #Crypto",
+      "url": "https://app.binance.com/uni-qr/cpos/384120332055945?r=DZCPIY7B&l=ru",
+      "postId": 384120332055945
     }
   ],
   "lastError": null,

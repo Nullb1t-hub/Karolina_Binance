@@ -2,7 +2,7 @@
   "active": true,
   "startedAt": "2026-10-22T12:41:00.000Z",
   "endsAt": "2026-11-21T12:41:00.000Z",
-  "published": 64,
+  "published": 65,
   "perDay": {
     "2026-10-22": 3,
     "2026-10-23": 6,
@@ -17,7 +17,7 @@
     "2026-11-01": 5,
     "2026-11-02": 3,
     "2026-11-03": 4,
-    "2026-11-04": 2
+    "2026-11-04": 3
   },
   "seen": [
     "HUMA",
@@ -83,7 +83,8 @@
     "BEAM",
     "RUNE",
     "HUMA",
-    "BEAM"
+    "BEAM",
+    "QNT"
   ],
   "history": [
     {
@@ -725,6 +726,16 @@
       "text": "BUYERS ARE PUSHING $BEAM · +6.16% in 1H\n24H +8.30% | Vol $43.8M\n\nMomentum is here. The next move matters. LONG idea:\nEntry $0.004289 → TP $0.004444 (+3.60%)\nSL $0.004204 (-2.00%)\nAt 5x: approx. +18.0% / -10.0% gross, before fees/funding.\n\nTap $BEAM and check the live Futures chart. Would you take this move or wait for a pullback?\n#BEAM #LONG #Futures",
       "url": "https://app.binance.com/uni-qr/cpos/384604056627475?r=DZCPIY7B&l=ru",
       "postId": 384604056627475
+    },
+    {
+      "at": "2026-11-04T18:14:18.392Z",
+      "ticker": "QNT",
+      "change": 3.0908634552119,
+      "volume": 82643600,
+      "marketType": "futures",
+      "text": "BUYERS ARE PUSHING $QNT · +3.09% in 1H\n24H +6.64% | Vol $82.6M\n\nNot chasing blindly — waiting for this setup. LONG idea:\nEntry $207.7024 → TP $211.7421 (+1.94%)\nSL $205.4581 (-1.08%)\nAt 5x: approx. +9.7% / -5.4% gross, before fees/funding.\n\nTap $QNT and check the live Futures chart. Would you take this move or wait for a pullback?\n#QNT #LONG #Futures",
+      "url": "https://app.binance.com/uni-qr/cpos/384716219553312?r=DZCPIY7B&l=ru",
+      "postId": 384716219553312
     }
   ],
   "lastError": null,

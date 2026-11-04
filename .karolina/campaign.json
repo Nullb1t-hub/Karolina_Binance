@@ -2,7 +2,7 @@
   "active": true,
   "startedAt": "2026-10-22T12:41:00.000Z",
   "endsAt": "2026-11-21T12:41:00.000Z",
-  "published": 65,
+  "published": 66,
   "perDay": {
     "2026-10-22": 3,
     "2026-10-23": 6,
@@ -17,7 +17,8 @@
     "2026-11-01": 5,
     "2026-11-02": 3,
     "2026-11-03": 4,
-    "2026-11-04": 3
+    "2026-11-04": 3,
+    "2026-11-05": 1
   },
   "seen": [
     "HUMA",
@@ -84,7 +85,8 @@
     "RUNE",
     "HUMA",
     "BEAM",
-    "QNT"
+    "QNT",
+    "ARX"
   ],
   "history": [
     {
@@ -736,6 +738,16 @@
       "text": "BUYERS ARE PUSHING $QNT · +3.09% in 1H\n24H +6.64% | Vol $82.6M\n\nNot chasing blindly — waiting for this setup. LONG idea:\nEntry $207.7024 → TP $211.7421 (+1.94%)\nSL $205.4581 (-1.08%)\nAt 5x: approx. +9.7% / -5.4% gross, before fees/funding.\n\nTap $QNT and check the live Futures chart. Would you take this move or wait for a pullback?\n#QNT #LONG #Futures",
       "url": "https://app.binance.com/uni-qr/cpos/384716219553312?r=DZCPIY7B&l=ru",
       "postId": 384716219553312
+    },
+    {
+      "at": "2026-11-04T23:47:55.674Z",
+      "ticker": "ARX",
+      "change": 3.5973574043454755,
+      "volume": 24230882,
+      "marketType": "spot",
+      "text": "BREAKOUT WATCH · $ARX +3.60% in 1H\n24H +12.24% | Vol $24.2M\n\nI’m watching this one NOW.\nEntry $0.2444 → TP $0.2525 (+3.31%)\nInvalidation $0.2399 (-1.84%)\n\nTap $ARX to open the chart. Is this the start of a bigger move — or a fakeout?\n#ARX #BinanceSpot #Crypto",
+      "url": "https://app.binance.com/uni-qr/cpos/384798210221965?r=DZCPIY7B&l=ru",
+      "postId": 384798210221965
     }
   ],
   "lastError": null,

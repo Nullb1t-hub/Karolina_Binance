@@ -2,7 +2,7 @@
   "active": true,
   "startedAt": "2026-10-22T12:41:00.000Z",
   "endsAt": "2026-11-21T12:41:00.000Z",
-  "published": 63,
+  "published": 64,
   "perDay": {
     "2026-10-22": 3,
     "2026-10-23": 6,
@@ -17,7 +17,7 @@
     "2026-11-01": 5,
     "2026-11-02": 3,
     "2026-11-03": 4,
-    "2026-11-04": 1
+    "2026-11-04": 2
   },
   "seen": [
     "HUMA",
@@ -82,7 +82,8 @@
     "BEAM",
     "BEAM",
     "RUNE",
-    "HUMA"
+    "HUMA",
+    "BEAM"
   ],
   "history": [
     {
@@ -714,6 +715,16 @@
       "text": "SELL PRESSURE · $HUMA -1.11% in 1H\n24H -8.09% | Vol $33.0M\n\nI’m not buying this drop blindly. Downside level: $0.0199\nBullish reclaim needed above: $0.0207\n\nTap $HUMA and watch the level. Would you wait for a bounce or stay away?\n#HUMA #BinanceSpot #Crypto",
       "url": "https://app.binance.com/uni-qr/cpos/384487730743006?r=DZCPIY7B&l=ru",
       "postId": 384487730743006
+    },
+    {
+      "at": "2026-11-04T10:37:54.871Z",
+      "ticker": "BEAM",
+      "change": 6.155787014986404,
+      "volume": 43785560,
+      "marketType": "futures",
+      "text": "BUYERS ARE PUSHING $BEAM · +6.16% in 1H\n24H +8.30% | Vol $43.8M\n\nMomentum is here. The next move matters. LONG idea:\nEntry $0.004289 → TP $0.004444 (+3.60%)\nSL $0.004204 (-2.00%)\nAt 5x: approx. +18.0% / -10.0% gross, before fees/funding.\n\nTap $BEAM and check the live Futures chart. Would you take this move or wait for a pullback?\n#BEAM #LONG #Futures",
+      "url": "https://app.binance.com/uni-qr/cpos/384604056627475?r=DZCPIY7B&l=ru",
+      "postId": 384604056627475
     }
   ],
   "lastError": null,

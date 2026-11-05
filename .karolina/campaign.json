@@ -783,7 +783,7 @@
       "postId": 385105000271846
     }
   ],
-  "lastError": null,
+  "lastError": "No eligible Futures token could be published. Last issue: Binance API error HTTP 400 code 000002: illegal parameter",
   "planVersion": 4,
   "archiveHistory": [
     {

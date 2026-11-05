@@ -145,7 +145,7 @@ function fallbackDraft(coin){
  const ticker='$'+coin.ticker,signed=n=>(n>=0?'+':'')+n.toFixed(2)+'%';
  const favorable=(tp/price-1)*(side==='LONG'?1:-1)*100,extended=(stretch/price-1)*(side==='LONG'?1:-1)*100,adverse=(1-sl/price)*(side==='LONG'?1:-1)*100;
  const entry=formatPrice(price),target=formatPrice(tp),runner=formatPrice(stretch),stop=formatPrice(sl);
- let hash=0;for(const ch of coin.ticker)hash=(hash*33+ch.charCodeAt(0))>>>0;
+ let hash=0;for(const ch of coin.ticker)hash=(hash*33+ch.charCodeAt(0))>>>0;hash=(hash+(Number(coin.variantSeed)||0)*17)>>>0;
  const variants=[
   side==='LONG'?'After the pullback, buyers are trying to reclaim the 1H range.':'The bounce is weak so far; sellers still have the cleaner structure.',
   side==='LONG'?'Momentum turned up on the 1H chart. I want price to defend the last swing low.':'The last 1H support gave way. A failed reclaim would keep the short idea alive.',
@@ -158,7 +158,7 @@ function fallbackDraft(coin){
  const layouts=[
   ()=>ticker+' '+signed(hour)+' on 1H. '+opener+'\n'+heading+' · Entry '+entry+'\nTP1 '+target+' ('+signed(favorable)+') · stretch '+runner+' ('+signed(extended)+')\nSL '+stop+' ('+signed(-adverse)+')\n#Perpetual #Futures '+direction,
   ()=> '1H setup: '+ticker+'\n'+opener+'\n'+heading+' '+entry+' → '+target+'\nStretch: '+runner+' | invalidation: '+stop+'\n24H '+signed(day)+' · '+signed(hour)+' in 1H\n#Perpetual #Futures '+direction,
-  ()=>ticker+' is moving '+signed(hour)+' in 1H.\n'+heading+' idea: '+entry+'\nFirst target '+target+'; extended target '+runner+'.\nWrong above/below: '+stop+'.\n'+opener+'\n#Perpetual #Futures '+direction,
+  ()=>ticker+' is moving '+signed(hour)+' in 1H.\n'+heading+' · Entry '+entry+'\nTP1 '+target+'; stretch '+runner+'.\nSL '+stop+' ('+signed(-adverse)+').\n'+opener+'\n#Perpetual #Futures '+direction,
   ()=>opener+'\n'+ticker+' · '+heading+'\nEntry '+entry+' | TP '+target+' | stretch '+runner+'\nSL '+stop+'\n1H '+signed(hour)+' / 24H '+signed(day)+'\n#Perpetual #Futures '+direction
  ];
  return layouts[hash%layouts.length]();
@@ -193,7 +193,7 @@ async function postOne(s){
  for(const coin of ranked.slice(0,12)){
   try{
    const values=await chartPoints(coin);if(values.length<8)throw Error('Not enough Futures chart points');
-   const text=await draft(coin),img=await card(coin,values);
+   coin.variantSeed=s.published||0;const text=await draft(coin),img=await card(coin,values);
    const r=await publishImage(text,img,'market-futures-'+coin.ticker.toLowerCase()+'-'+Date.now()+'.png');
    const entry={at:new Date().toISOString(),ticker:coin.ticker,change:coin.hourChange,volume:coin.volume,marketType:'futures',text,url:r.url||null,postId:r.id||null};
    s.published=(s.published||0)+1;s.perDay[today]=(s.perDay[today]||0)+1;s.seen=(s.seen||[]).concat(coin.ticker).slice(-300);s.history=(s.history||[]).concat(entry).slice(-100);s.lastError=null;

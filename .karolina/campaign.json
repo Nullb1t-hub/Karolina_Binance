@@ -772,7 +772,7 @@
       "postId": 385011965893707
     }
   ],
-  "lastError": null,
+  "lastError": "fapi.binance.com HTTP 451",
   "planVersion": 4,
   "archiveHistory": [
     {

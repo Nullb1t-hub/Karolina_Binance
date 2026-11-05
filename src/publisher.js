@@ -14,7 +14,7 @@ export async function publishText(text){
  const apiKey=key(),data=await api(V1,'/content/add',apiKey,{contentType:1,bodyTextOnly:text});
  const id=data.id||null;return {id,url:data.shareLink||(id?'https://www.binance.com/square/post/'+id:null),publishedAt:new Date().toISOString(),successWithoutId:!!data.successWithoutId};
 }
-export async function publishImage(text,imageBuffer,imageName='market-card.png'){
+export async function publishImage(text,imageBuffer,imageName='market-card.png',metadata={}){
  const apiKey=key();
  const signed=await api(V2,'/image/presignedUrl',apiKey,{imageName});
  if(!signed.presignedUrl||!signed.fileTicket)throw new Error('Binance did not return image upload ticket');
@@ -28,7 +28,10 @@ export async function publishImage(text,imageBuffer,imageName='market-card.png')
   await sleep(3000);
  }
  if(!status||status.status!==1||!status.imageUrl)throw new Error('Timed out waiting for Binance image processing');
- const data=await api(V1,'/content/add',apiKey,{contentType:1,bodyTextOnly:text,imageList:[status.imageUrl]});
+ const payload={contentType:1,bodyTextOnly:text,imageList:[status.imageUrl]};
+ // Binance's Square composer exposes Bullish/Bearish sentiment. Try the matching API field as well as the native inline futures-pair marker in the text.
+ if(metadata.tendency==='bullish'||metadata.tendency==='bearish')payload.tendency=metadata.tendency;
+ const data=await api(V1,'/content/add',apiKey,payload);
  const id=data.id||null;
  return {id,url:data.shareLink||(id?'https://www.binance.com/square/post/'+id:null),publishedAt:new Date().toISOString(),successWithoutId:!!data.successWithoutId,image:true};
 }

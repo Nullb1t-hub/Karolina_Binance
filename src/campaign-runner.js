@@ -194,7 +194,7 @@ async function postOne(s){
   try{
    const values=await chartPoints(coin);if(values.length<8)throw Error('Not enough Futures chart points');
    coin.variantSeed=s.published||0;const text=await draft(coin),img=await card(coin,values);
-   const r=await publishImage(text,img,'market-futures-'+coin.ticker.toLowerCase()+'-'+Date.now()+'.png',{tendency:coin.signalSide==='LONG'?'bullish':'bearish'});
+   const r=await publishImage(text,img,'market-futures-'+coin.ticker.toLowerCase()+'-'+Date.now()+'.png');
    const entry={at:new Date().toISOString(),ticker:coin.ticker,change:coin.hourChange,volume:coin.volume,marketType:'futures',text,url:r.url||null,postId:r.id||null};
    s.published=(s.published||0)+1;s.perDay[today]=(s.perDay[today]||0)+1;s.seen=(s.seen||[]).concat(coin.ticker).slice(-300);s.history=(s.history||[]).concat(entry).slice(-100);s.lastError=null;
    console.log('PUBLISHED '+s.published+'/'+maxPosts+' FUTURES $'+coin.ticker+' '+coin.hourChange.toFixed(2)+'% '+(r.url||'no URL'));
@@ -204,8 +204,8 @@ async function postOne(s){
  throw Error('No eligible Futures token could be published. Last issue: '+last);
 }
 async function main(){
- let s=await load();const event=process.env.GITHUB_EVENT_NAME||'';
- if(event==='push'&&(s.published||0)>0){const lastPost=Date.parse((s.history||[]).at(-1)?.at||'');if(Number.isFinite(lastPost)&&now()-lastPost<minPostGapMs)console.log('One-time integration verification: bypassing the normal gap to verify native Futures chart and sentiment fields.');else console.log('Push-triggered recovery: attempting publication.');}
+ let s=await load();const event=process.env.GITHUB_EVENT_NAME||'';if(s.pausedForNativeSentiment){console.log('Campaign paused: native Bullish/Bearish sentiment is not supported by the current Square OpenAPI. No incomplete post will be published.');return;}
+ if(event==='push'&&(s.published||0)>0){const lastPost=Date.parse((s.history||[]).at(-1)?.at||'');if(Number.isFinite(lastPost)&&now()-lastPost<minPostGapMs){console.log('Push-triggered check skipped: last published post is less than 55 minutes old.');return;}console.log('Push-triggered recovery: last post is at least 55 minutes old; attempting publication.');}
  if(event==='schedule'&&s.planVersion!==4){console.log('Scheduled run waiting for manual pilot start.');return;}
  if(event==='workflow_dispatch'&&s.planVersion!==4){s={active:true,startedAt:new Date().toISOString(),endsAt:new Date(now()+30*24*3600000).toISOString(),published:0,perDay:{},seen:[],history:[],lastError:null,planVersion:4};console.log('New 30-day Futures-only campaign starts '+s.startedAt+' ends '+s.endsAt+' target='+maxPosts);}
  if(!s.active||(s.published||0)>=maxPosts||now()>=Date.parse(s.endsAt)){s.active=false;s.lastError='Pilot complete or time expired';await save(s);console.log('Finished '+s.published+'/'+maxPosts);return;}

@@ -2,7 +2,7 @@
   "active": true,
   "startedAt": "2026-10-22T12:41:00.000Z",
   "endsAt": "2026-11-21T12:41:00.000Z",
-  "published": 67,
+  "published": 68,
   "perDay": {
     "2026-10-22": 3,
     "2026-10-23": 6,
@@ -18,7 +18,7 @@
     "2026-11-02": 3,
     "2026-11-03": 4,
     "2026-11-04": 3,
-    "2026-11-05": 2
+    "2026-11-05": 3
   },
   "seen": [
     "HUMA",
@@ -87,7 +87,8 @@
     "BEAM",
     "QNT",
     "ARX",
-    "BEAM"
+    "BEAM",
+    "SUPER"
   ],
   "history": [
     {
@@ -759,6 +760,16 @@
       "text": "BUYERS ARE PUSHING $BEAM · +3.54% in 1H\n24H +19.81% | Vol $78.4M\n\nMomentum is here. The next move matters. LONG idea:\nEntry $0.004842 → TP $0.005052 (+4.33%)\nSL $0.004725 (-2.41%)\nAt 5x: approx. +21.7% / -12.0% gross, before fees/funding.\n\nTap $BEAM and check the live Futures chart. Would you take this move or wait for a pullback?\n#BEAM #LONG #Futures",
       "url": "https://app.binance.com/uni-qr/cpos/384885986251490?r=DZCPIY7B&l=ru",
       "postId": 384885986251490
+    },
+    {
+      "at": "2026-11-05T14:17:42.073Z",
+      "ticker": "SUPER",
+      "change": 0.9010626434245288,
+      "volume": 9238264,
+      "marketType": "futures",
+      "text": "BUYERS ARE PUSHING $SUPER · +0.90% in 1H\n24H +9.09% | Vol $9.2M\n\nOne clean move could make this interesting. LONG idea:\nEntry $0.1899 → TP $0.1936 (+1.93%)\nSL $0.1879 (-1.07%)\nAt 5x: approx. +9.6% / -5.3% gross, before fees/funding.\n\nTap $SUPER and check the live Futures chart. Would you take this move or wait for a pullback?\n#SUPER #LONG #Futures",
+      "url": "https://app.binance.com/uni-qr/cpos/385011965893707?r=DZCPIY7B&l=ru",
+      "postId": 385011965893707
     }
   ],
   "lastError": null,

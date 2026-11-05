@@ -32,16 +32,34 @@ async function getJson(url,timeout=12000){
  throw Error(host+' HTTP 429 after retries');
 }
 const excluded=new Set(['BTC','ETH','BNB','SOL','XRP','DOGE','ADA','TRX','TON','LINK','LTC','BCH','DOT','AVAX','SHIB','USDC','USDT','FDUSD','DAI','EUR','BRL','TRY']);
+const knownPerpetuals=new Set(('1000SATS 1000PEPE 1000SHIB 1INCH AAVE ACE ADA ALGO ANIME APT ARB ARKM ARK ATOM AVAX BCH BEAM BERA BLUR BNB BONK BRETT BTC CFX CHZ COMP CRV DOGE DOT DYDX EGLD ENA ENS ETC ETH FIL FET FLOW FTM GALA GAS GRT HBAR HIFI ICP IMX INJ IOTA JASMY JTO JUP KAS KAVA LDO LINK LISTA LTC MANA MANTA MASK MEME METIS MINA MKR NEAR NEIRO NOT OP ORDI PENDLE PEOPLE PEPE PNUT POL POLYX POPCAT PYTH QNT QTUM RENDER RIF RLC RUNE SAND SEI SHIB SKL SNX SOL STX SUI SUPER SUSHI TAO THETA TIA TLM TNSR TON TRB TRX UNI USUAL VET W WIF WLD XAI XLM XRP XTZ YGG ZEC ZEN ZK ZRO ZRX').split(' '));
 async function symbols(){
- const rows=await getJson('https://fapi.binance.com/fapi/v1/ticker/24hr',15000);
- return rows.filter(x=>String(x.symbol).endsWith('USDT')&&!/(UP|DOWN|BULL|BEAR)USDT$/.test(x.symbol))
-  .map(x=>({ticker:x.symbol.slice(0,-4),symbol:x.symbol,price:Number(x.lastPrice),change:Number(x.priceChangePercent),volume:Number(x.quoteVolume),trades:Number(x.count),source:'Binance USD-M Futures'}))
-  .filter(x=>!excluded.has(x.ticker)&&x.price>0&&x.volume>=1500000&&Math.abs(x.change)>=3.5&&x.trades>=500)
-  .sort((a,b)=>Math.abs(b.change)*Math.log10(1+b.volume)-Math.abs(a.change)*Math.log10(1+a.volume)).slice(0,100);
+ try{
+  const rows=await getJson('https://fapi.binance.com/fapi/v1/ticker/24hr',15000);
+  return rows.filter(x=>String(x.symbol).endsWith('USDT')&&!/(UP|DOWN|BULL|BEAR)USDT$/.test(x.symbol))
+   .map(x=>({ticker:x.symbol.slice(0,-4),symbol:x.symbol,price:Number(x.lastPrice),change:Number(x.priceChangePercent),volume:Number(x.quoteVolume),trades:Number(x.count),source:'Binance USD-M Futures'}))
+   .filter(x=>!excluded.has(x.ticker)&&x.price>0&&x.volume>=1500000&&Math.abs(x.change)>=3.5&&x.trades>=500)
+   .sort((a,b)=>Math.abs(b.change)*Math.log10(1+b.volume)-Math.abs(a.change)*Math.log10(1+a.volume)).slice(0,100);
+ }catch(e){
+  if(!String(e.message||e).includes('HTTP 451'))throw e;
+  console.log('Binance USD-M Futures API is geo-blocked on this runner; using OKX USDT perpetual swap data, restricted to known Binance perpetual tickers.');
+  const rows=await getJson('https://www.okx.com/api/v5/market/tickers?instType=SWAP',15000);
+  return (rows.data||[]).filter(x=>String(x.instId).endsWith('-USDT-SWAP'))
+   .map(x=>({ticker:String(x.instId).split('-')[0],symbol:String(x.instId).split('-')[0]+'USDT',okxInstId:x.instId,price:Number(x.last),change:(Number(x.last)/Number(x.open24h)-1)*100,volume:Number(x.volCcy24h||0)*Number(x.last),trades:0,source:'OKX USDT perpetual'}))
+   .filter(x=>knownPerpetuals.has(x.ticker)&&!excluded.has(x.ticker)&&x.price>0&&Number.isFinite(x.change)&&x.volume>=1500000&&Math.abs(x.change)>=3.5)
+   .sort((a,b)=>Math.abs(b.change)*Math.log10(1+b.volume)-Math.abs(a.change)*Math.log10(1+a.volume)).slice(0,100);
+ }
+}
+async function futuresCandles(coin){
+ if(coin.okxInstId){
+  const d=await getJson('https://www.okx.com/api/v5/market/candles?instId='+encodeURIComponent(coin.okxInstId)+'&bar=5m&limit=60',12000);
+  return (d.data||[]).slice().reverse().map(x=>({open:Number(x[1]),high:Number(x[2]),low:Number(x[3]),close:Number(x[4])}));
+ }
+ const d=await getJson('https://fapi.binance.com/fapi/v1/klines?symbol='+encodeURIComponent(coin.symbol)+'&interval=5m&limit=60',12000);
+ return d.map(x=>({open:Number(x[1]),high:Number(x[2]),low:Number(x[3]),close:Number(x[4])}));
 }
 async function chartPoints(coin){
- const d=await getJson('https://fapi.binance.com/fapi/v1/klines?symbol='+encodeURIComponent(coin.symbol)+'&interval=5m&limit=60',12000);
- return d.map(x=>Number(x[4])).filter(x=>Number.isFinite(x)&&x>0);
+ return (await futuresCandles(coin)).map(x=>x.close).filter(x=>Number.isFinite(x)&&x>0);
 }
 function linePath(values){
  const min=Math.min(...values),max=Math.max(...values),span=max-min||1;
@@ -155,9 +173,8 @@ async function postOne(s){
  const ranked=[];
  for(const candidate of list.filter(x=>!recentUsed.has(x.ticker)).slice(0,30)){
   try{
-   const raw=await getJson('https://fapi.binance.com/fapi/v1/klines?symbol='+encodeURIComponent(candidate.symbol)+'&interval=5m&limit=60',12000);
-   if(raw.length<30)continue;
-   const candles=raw.map(x=>({open:Number(x[1]),high:Number(x[2]),low:Number(x[3]),close:Number(x[4])}));
+   const candles=await futuresCandles(candidate);
+   if(candles.length<30)continue;
    const closes=candles.map(x=>x.close),price=closes.at(-1),hourBase=closes.at(-13),hourChange=(price/hourBase-1)*100;
    if(!Number.isFinite(hourChange)||Math.abs(hourChange)<0.65||price<=0)continue;
    const recent=candles.slice(-12);

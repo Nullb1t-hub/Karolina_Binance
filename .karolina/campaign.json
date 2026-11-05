@@ -2,7 +2,7 @@
   "active": true,
   "startedAt": "2026-10-22T12:41:00.000Z",
   "endsAt": "2026-11-21T12:41:00.000Z",
-  "published": 68,
+  "published": 69,
   "perDay": {
     "2026-10-22": 3,
     "2026-10-23": 6,
@@ -18,7 +18,7 @@
     "2026-11-02": 3,
     "2026-11-03": 4,
     "2026-11-04": 3,
-    "2026-11-05": 3
+    "2026-11-05": 4
   },
   "seen": [
     "HUMA",
@@ -88,7 +88,8 @@
     "QNT",
     "ARX",
     "BEAM",
-    "SUPER"
+    "SUPER",
+    "BERA"
   ],
   "history": [
     {
@@ -770,9 +771,19 @@
       "text": "BUYERS ARE PUSHING $SUPER · +0.90% in 1H\n24H +9.09% | Vol $9.2M\n\nOne clean move could make this interesting. LONG idea:\nEntry $0.1899 → TP $0.1936 (+1.93%)\nSL $0.1879 (-1.07%)\nAt 5x: approx. +9.6% / -5.3% gross, before fees/funding.\n\nTap $SUPER and check the live Futures chart. Would you take this move or wait for a pullback?\n#SUPER #LONG #Futures",
       "url": "https://app.binance.com/uni-qr/cpos/385011965893707?r=DZCPIY7B&l=ru",
       "postId": 385011965893707
+    },
+    {
+      "at": "2026-11-05T20:36:15.563Z",
+      "ticker": "BERA",
+      "change": 1.2142237640936582,
+      "volume": 2520728.81085,
+      "marketType": "futures",
+      "text": "$BERA is moving +1.21% in 1H.\n🟢 LONG idea: $0.1167\nFirst target $0.1195; extended target $0.1209.\nWrong above/below: $0.1153.\nThis is a breakout attempt, not a chase: the retest is the key.\n#Perpetual #Futures #LONG",
+      "url": "https://app.binance.com/uni-qr/cpos/385105000271846?r=DZCPIY7B&l=ru",
+      "postId": 385105000271846
     }
   ],
-  "lastError": "fapi.binance.com HTTP 451",
+  "lastError": null,
   "planVersion": 4,
   "archiveHistory": [
     {

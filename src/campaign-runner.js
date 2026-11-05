@@ -161,7 +161,7 @@ function fallbackDraft(coin){
   ()=>ticker+' is moving '+signed(hour)+' in 1H.\n'+heading+' · Entry '+entry+'\nTP1 '+target+'; stretch '+runner+'.\nSL '+stop+' ('+signed(-adverse)+').\n'+opener+'\n#Perpetual #Futures '+direction,
   ()=>opener+'\n'+ticker+' · '+heading+'\nEntry '+entry+' | TP '+target+' | stretch '+runner+'\nSL '+stop+'\n1H '+signed(hour)+' / 24H '+signed(day)+'\n#Perpetual #Futures '+direction
  ];
- return layouts[hash%layouts.length]();
+ return layouts[hash%layouts.length]()+ '\n{future}('+coin.symbol+')';
 }
 async function draft(coin){return fallbackDraft(coin);}
 
@@ -194,7 +194,7 @@ async function postOne(s){
   try{
    const values=await chartPoints(coin);if(values.length<8)throw Error('Not enough Futures chart points');
    coin.variantSeed=s.published||0;const text=await draft(coin),img=await card(coin,values);
-   const r=await publishImage(text,img,'market-futures-'+coin.ticker.toLowerCase()+'-'+Date.now()+'.png');
+   const r=await publishImage(text,img,'market-futures-'+coin.ticker.toLowerCase()+'-'+Date.now()+'.png',{tendency:coin.signalSide==='LONG'?'bullish':'bearish'});
    const entry={at:new Date().toISOString(),ticker:coin.ticker,change:coin.hourChange,volume:coin.volume,marketType:'futures',text,url:r.url||null,postId:r.id||null};
    s.published=(s.published||0)+1;s.perDay[today]=(s.perDay[today]||0)+1;s.seen=(s.seen||[]).concat(coin.ticker).slice(-300);s.history=(s.history||[]).concat(entry).slice(-100);s.lastError=null;
    console.log('PUBLISHED '+s.published+'/'+maxPosts+' FUTURES $'+coin.ticker+' '+coin.hourChange.toFixed(2)+'% '+(r.url||'no URL'));

@@ -783,7 +783,7 @@
       "postId": 385105000271846
     }
   ],
-  "lastError": "No eligible Futures token could be published. Last issue: Binance API error HTTP 400 code 000002: illegal parameter",
+  "lastError": "Paused: current Binance Square OpenAPI does not support native Bullish/Bearish sentiment labels; do not publish incomplete posts.",
   "planVersion": 4,
   "archiveHistory": [
     {
@@ -996,5 +996,6 @@
       "url": "https://app.binance.com/uni-qr/cpos/379917175466127?r=DZCPIY7B&l=ru",
       "postId": 379917175466127
     }
-  ]
+  ],
+  "pausedForNativeSentiment": true
 }

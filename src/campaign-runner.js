@@ -4,7 +4,7 @@ import sharp from 'sharp';
 import {publishImage} from './publisher.js';
 const statePath='.karolina/campaign.json';
 const feeds=[{name:'CoinDesk',url:'https://www.coindesk.com/arc/outboundfeeds/rss/'},{name:'Cointelegraph',url:'https://cointelegraph.com/rss'},{name:'Decrypt',url:'https://decrypt.co/feed'}];
-const maxPosts=720,maxDaily=24,spotTarget=274,futuresTarget=446,minPostGapMs=55*60*1000,now=()=>Date.now();
+const maxPosts=720,maxDaily=24,minPostGapMs=55*60*1000,now=()=>Date.now();
 function decode(s){return String(s||'').replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g,'$1').replace(/<[^>]*>/g,' ').replace(/&amp;/g,'&').replace(/&quot;/g,'"').replace(/&#39;|&apos;/g,"'").replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&#(\d+);/g,(_,n)=>String.fromCharCode(Number(n))).replace(/\s+/g,' ').trim();}
 function tag(b,n){const r=new RegExp('<'+n+'(?:\\s[^>]*)?>([\\s\\S]*?)<\\/'+n+'\\s*>','i'),m=b.match(r);return m?decode(m[1]):'';}
 function parseFeed(xml,source){return xml.split(/<item\b/i).slice(1).map(x=>x.split(/<\/item>/i)[0]).map(b=>({source,title:tag(b,'title'),link:tag(b,'link'),description:tag(b,'description'),date:tag(b,'pubDate')})).filter(x=>x.title&&/^https?:\/\//i.test(x.link));}
@@ -33,45 +33,14 @@ async function getJson(url,timeout=12000){
 }
 const excluded=new Set(['BTC','ETH','BNB','SOL','XRP','DOGE','ADA','TRX','TON','LINK','LTC','BCH','DOT','AVAX','SHIB','USDC','USDT','FDUSD','DAI','EUR','BRL','TRY']);
 async function symbols(){
- try{
-  const d=await getJson('https://api.binance.vision/api/v3/ticker/24hr',15000);
-  const rows=d.filter(x=>String(x.symbol).endsWith('USDT')&&!/(UP|DOWN|BULL|BEAR)USDT$/.test(x.symbol))
-   .map(x=>({ticker:x.symbol.slice(0,-4),symbol:x.symbol,price:Number(x.lastPrice),change:Number(x.priceChangePercent),volume:Number(x.quoteVolume),trades:Number(x.count),source:'Binance Spot'}))
-   .filter(x=>!excluded.has(x.ticker)&&x.price>0&&x.volume>=1500000&&Math.abs(x.change)>=4.5&&x.trades>=1000)
-   .sort((a,b)=>Math.abs(b.change)*Math.log10(1+b.volume)-Math.abs(a.change)*Math.log10(1+a.volume));
-  if(rows.length>=3)return rows.slice(0,100);
-  console.log('Binance market feed returned too few breakouts; falling back to CoinGecko');
- }catch(e){console.log('Binance market feed failed: '+e.message+'; falling back to CoinGecko');}
- try{
-  const d=await getJson('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=volume_desc&per_page=250&page=1&price_change_percentage=24h',18000);
-  const rows=d.map(x=>({ticker:String(x.symbol||'').toUpperCase(),name:x.name,symbol:String(x.symbol||'').toUpperCase()+'USDT',price:Number(x.current_price),change:Number(x.price_change_percentage_24h),volume:Number(x.total_volume),marketCap:Number(x.market_cap||0),coinId:x.id,image:x.image,source:'CoinGecko'}))
-   .filter(x=>x.ticker&&!excluded.has(x.ticker)&&x.price>0&&x.volume>=1500000&&Math.abs(x.change)>=4.5&&(!x.marketCap||x.marketCap<15000000000))
-   .sort((a,b)=>Math.abs(b.change)*Math.log10(1+b.volume)-Math.abs(a.change)*Math.log10(1+a.volume)).slice(0,100);
-  if(rows.length>=3)return rows;
-  console.log('CoinGecko returned too few candidates; falling back to OKX');
- }catch(e){console.log('CoinGecko market feed failed: '+e.message+'; falling back to OKX');}
- const d=await getJson('https://www.okx.com/api/v5/market/tickers?instType=SPOT',15000);
- return (d.data||[]).filter(x=>String(x.instId).endsWith('-USDT'))
-  .map(x=>({ticker:String(x.instId).slice(0,-5),name:String(x.instId).slice(0,-5),symbol:x.instId,price:Number(x.last),change:(Number(x.last)/Number(x.open24h)-1)*100,volume:Number(x.volCcy24h||0)*Number(x.last),marketCap:0,source:'OKX'}))
-  .filter(x=>x.ticker&&!excluded.has(x.ticker)&&x.price>0&&Number.isFinite(x.change)&&x.volume>=1500000&&Math.abs(x.change)>=4.5)
+ const rows=await getJson('https://fapi.binance.com/fapi/v1/ticker/24hr',15000);
+ return rows.filter(x=>String(x.symbol).endsWith('USDT')&&!/(UP|DOWN|BULL|BEAR)USDT$/.test(x.symbol))
+  .map(x=>({ticker:x.symbol.slice(0,-4),symbol:x.symbol,price:Number(x.lastPrice),change:Number(x.priceChangePercent),volume:Number(x.quoteVolume),trades:Number(x.count),source:'Binance USD-M Futures'}))
+  .filter(x=>!excluded.has(x.ticker)&&x.price>0&&x.volume>=1500000&&Math.abs(x.change)>=3.5&&x.trades>=500)
   .sort((a,b)=>Math.abs(b.change)*Math.log10(1+b.volume)-Math.abs(a.change)*Math.log10(1+a.volume)).slice(0,100);
 }
 async function chartPoints(coin){
- // Prefer OKX minute candles for CoinGecko-discovered tokens. This avoids
- // hammering CoinGecko's rate-limited chart endpoint once per candidate.
- if(coin.source==='OKX'||coin.coinId){
-  const instId=coin.source==='OKX'?coin.symbol:(coin.ticker+'-USDT');
-  try{
-   const d=await getJson('https://www.okx.com/api/v5/market/candles?instId='+encodeURIComponent(instId)+'&bar=1m&limit=60',10000);
-   const values=(d.data||[]).slice().reverse().map(x=>Number(x[4])).filter(x=>Number.isFinite(x)&&x>0);
-   if(values.length>=8)return values;
-  }catch(e){console.log('OKX candles unavailable for '+coin.ticker+': '+String(e.message||e));}
- }
- if(coin.coinId){
-  const d=await getJson('https://api.coingecko.com/api/v3/coins/'+encodeURIComponent(coin.coinId)+'/market_chart?vs_currency=usd&days=1',10000);
-  return (d.prices||[]).map(x=>Number(x[1])).filter(x=>Number.isFinite(x)&&x>0);
- }
- const d=await getJson('https://api.binance.vision/api/v3/klines?symbol='+encodeURIComponent(coin.symbol)+'&interval=1m&limit=60',10000);
+ const d=await getJson('https://fapi.binance.com/fapi/v1/klines?symbol='+encodeURIComponent(coin.symbol)+'&interval=5m&limit=60',12000);
  return d.map(x=>Number(x[4])).filter(x=>Number.isFinite(x)&&x>0);
 }
 function linePath(values){
@@ -151,155 +120,71 @@ function formatPrice(value){
  if(n>=0.01)return '$'+n.toFixed(4);
  return '$'+n.toPrecision(4);
 }
-function fallbackDraft(coin,mode){
- const side=coin.signalSide||(Number(coin.hourChange??coin.change)>=0?'LONG':'SHORT');
- const hour=Number(coin.hourChange??coin.change),day=Number(coin.change24h??0);
- const price=Number(coin.price),tp=Number(coin.takeProfit),sl=Number(coin.stopLoss);
- if(!(price>0&&tp>0&&sl>0))throw Error('Invalid entry/TP/SL levels');
- const ticker='$'+coin.ticker,vol=compactMoney(coin.volume);
- const signed=n=>(n>=0?'+':'')+n.toFixed(2)+'%';
- const move=signed(hour),dayMove=signed(day);
- const favorable=(side==='LONG'?(tp/price-1):(price/tp-1))*100;
- const adverse=(side==='LONG'?(1-sl/price):(sl/price-1))*100;
- const leverage=mode==='futures'?5:1;
- const potential=Math.max(0,favorable*leverage),risk=Math.max(0,adverse*leverage);
- const target=formatPrice(tp),stop=formatPrice(sl),entry=formatPrice(price);
+function fallbackDraft(coin){
+ const side=coin.signalSide,hour=Number(coin.hourChange),day=Number(coin.change24h);
+ const price=Number(coin.price),tp=Number(coin.takeProfit),stretch=Number(coin.stretchTarget),sl=Number(coin.stopLoss);
+ if(!(price>0&&tp>0&&stretch>0&&sl>0))throw Error('Invalid Futures entry/TP/SL levels');
+ const ticker='$'+coin.ticker,signed=n=>(n>=0?'+':'')+n.toFixed(2)+'%';
+ const favorable=(tp/price-1)*(side==='LONG'?1:-1)*100,extended=(stretch/price-1)*(side==='LONG'?1:-1)*100,adverse=(1-sl/price)*(side==='LONG'?1:-1)*100;
+ const entry=formatPrice(price),target=formatPrice(tp),runner=formatPrice(stretch),stop=formatPrice(sl);
+ let hash=0;for(const ch of coin.ticker)hash=(hash*33+ch.charCodeAt(0))>>>0;
  const variants=[
-  'I’m watching this one NOW.',
-  'This is the level I want to see hold.',
-  'Momentum is here. The next move matters.',
-  'Not chasing blindly — waiting for this setup.',
-  'One clean move could make this interesting.'
+  side==='LONG'?'After the pullback, buyers are trying to reclaim the 1H range.':'The bounce is weak so far; sellers still have the cleaner structure.',
+  side==='LONG'?'Momentum turned up on the 1H chart. I want price to defend the last swing low.':'The last 1H support gave way. A failed reclaim would keep the short idea alive.',
+  side==='LONG'?'This is a breakout attempt, not a chase: the retest is the key.':'This is a breakdown watch, not a blind short: the retest decides.',
+  side==='LONG'?'Higher low + improving momentum. The setup fails below the marked stop.':'Lower high + fading bounce. The setup fails above the marked stop.',
+  side==='LONG'?'If buyers hold this zone, there may be room for another leg.':'If sellers defend this zone, the next leg could extend lower.',
+  side==='LONG'?'I’m watching the 1H close. A weak close cancels the bullish case.':'I’m watching the 1H close. A strong reclaim cancels the bearish case.'
  ];
- let hash=0;for(const c of coin.ticker)hash=(hash*31+c.charCodeAt(0))>>>0;
- const hook=variants[hash%variants.length];
- if(mode==='futures'){
-  const direction=side==='LONG'?'LONG':'SHORT';
-  const action=direction==='LONG'?'BUYERS ARE PUSHING':'SELLERS ARE IN CONTROL';
-  return action+' '+ticker+' · '+move+' in 1H\n'+
-   '24H '+dayMove+' | Vol '+vol+'\n\n'+
-   hook+' '+direction+' idea:\n'+
-   'Entry '+entry+' → TP '+target+' ('+signed(favorable)+')\n'+
-   'SL '+stop+' ('+signed(-adverse)+')\n'+
-   'At 5x: approx. +'+potential.toFixed(1)+'% / -'+risk.toFixed(1)+'% gross, before fees/funding.\n\n'+
-   'Tap '+ticker+' and check the live Futures chart. Would you take this move or wait for a pullback?\n'+
-   '#'+coin.ticker+' #'+direction+' #Futures';
- }
- if(side==='SHORT'){
-  return 'SELL PRESSURE · '+ticker+' '+move+' in 1H\n'+
-   '24H '+dayMove+' | Vol '+vol+'\n\n'+
-   'I’m not buying this drop blindly. Downside level: '+target+'\n'+
-   'Bullish reclaim needed above: '+stop+'\n\n'+
-   'Tap '+ticker+' and watch the level. Would you wait for a bounce or stay away?\n'+
-   '#'+coin.ticker+' #BinanceSpot #Crypto';
- }
- return 'BREAKOUT WATCH · '+ticker+' '+move+' in 1H\n'+
-  '24H '+dayMove+' | Vol '+vol+'\n\n'+
-  hook+'\n'+
-  'Entry '+entry+' → TP '+target+' ('+signed(favorable)+')\n'+
-  'Invalidation '+stop+' ('+signed(-adverse)+')\n\n'+
-  'Tap '+ticker+' to open the chart. Is this the start of a bigger move — or a fakeout?\n'+
-  '#'+coin.ticker+' #BinanceSpot #Crypto';
+ const opener=variants[hash%variants.length],heading=side==='LONG'?'🟢 LONG':'🔴 SHORT',direction='#'+side;
+ const layouts=[
+  ()=>ticker+' '+signed(hour)+' on 1H. '+opener+'\n'+heading+' · Entry '+entry+'\nTP1 '+target+' ('+signed(favorable)+') · stretch '+runner+' ('+signed(extended)+')\nSL '+stop+' ('+signed(-adverse)+')\n#Perpetual #Futures '+direction,
+  ()=> '1H setup: '+ticker+'\n'+opener+'\n'+heading+' '+entry+' → '+target+'\nStretch: '+runner+' | invalidation: '+stop+'\n24H '+signed(day)+' · '+signed(hour)+' in 1H\n#Perpetual #Futures '+direction,
+  ()=>ticker+' is moving '+signed(hour)+' in 1H.\n'+heading+' idea: '+entry+'\nFirst target '+target+'; extended target '+runner+'.\nWrong above/below: '+stop+'.\n'+opener+'\n#Perpetual #Futures '+direction,
+  ()=>opener+'\n'+ticker+' · '+heading+'\nEntry '+entry+' | TP '+target+' | stretch '+runner+'\nSL '+stop+'\n1H '+signed(hour)+' / 24H '+signed(day)+'\n#Perpetual #Futures '+direction
+ ];
+ return layouts[hash%layouts.length]();
 }
-async function draft(coin,mode){return fallbackDraft(coin,mode);}
-async function postOne(s,forcedMode=null){
+async function draft(coin){return fallbackDraft(coin);}
+
+async function postOne(s){
  const today=dayKey();s.perDay=s.perDay||{};
  if((s.perDay[today]||0)>=maxDaily)throw Error('Daily cap reached');
- const list=await symbols();if(!list.length)throw Error('No high-volume 24h breakout tokens found; nothing posted.');
- const history=s.history||[];
- const spotCount=history.filter(x=>x.marketType==='spot').length;
- const futuresCount=history.filter(x=>x.marketType==='futures').length;
- const nextN=(s.published||0)+1;
- const shouldFutures=futuresCount<Math.floor(nextN*futuresTarget/maxPosts) && futuresCount<futuresTarget;
- const mode=forcedMode||(shouldFutures?'futures':'spot');
- let marketSet;
- if(mode==='futures'){
-  try{
-   const data=await getJson('https://fapi.binance.com/fapi/v1/ticker/24hr',15000);
-   marketSet=new Set(data.map(x=>x.symbol).filter(x=>String(x).endsWith('USDT')));
-  }catch(e){
-   // GitHub-hosted runners can be geo-blocked by Binance Futures (HTTP 451).
-   // Fall back only to a conservative set of commonly listed USDⓈ-M perpetuals,
-   // intersected with live CoinGecko candidates, rather than aborting the whole run.
-   console.log('Binance Futures feed unavailable: '+String(e.message||e)+'; using conservative known-perpetual fallback');
-   const knownPerpetuals=new Set(('1000SATS 1000PEPE 1000SHIB 1INCH AAVE ACE ADA ALGO ANIME APT ARB ARKM ARK ATOM AVAX BCH BEAM BERA BLUR BNB BONK BRETT BTC CFX CHZ COMP CRV DOGE DOT DYDX EGLD ENA ENS ETC ETH FIL FET FLOW FTM GALA GAS GRT HBAR HIFI ICP IMX INJ IOTA JASMY JTO JUP KAS KAVA LDO LINK LISTA LTC MANA MANTA MASK MEME METIS MINA MKR NEAR NEIRO NOT OP ORDI PENDLE PEOPLE PEPE PNUT POL POLYX POPCAT PYTH QNT QTUM RENDER RIF RLC RUNE SAND SEI SHIB SKL SNX SOL STX SUI SUPER SUSHI TAO THETA TIA TLM TNSR TON TRB TRX UNI USUAL VET W WIF WLD XAI XLM XRP XTZ YGG ZEC ZEN ZK ZRO ZRX').split(' '));
-   marketSet=new Set(list.filter(x=>knownPerpetuals.has(x.ticker)).map(x=>x.ticker+'USDT'));
-  }
- }else{
-  try{
-   const data=await getJson('https://api.binance.com/api/v3/ticker/24hr',15000);
-   marketSet=new Set(data.map(x=>x.symbol).filter(x=>String(x).endsWith('USDT')));
-  }catch(e){
-   console.log('Binance Vision spot-list fallback failed: '+String(e.message||e));
-   // When Binance market endpoints are unreachable, continue using CoinGecko-backed
-   // candidates; their price chart is available separately and publishing can still proceed.
-   marketSet=new Set(list.map(x=>x.ticker+'USDT'));
-  }
- }
- const cooldownMs=6*60*60*1000;
- const recentUsed=new Set(history.filter(x=>now()-Date.parse(x.at||'')<cooldownMs).map(x=>x.ticker));
- const candidates=list.filter(x=>!recentUsed.has(x.ticker)&&marketSet.has(x.ticker+'USDT')).slice(0,24);
+ const list=await symbols();if(!list.length)throw Error('No liquid Binance USD-M Futures breakout tokens found; nothing posted.');
+ const history=s.history||[],recentUsed=new Set(history.filter(x=>now()-Date.parse(x.at||'')<6*60*60*1000).map(x=>x.ticker));
  const ranked=[];
- for(const candidate of candidates){
+ for(const candidate of list.filter(x=>!recentUsed.has(x.ticker)).slice(0,30)){
   try{
-   let closes,highs,lows,atr;
-   if(candidate.coinId||candidate.source==='OKX'){
-    // Use CoinGecko or OKX candles when Binance endpoints are blocked on the runner.
-    const prices=await chartPoints(candidate);
-    if(prices.length<8)continue;
-    closes=prices;
-    const recent=prices.slice(-4);
-    highs=recent;lows=recent;
-    const hourIndex=Math.max(0,prices.length-13);
-    const first=prices[hourIndex],lastPrice=prices[prices.length-1];
-    const moves=prices.slice(-13).slice(1).map((v,i)=>Math.abs(v-prices[prices.length-13+i])).filter(v=>Number.isFinite(v)&&v>0);
-    atr=moves.length?moves.reduce((n,x)=>n+x,0)/moves.length*2.5:0;
-    const hourChange=(lastPrice-first)/first*100;
-    const recentHigh=Math.max(...highs),recentLow=Math.min(...lows);
-    if(!Number.isFinite(hourChange)||Math.abs(hourChange)<0.8||!atr||lastPrice<=0)continue;
-    const signalSide=hourChange>0?'LONG':'SHORT',price=lastPrice;
-    const stopLoss=signalSide==='LONG'?Math.min(recentLow,price-1.35*atr):Math.max(recentHigh,price+1.35*atr);
-    const risk=Math.abs(price-stopLoss);
-    if(!risk||risk/price>0.045)continue;
-    const takeProfit=signalSide==='LONG'?price+1.8*risk:price-1.8*risk;
-    if(Math.abs(takeProfit-price)/price<0.012)continue; // avoid tiny targets that leave too little room for fees/slippage
-    ranked.push({...candidate,price,change24h:candidate.change,change:hourChange,hourChange,signalSide,takeProfit,stopLoss,rank:Math.abs(hourChange)*Math.log10(1+candidate.volume)});
-   }else{
-    const candles=await getJson('https://api.binance.vision/api/v3/klines?symbol='+encodeURIComponent(candidate.symbol)+'&interval=1m&limit=60',10000);
-    if(candles.length<50)continue;
-    closes=candles.map(x=>Number(x[4]));highs=candles.map(x=>Number(x[2]));lows=candles.map(x=>Number(x[3]));
-    const first=closes[0],lastPrice=closes[closes.length-1],hourChange=(lastPrice-first)/first*100;
-    const recentHigh=Math.max(...highs.slice(-15)),recentLow=Math.min(...lows.slice(-15));
-    const ranges=candles.slice(-20).map(x=>Number(x[2])-Number(x[3])).filter(x=>x>0);
-    atr=ranges.reduce((n,x)=>n+x,0)/Math.max(1,ranges.length);
-    if(!Number.isFinite(hourChange)||Math.abs(hourChange)<0.8||!atr||lastPrice<=0)continue;
-    const signalSide=hourChange>0?'LONG':'SHORT',price=lastPrice;
-    const stopLoss=signalSide==='LONG'?Math.min(recentLow,price-1.35*atr):Math.max(recentHigh,price+1.35*atr);
-    const risk=Math.abs(price-stopLoss);
-    if(!risk||risk/price>0.045)continue;
-    const takeProfit=signalSide==='LONG'?price+1.8*risk:price-1.8*risk;
-    if(Math.abs(takeProfit-price)/price<0.012)continue; // avoid tiny targets that leave too little room for fees/slippage
-    ranked.push({...candidate,price,change24h:candidate.change,change:hourChange,hourChange,signalSide,takeProfit,stopLoss,rank:Math.abs(hourChange)*Math.log10(1+candidate.volume)});
-   }
-  }catch(e){console.log('market scan skipped '+candidate.ticker+': '+String(e.message||e));}
+   const raw=await getJson('https://fapi.binance.com/fapi/v1/klines?symbol='+encodeURIComponent(candidate.symbol)+'&interval=5m&limit=60',12000);
+   if(raw.length<30)continue;
+   const candles=raw.map(x=>({open:Number(x[1]),high:Number(x[2]),low:Number(x[3]),close:Number(x[4])}));
+   const closes=candles.map(x=>x.close),price=closes.at(-1),hourBase=closes.at(-13),hourChange=(price/hourBase-1)*100;
+   if(!Number.isFinite(hourChange)||Math.abs(hourChange)<0.65||price<=0)continue;
+   const recent=candles.slice(-12);
+   const ranges=candles.slice(-15).map((x,i,a)=>Math.max(x.high-x.low,Math.abs(x.high-(a[i-1]?.close??x.open)),Math.abs(x.low-(a[i-1]?.close??x.open))));
+   const atr=ranges.reduce((sum,x)=>sum+x,0)/ranges.length;if(!(atr>0))continue;
+   const signalSide=hourChange>=0?'LONG':'SHORT',swingLow=Math.min(...recent.map(x=>x.low)),swingHigh=Math.max(...recent.map(x=>x.high));
+   const stopLoss=signalSide==='LONG'?Math.min(swingLow,price-1.35*atr):Math.max(swingHigh,price+1.35*atr),risk=Math.abs(price-stopLoss);
+   if(!(risk>0)||risk/price>0.045)continue;
+   const takeProfit=signalSide==='LONG'?price+2*risk:price-2*risk,stretchTarget=signalSide==='LONG'?price+3*risk:price-3*risk;
+   if(takeProfit<=0||stretchTarget<=0||Math.abs(takeProfit-price)/price<0.012)continue;
+   ranked.push({...candidate,price,change24h:candidate.change,hourChange,signalSide,takeProfit,stretchTarget,stopLoss,rank:Math.abs(hourChange)*Math.log10(1+candidate.volume)});
+  }catch(e){console.log('Futures scan skipped '+candidate.ticker+': '+String(e.message||e));}
  }
  ranked.sort((a,b)=>b.rank-a.rank);
- const candidatesRanked=ranked.slice(0,12);
- let last='No unused token passed the one-hour momentum and liquidity filters';
- for(const original of candidatesRanked){
-  const coin={...original,spotUrl:'https://www.binance.com/en/trade/'+original.ticker+'_USDT?type=spot',futuresUrl:'https://www.binance.com/en/futures/'+original.ticker+'USDT'};
+ let last='No token passed the USD-M Futures 1H momentum, liquidity and risk filters';
+ for(const coin of ranked.slice(0,12)){
   try{
-   const values=await chartPoints(coin);if(values.length<8)throw Error('Not enough real chart points');
-   const text=await draft(coin,mode),img=await card(coin,values);
-   const r=await publishImage(text,img,'market-'+mode+'-'+coin.ticker.toLowerCase()+'-'+Date.now()+'.png');
-   const entry={at:new Date().toISOString(),ticker:coin.ticker,change:coin.change,volume:coin.volume,marketType:mode,text,url:r.url||null,postId:r.id||null};
+   const values=await chartPoints(coin);if(values.length<8)throw Error('Not enough Futures chart points');
+   const text=await draft(coin),img=await card(coin,values);
+   const r=await publishImage(text,img,'market-futures-'+coin.ticker.toLowerCase()+'-'+Date.now()+'.png');
+   const entry={at:new Date().toISOString(),ticker:coin.ticker,change:coin.hourChange,volume:coin.volume,marketType:'futures',text,url:r.url||null,postId:r.id||null};
    s.published=(s.published||0)+1;s.perDay[today]=(s.perDay[today]||0)+1;s.seen=(s.seen||[]).concat(coin.ticker).slice(-300);s.history=(s.history||[]).concat(entry).slice(-100);s.lastError=null;
-   console.log('PUBLISHED '+s.published+'/'+maxPosts+' '+mode.toUpperCase()+' $'+coin.ticker+' '+coin.change.toFixed(2)+'% '+(r.url||'no URL'));
-   console.log('MIX spot='+spotCount+' futures='+futuresCount+' targets='+spotTarget+'/'+futuresTarget);
+   console.log('PUBLISHED '+s.published+'/'+maxPosts+' FUTURES $'+coin.ticker+' '+coin.hourChange.toFixed(2)+'% '+(r.url||'no URL'));
    console.log('TEXT: '+text);return true;
-  }catch(e){last=String(e.message||e);console.log('Skipped $'+coin.ticker+': '+last);}
+  }catch(e){last=String(e.message||e);console.log('Skipped Futures $'+coin.ticker+': '+last);}
  }
- throw Error('No eligible '+mode+' token could be published. Last issue: '+last);
+ throw Error('No eligible Futures token could be published. Last issue: '+last);
 }
 async function main(){
  let s=await load();const event=process.env.GITHUB_EVENT_NAME||'';
@@ -307,7 +192,7 @@ async function main(){
  if(event==='schedule'&&s.planVersion!==4){console.log('Scheduled run waiting for manual pilot start.');return;}
  if(event==='workflow_dispatch'&&s.planVersion!==4){s={active:true,startedAt:new Date().toISOString(),endsAt:new Date(now()+30*24*3600000).toISOString(),published:0,perDay:{},seen:[],history:[],lastError:null,planVersion:4};console.log('New 30-day campaign starts '+s.startedAt+' ends '+s.endsAt+' target='+maxPosts+' mix spot='+spotTarget+' futures='+futuresTarget);}
  if(!s.active||(s.published||0)>=maxPosts||now()>=Date.parse(s.endsAt)){s.active=false;s.lastError='Pilot complete or time expired';await save(s);console.log('Finished '+s.published+'/'+maxPosts);return;}
- try{const lastPost=Date.parse((s.history||[]).at(-1)?.at||'');if(event!=='push'&&Number.isFinite(lastPost)&&now()-lastPost<minPostGapMs){console.log('Throttle: last post is less than 55 minutes old; skipping publish.');return;}if(!process.env.BINANCE_SQUARE_OPENAPI_KEY)throw Error('Missing BINANCE_SQUARE_OPENAPI_KEY; no post sent.');try{await postOne(s);}catch(firstError){if(String(firstError.message||firstError).includes('No eligible futures token')){console.log('Futures scan found no publishable setup; retrying once with Spot.');await postOne(s,'spot');}else throw firstError;}}catch(e){s.lastError=String(e.message||e).slice(0,500);console.error('POST FAILED: '+s.lastError);}
+ try{const lastPost=Date.parse((s.history||[]).at(-1)?.at||'');if(event!=='push'&&Number.isFinite(lastPost)&&now()-lastPost<minPostGapMs){console.log('Throttle: last post is less than 55 minutes old; skipping publish.');return;}if(!process.env.BINANCE_SQUARE_OPENAPI_KEY)throw Error('Missing BINANCE_SQUARE_OPENAPI_KEY; no post sent.');await postOne(s);}catch(e){s.lastError=String(e.message||e).slice(0,500);console.error('POST FAILED: '+s.lastError);}
  if(s.published>=maxPosts||now()>=Date.parse(s.endsAt))s.active=false;await save(s);console.log('PILOT '+(s.active?'ACTIVE':'FINISHED')+' '+s.published+'/'+maxPosts+' perDay='+JSON.stringify(s.perDay)+' error='+(s.lastError||'none'));if(s.lastError)process.exitCode=1;
 }
 main().catch(e=>{console.error('FATAL: '+String(e.message||e));process.exitCode=1;});
